@@ -1,0 +1,9 @@
+.form-control.error {
+    border-color: red;
+} .error{
+    color: red;
+} .modal button.close{
+    display: none;
+} .mb-15{
+    margin-bottom: 15px;
+}

@@ -1,0 +1,302 @@
+<?php
+
+namespace App\Http\Controllers\Dashboard;
+
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+
+use App\User;
+use Carbon\Carbon;
+use App\Model\City;
+use App\Model\OtpVerification;
+use App\Model\CustomerDetail;
+
+class HomeController extends Controller
+{
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function index()
+    {
+        $data['activemenu']['main'] = 'dashboard';
+
+        return view('dashboard.home', $data);
+    }
+
+    public function profile($id = 'none'){
+        $data['activemenu']['main'] = 'profile';
+
+        if($id == 'none'){
+            $data['user'] = \Auth::user();
+        } else{
+            $data['user'] = User::findorfail(base64_decode($id));
+
+            if(!\Myhelper::can('edit_'.$data['user']->role->slug)){
+                abort(401);
+            }
+        }
+
+        // dd($data['user']->toArray());
+
+        $data['cities'] = City::all();
+        return view('dashboard.profile', $data);
+    }
+
+    public function updateProfile(Request $post){
+        if(!$post->has('id')){
+            $post['id'] = \Auth::id();
+        }
+
+        $userdata = User::findorfail($post->id);
+        if($userdata->id != \Auth::id()){
+            if(!\Myhelper::can('edit_'.$userdata->role->slug)){
+                return response()->json(['status' => 'Permission Denied'], 400);
+            }
+        }
+
+        switch ($post->type) {
+            case 'basicdetails':
+                $rules = [
+                    'name' => 'required',
+                    'email' => 'required|unique:users,email,'.$post->id,
+                    'mobile' => 'nullable|digits:10|unique:users,mobile,'.$post->id,
+                ];
+
+                if($userdata->role->slug == 'customer'){
+                    $rules['pancard'] = 'required|string|max:10|min:10|regex:^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$^|unique:users,pancard,'.$post->id;
+                    $rules['gender'] = 'nullable|in:male,female,others';
+                    $rules['date_of_birth'] = 'nullable';
+                    $rules['pincode'] = 'nullable|digits:6';
+                    $rules['city'] = 'nullable';
+                }
+            break;
+
+            case 'profileimage':
+                $rules = [
+                    'profile_image' => 'required',
+                ];
+            break;
+
+            case 'changepassword':
+                $rules = [
+                    'new_password' => 'required|confirmed',
+                ];
+
+                if($userdata->id == \Auth::id()){
+                    $rules['current_password'] = 'required';
+                }
+            break;
+
+            case 'verifymobile':
+                if(!$post->has('otp') || !in_array($post->otp, ['send','resend'])){
+                    $rules = [
+                        'otp' => 'required|digits:6',
+                    ];
+                }
+            break;
+
+            case 'businessdoc':
+                $rules = [
+                    'pancard_image' => 'nullable',
+                    'aadharcard_image' => 'nullable',
+                    'cancelled_cheque_image' => 'nullable',
+                ];
+            break;
+
+            default:
+                return response()->json(['status' => 'Unsupported request'], 400);
+            break;
+        }
+
+        if(isset($rules)){
+            $validator = \Validator::make($post->all(), $rules);
+            if($validator->fails()){
+                foreach($validator->errors()->messages() as $key => $value){
+                    return response()->json(['status' => $value[0]], 400);
+                }
+            }
+        }
+
+        switch ($post->type) {
+            case 'basicdetails':
+                $update['name'] = $post->name;
+                $update['email'] = $post->email;
+                $update['mobile'] = $post->mobile;
+
+                if($userdata->role->slug == 'customer'){
+                    $update['pancard'] = $post->pancard;
+                    $update['gender'] = $post->gender;
+                    $update['dob'] = Carbon::parse($post->date_of_birth)->format('Y-m-d');
+                    $update['pincode'] = $post->pincode;
+                    $update['city_id'] = $post->city;
+                }
+
+                $action = User::where('id', $post->id)->update($update);
+
+                if($action){
+                    return response()->json(['status' => 'Profile updated successfully'], 200);
+                } else{
+                    return response()->json(['status' => 'Task failed. Please try again later'], 400);
+                }
+            break;
+
+            case 'profileimage':
+                $file = $post->file('profile_image');
+                $filename = Carbon::now()->timestamp.'_'.$file->getClientOriginalName();
+
+                if($userdata->profile_image != NULL){
+                    $deletefile = 'uploads/profile/'.$userdata->profile_image;
+                }
+
+                //Resizing and compressing the image
+                if(\Image::make($file->getRealPath())->resize(160, 160)->save('uploads/profile/'.$filename, 60)){
+                    $update['profile_image'] = $filename;
+
+                    if(isset($deletefile)){
+                        \File::delete($deletefile);
+                    }
+                } else{
+                    return response()->json(['status' => 'File cannot be saved to server.'], 400);
+                }
+
+                $action = User::where('id', $post->id)->update($update);
+
+                if($action){
+                    \Session::flash('success', 'Profile updated successfully.');
+                    return response()->json(['status' => 'Profile updated successfully'], 200);
+                } else{
+                    return response()->json(['status' => 'Task failed. Please try again later'], 400);
+                }
+            break;
+
+            case 'changepassword':
+                if($userdata->id == \Auth::id()){
+                    if(!\Hash::check($post->current_password, $userdata->password)){
+                        return response()->json(['status' => 'Current password didnnot matched'], 400);
+                    }
+                }
+
+                $update['password'] = bcrypt($post->new_password);
+
+                $action = User::where('id', $post->id)->update($update);
+
+                if($action){
+                    return response()->json(['status' => 'Profile updated successfully'], 200);
+                } else{
+                    return response()->json(['status' => 'Task failed. Please try again later'], 400);
+                }
+            break;
+
+            case 'verifymobile':
+                if(in_array($post->otp, ['send','resend'])){
+                    $post['otp'] = rand(111111, 999999);
+
+                    $body = "Dear $userdata->name, your verification code is $post->otp. Team ".config('app.name').".";
+                    if(\Myhelper::sms($userdata->mobile, $body)){
+                        OtpVerification::where('mobile', $userdata->mobile)->where('email', $userdata->email)->delete(); #delete prev records
+
+                        $action = OtpVerification::create([
+                            'email' => $userdata->email,
+                            'mobile' => $userdata->mobile,
+                            'otp' => $post->otp,
+                        ]);
+
+                        if($action){
+                            \Session::put('registerdata', $post->all());
+                            return response()->json(['status' => 'An OTP has been successfully sent to your Mobile Number.'], 200);
+                        } else{
+                            return response()->json(['status' => 'Internal server error. Please try again later.'], 400);
+                        }
+                    } else{
+                        return response()->json(['status' => 'OTP cannot be sent. Please try again later.'], 400);
+                    }
+                } else{
+                    $verfication = OtpVerification::where('mobile', $userdata->mobile)->whereBetween('created_at', [Carbon::now()->subMinutes(15)->format('Y-m-d H:i:s'), Carbon::now()->format('Y-m-d H:i:s')])->first(); #valiate only otp with mobile number
+                    if($verfication){
+                        if(!\Hash::check($post->otp, $verfication->otp)){
+                            return response()->json(['status' => "The otp you entered doesn't matched"], 400);
+                        }
+
+                        $update = array();
+                        $update['mobile_verified_at'] = Carbon::now()->format('Y-m-d H:i:s');
+                        $action = User::where('id', $post->id)->update($update);
+                        if($action){
+                            $verfication->delete();
+                            \Session::flash('success', 'Mobile number verified successfully');
+                            return response()->json(['status' => 'Mobile number verified successfully'], 200);
+                        } else{
+                            return response()->json(['status' => 'Task failed. Please try again later'], 400);
+                        }
+                    } else{
+                        return response()->json(['status' => 'The otp you entered is invalid or may have been expired'], 400);
+                    }
+                }
+            break;
+
+            case 'businessdoc':
+                $update = array();
+                $update['user_id'] = $userdata->id;
+
+                if($post->file('pancard_image')){
+                    $file = $post->file('pancard_image');
+                    $filename = Carbon::now()->timestamp.'_'.$file->getClientOriginalName();
+
+                    //Resizing and compressing the image
+                    if(\Image::make($file->getRealPath())->save('uploads/profile/customers/'.$filename, 60)){
+                        $update['pancardimage'] = $filename;
+                    } else{
+                        return response()->json(['status' => 'Pancard image cannot be saved to server.'], 400);
+                    }
+                }
+
+                if($post->file('aadharcard_image')){
+                    $file = $post->file('aadharcard_image');
+                    $filename = Carbon::now()->timestamp.'_'.$file->getClientOriginalName();
+
+                    //Resizing and compressing the image
+                    if(\Image::make($file->getRealPath())->save('uploads/profile/customers/'.$filename, 60)){
+                        $update['aadharcardimage'] = $filename;
+                    } else{
+                        return response()->json(['status' => 'Aadharcard image cannot be saved to server.'], 400);
+                    }
+                }
+
+                if($post->file('cancelled_cheque_image')){
+                    $file = $post->file('cancelled_cheque_image');
+                    $filename = Carbon::now()->timestamp.'_'.$file->getClientOriginalName();
+
+                    //Resizing and compressing the image
+                    if(\Image::make($file->getRealPath())->save('uploads/profile/customers/'.$filename, 60)){
+                        $update['cancelledchequeimage'] = $filename;
+                    } else{
+                        return response()->json(['status' => 'Cancelled cheque image cannot be saved to server.'], 400);
+                    }
+                }
+
+                $action = CustomerDetail::updateorcreate(['user_id' => $userdata->id], $update);
+                if($action){
+                    \Session::flash('success', 'Profile updated successfully.');
+                    return response()->json(['status' => 'Profile updated successfully.'], 200);
+                } else{
+                    return response()->json(['status' => 'Task failed. Please try again later.'], 400);
+                }
+            break;
+
+            default:
+                return response()->json(['status' => 'Unsupported request'], 400);
+            break;
+        }
+    }
+}
