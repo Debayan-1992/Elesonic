@@ -88,7 +88,7 @@
 						<div class="icon-block">
 							<ul>
 								<li class="sell-product"><a href="#">Sell on Elesonic</a></li>
-								<li class="user-icon"><a href="{{route('i')}}"><img src="{{asset('custom_resource/images/user-icon.png')}}"></a></li>
+								<li class="user-icon"><a href="{{route('welcome')}}"><img src="{{asset('custom_resource/images/user-icon.png')}}"></a></li>
 								<li class="cagrt-icon" ><a href="#"><img src="{{asset('custom_resource/images/cart-icon.png')}}"></a></li>
 							</ul>
 						</div>

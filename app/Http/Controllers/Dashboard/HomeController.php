@@ -20,7 +20,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        //$this->middleware('auth'); //For this function i function was not working
     }
 
     /**
@@ -28,10 +28,15 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function i()
+    public function landing()
     {
-        dd('dsfsdfs');
+        //dd('dsfsdfs');
         return view('index');
+    }
+
+    public function welcome()
+    {
+        return view('welcome');
     }
 
     public function index()

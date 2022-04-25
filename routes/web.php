@@ -13,8 +13,9 @@ use App\Http\Controllers\Dashboard\HomeController;
 |
 */
 
-Route::get('/i', function () {return view('welcome');})->name('index');
-Route::get('/', [HomeController::class, 'i'])->name('landing');
+// Route::get('/i', function () {return view('welcome');})->name('i');
+Route::get('/welcome', [HomeController::class, 'welcome'])->name('welcome');
+Route::get('/', [HomeController::class, 'landing'])->name('landing');
 
 Auth::routes(['verify' => true]);
 
