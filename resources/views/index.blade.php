@@ -6,8 +6,8 @@
 	  <meta charset="utf-8">
 	  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
-	<link rel="icon" href="images/favicon.ico" type="image/x-icon">
+	<link rel="shortcut icon" href="{{asset('custom_resource/images/favicon.ico')}}" type="image/x-icon">
+	<link rel="icon" href="{{asset('custom_resource/images/favicon.ico')}}" type="image/x-icon">
 
 	<!-- font -->
 	<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap" rel="stylesheet">
@@ -17,18 +17,18 @@
 	<!-- font -->
 
 
-	 <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+	 <link rel="stylesheet" type="text/css" href="{{asset('custom_resource/css/bootstrap.min.css')}}">
 
 
 	<!-- owl-slider -->
-	<link rel="stylesheet" type="text/css" href="css/owl.carousel.min.css">
+	<link rel="stylesheet" type="text/css" href="{{asset('custom_resource/css/owl.carousel.min.css')}}">
 	<!-- owl-slider -->
 
 	<!-- font-awesome -->
-	<link rel="stylesheet" href="css/font-awesome.min.css">
+	<link rel="stylesheet" href="{{asset('custom_resource/css/font-awesome.min.css')}}">
 	<!-- font-awesome -->
 
-	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link rel="stylesheet" type="text/css" href="{{asset('custom_resource/css/style.css')}}">
 
 
 	 <!-- countru-code -->
@@ -43,7 +43,7 @@
 			<div class="container-fluid">
 
 				<div class="logo-block">
-				  <a class="navbar-brand" href="#"><img src="images/logo.png"></a>
+				  <a class="navbar-brand" href="#"><img src="{{asset('custom_resource/images/logo.png')}}"></a>
 				</div>
 
 				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -88,8 +88,8 @@
 						<div class="icon-block">
 							<ul>
 								<li class="sell-product"><a href="#">Sell on Elesonic</a></li>
-								<li class="user-icon"><a href="#"><img src="images/user-icon.png"></a></li>
-								<li class="cagrt-icon" ><a href="#"><img src="images/cart-icon.png"></a></li>
+								<li class="user-icon"><a href="{{route('i')}}"><img src="{{asset('custom_resource/images/user-icon.png')}}"></a></li>
+								<li class="cagrt-icon" ><a href="#"><img src="{{asset('custom_resource/images/cart-icon.png')}}"></a></li>
 							</ul>
 						</div>
 					</div>
@@ -111,13 +111,13 @@
 
 				<!-- item -->
 				<div class="item">
-					<img src="images/banner1.jpg">
+					<img src="{{asset('custom_resource/images/banner1.jpg')}}">
 				</div>
 				<!-- item -->
 
 				<!-- item -->
 				<div class="item">
-					<img src="images/banner1.jpg">
+					<img src="{{asset('custom_resource/images/banner1.jpg')}}">
 				</div>
 				<!-- item -->
 			</div>
@@ -151,7 +151,7 @@
 							<div class="item">
 								<a href="#">
 									<div class="figure">
-									<img src="images/departments/depart-img1.png">
+									<img src="{{asset('custom_resource/images/departments/depart-img1.png')}}">
 									</div>
 									<p>Consumable & Disposable</p>
 								</a>
@@ -164,7 +164,7 @@
 							<div class="item">
 								<a href="#">
 									<div class="figure">
-									<img src="images/departments/depart-img2.png">
+									<img src="{{asset('custom_resource/images/departments/depart-img2.png')}}">
 									</div>
 									<p>Lab Diagnostics & Instruments</p>
 								</a>
@@ -177,7 +177,7 @@
 							<div class="item">
 								<a href="#">
 									<div class="figure">
-									<img src="images/departments/depart-img3.png">
+									<img src="{{asset('custom_resource/images/departments/depart-img3.png')}}">
 									</div>
 									<p>Medical Device & Equipment</p>
 								</a>
@@ -191,7 +191,7 @@
 							<div class="item">
 								<a href="#">
 									<div class="figure">
-									<img src="images/departments/depart-img1.png">
+									<img src="{{asset('custom_resource/images/departments/depart-img1.png')}}">
 									</div>
 									<p>Consumable & Disposable</p>
 								</a>
@@ -205,7 +205,7 @@
 							<div class="item">
 								<a href="#">
 									<div class="figure">
-									<img src="images/departments/depart-img2.png">
+									<img src="{{asset('custom_resource/images/departments/depart-img2.png')}}">
 									</div>
 									<p>Lab Diagnostics & Instruments</p>
 								</a>
@@ -218,7 +218,7 @@
 							<div class="item">
 								<a href="#">
 									<div class="figure">
-									<img src="images/departments/depart-img3.png">
+									<img src="{{asset('custom_resource/images/departments/depart-img3.png')}}">
 									</div>
 									<p>Medical Device & Equipment</p>
 								</a>
@@ -249,7 +249,7 @@
 						<div class="item">
 							<a href="#">
 								<div class="img-figure">
-									<img src="images/popular-products/img1.png">
+									<img src="{{asset('custom_resource/images/popular-products/img1.png')}}">
 								</div>
 
 								<p>Medical Diagnostic X-ray equipments</p>
@@ -262,7 +262,7 @@
 						<div class="item">
 							<a href="#">
 								<div class="img-figure">
-									<img src="images/popular-products/img2.png">
+									<img src="{{asset('custom_resource/images/popular-products/img2.png')}}">
 								</div>
 
 								<p>High quality & cost ffective CT Scan</p>
@@ -275,7 +275,7 @@
 						<div class="item">
 							<a href="#">
 								<div class="img-figure">
-									<img src="images/popular-products/img3.png">
+									<img src="{{asset('custom_resource/images/popular-products/img3.png')}}">
 								</div>
 
 								<p>ECG Machine</p>
@@ -288,7 +288,7 @@
 						<div class="item">
 							<a href="#">
 								<div class="img-figure">
-									<img src="images/popular-products/img4.png">
+									<img src="{{asset('custom_resource/images/popular-products/img4.png')}}">
 								</div>
 
 								<p>Medical Diagnostic X-ray equipments</p>
@@ -303,7 +303,7 @@
 						<div class="item">
 							<a href="#">
 								<div class="img-figure">
-									<img src="images/popular-products/img1.png">
+									<img src="{{asset('custom_resource/images/popular-products/img1.png')}}">
 								</div>
 
 								<p>Medical Diagnostic X-ray equipments</p>
@@ -316,7 +316,7 @@
 						<div class="item">
 							<a href="#">
 								<div class="img-figure">
-									<img src="images/popular-products/img2.png">
+									<img src="{{asset('custom_resource/images/popular-products/img2.png')}}">
 								</div>
 
 								<p>High quality & cost ffective CT Scan</p>
@@ -329,7 +329,7 @@
 						<div class="item">
 							<a href="#">
 								<div class="img-figure">
-									<img src="images/popular-products/img3.png">
+									<img src="{{asset('custom_resource/images/popular-products/img3.png')}}">
 								</div>
 
 								<p>ECG Machine</p>
@@ -342,7 +342,7 @@
 						<div class="item">
 							<a href="#">
 								<div class="img-figure">
-									<img src="images/popular-products/img4.png">
+									<img src="{{asset('custom_resource/images/popular-products/img4.png')}}">
 								</div>
 
 								<p>Medical Diagnostic X-ray equipments</p>
@@ -381,7 +381,7 @@
 							<div class="item">
 								<a href="#">
 									<div class="figure">
-									<img src="images/popular-services/img1.png">
+									<img src="{{asset('custom_resource/images/popular-services/img1.png')}}">
 									</div>
 									<p>Oxygen Concentrator</p>
 								</a>
@@ -394,7 +394,7 @@
 							<div class="item">
 								<a href="#">
 									<div class="figure">
-									<img src="images/popular-services/img2.png">
+									<img src="{{asset('custom_resource/images/popular-services/img2.png')}}">
 									</div>
 									<p>X Ray Machine</p>
 								</a>
@@ -407,7 +407,7 @@
 							<div class="item">
 								<a href="#">
 									<div class="figure">
-									<img src="images/popular-services/img3.png">
+									<img src="{{asset('custom_resource/images/popular-services/img3.png')}}">
 									</div>
 									<p>BiPAP Machine</p>
 								</a>
@@ -420,7 +420,7 @@
 							<div class="item">
 								<a href="#">
 									<div class="figure">
-									<img src="images/popular-services/img4.png">
+									<img src="{{asset('custom_resource/images/popular-services/img4.png')}}">
 									</div>
 									<p>CT Scan</p>
 								</a>
@@ -433,7 +433,7 @@
 							<div class="item">
 								<a href="#">
 									<div class="figure">
-									<img src="images/popular-services/img5.png">
+									<img src="{{asset('custom_resource/images/popular-services/img5.png')}}">
 									</div>
 									<p>Hemodialysis Machine</p>
 								</a>
@@ -446,7 +446,7 @@
 							<div class="item">
 								<a href="#">
 									<div class="figure">
-									<img src="images/popular-services/img6.png">
+									<img src="{{asset('custom_resource/images/popular-services/img6.png')}}">
 									</div>
 									<p>Hemodialysis Machine</p>
 								</a>
@@ -459,7 +459,7 @@
 							<div class="item">
 								<a href="#">
 									<div class="figure">
-									<img src="images/popular-services/img1.png">
+									<img src="{{asset('custom_resource/images/popular-services/img1.png')}}">
 									</div>
 									<p>Oxygen Concentrator</p>
 								</a>
@@ -472,7 +472,7 @@
 							<div class="item">
 								<a href="#">
 									<div class="figure">
-									<img src="images/popular-services/img2.png">
+									<img src="{{asset('custom_resource/images/popular-services/img2.png')}}">
 									</div>
 									<p>X Ray Machine</p>
 								</a>
@@ -485,7 +485,7 @@
 							<div class="item">
 								<a href="#">
 									<div class="figure">
-									<img src="images/popular-services/img3.png">
+									<img src="{{asset('custom_resource/images/popular-services/img3.png')}}">
 									</div>
 									<p>BiPAP Machine</p>
 								</a>
@@ -498,7 +498,7 @@
 							<div class="item">
 								<a href="#">
 									<div class="figure">
-									<img src="images/popular-services/img4.png">
+									<img src="{{asset('custom_resource/images/popular-services/img4.png')}}">
 									</div>
 									<p>CT Scan</p>
 								</a>
@@ -511,7 +511,7 @@
 							<div class="item">
 								<a href="#">
 									<div class="figure">
-									<img src="images/popular-services/img5.png">
+									<img src="{{asset('custom_resource/images/popular-services/img5.png')}}">
 									</div>
 									<p>Hemodialysis Machine</p>
 								</a>
@@ -524,7 +524,7 @@
 							<div class="item">
 								<a href="#">
 									<div class="figure">
-									<img src="images/popular-services/img6.png">
+									<img src="{{asset('custom_resource/images/popular-services/img6.png')}}">
 									</div>
 									<p>Hemodialysis Machine</p>
 								</a>
@@ -558,7 +558,7 @@
 						<div class="item">
 							<a href="#">
 								<div class="img-figure">
-									<img src="images/elesonic/img1.png">
+									<img src="{{asset('custom_resource/images/elesonic/img1.png')}}">
 								</div>
 
 								<div class="text-block">
@@ -575,7 +575,7 @@
 						<div class="item">
 							<a href="#">
 								<div class="img-figure">
-									<img src="images/elesonic/img2.png">
+									<img src="{{asset('custom_resource/images/elesonic/img2.png')}}">
 								</div>
 
 								<div class="text-block">
@@ -592,7 +592,7 @@
 						<div class="item">
 							<a href="#">
 								<div class="img-figure">
-									<img src="images/elesonic/img3.png">
+									<img src="{{asset('custom_resource/images/elesonic/img3.png')}}">
 								</div>
 
 								<div class="text-block">
@@ -609,7 +609,7 @@
 						<div class="item">
 							<a href="#">
 								<div class="img-figure">
-									<img src="images/elesonic/img1.png">
+									<img src="{{asset('custom_resource/images/elesonic/img1.png')}}">
 								</div>
 
 								<div class="text-block">
@@ -626,7 +626,7 @@
 						<div class="item">
 							<a href="#">
 								<div class="img-figure">
-									<img src="images/elesonic/img2.png">
+									<img src="{{asset('custom_resource/images/elesonic/img2.png')}}">
 								</div>
 
 								<div class="text-block">
@@ -643,7 +643,7 @@
 						<div class="item">
 							<a href="#">
 								<div class="img-figure">
-									<img src="images/elesonic/img3.png">
+									<img src="{{asset('custom_resource/images/elesonic/img3.png')}}">
 								</div>
 
 								<div class="text-block">
@@ -660,7 +660,7 @@
 						<div class="item">
 							<a href="#">
 								<div class="img-figure">
-									<img src="images/elesonic/img1.png">
+									<img src="{{asset('custom_resource/images/elesonic/img1.png')}}">
 								</div>
 
 								<div class="text-block">
@@ -677,7 +677,7 @@
 						<div class="item">
 							<a href="#">
 								<div class="img-figure">
-									<img src="images/elesonic/img2.png">
+									<img src="{{asset('custom_resource/images/elesonic/img2.png')}}">
 								</div>
 
 								<div class="text-block">
@@ -694,7 +694,7 @@
 						<div class="item">
 							<a href="#">
 								<div class="img-figure">
-									<img src="images/elesonic/img3.png">
+									<img src="{{asset('custom_resource/images/elesonic/img3.png')}}">
 								</div>
 
 								<div class="text-block">
@@ -711,7 +711,7 @@
 						<div class="item">
 							<a href="#">
 								<div class="img-figure">
-									<img src="images/elesonic/img1.png">
+									<img src="{{asset('custom_resource/images/elesonic/img1.png')}}">
 								</div>
 
 								<div class="text-block">
@@ -728,7 +728,7 @@
 						<div class="item">
 							<a href="#">
 								<div class="img-figure">
-									<img src="images/elesonic/img2.png">
+									<img src="{{asset('custom_resource/images/elesonic/img2.png')}}">
 								</div>
 
 								<div class="text-block">
@@ -745,7 +745,7 @@
 						<div class="item">
 							<a href="#">
 								<div class="img-figure">
-									<img src="images/elesonic/img3.png">
+									<img src="{{asset('custom_resource/images/elesonic/img3.png')}}">
 								</div>
 
 								<div class="text-block">
@@ -781,7 +781,7 @@
 							<!-- item -->
 							<div class="item">
 								<div class="img-figure">
-									<img src="images/logo/logo1.jpg">
+									<img src="{{asset('custom_resource/images/logo/logo1.jpg')}}">
 								</div>
 							</div>
 							<!-- item -->
@@ -789,7 +789,7 @@
 							<!-- item -->
 							<div class="item">
 								<div class="img-figure">
-									<img src="images/logo/logo2.jpg">
+									<img src="{{asset('custom_resource/images/logo/logo2.jpg')}}">
 								</div>
 							</div>
 							<!-- item -->
@@ -797,7 +797,7 @@
 							<!-- item -->
 							<div class="item">
 								<div class="img-figure">
-									<img src="images/logo/logo3.jpg">
+									<img src="{{asset('custom_resource/images/logo/logo3.jpg')}}">
 								</div>
 							</div>
 							<!-- item -->
@@ -805,7 +805,7 @@
 							<!-- item -->
 							<div class="item">
 								<div class="img-figure">
-									<img src="images/logo/logo4.jpg">
+									<img src="{{asset('custom_resource/images/logo/logo4.jpg')}}">
 								</div>
 							</div>
 							<!-- item -->
@@ -813,7 +813,7 @@
 							<!-- item -->
 							<div class="item">
 								<div class="img-figure">
-									<img src="images/logo/logo3.jpg">
+									<img src="{{asset('custom_resource/images/logo/logo3.jpg')}}">
 								</div>
 							</div>
 							<!-- item -->
@@ -821,7 +821,7 @@
 							<!-- item -->
 							<div class="item">
 								<div class="img-figure">
-									<img src="images/logo/logo4.jpg">
+									<img src="{{asset('custom_resource/images/logo/logo4.jpg')}}">
 								</div>
 							</div>
 							<!-- item -->
@@ -829,7 +829,7 @@
 							<!-- item -->
 							<div class="item">
 								<div class="img-figure">
-									<img src="images/logo/logo4.jpg">
+									<img src="{{asset('custom_resource/images/logo/logo4.jpg')}}">
 								</div>
 							</div>
 							<!-- item -->
@@ -973,14 +973,14 @@
 
 <!-- js-link -->
 
-<script type="text/javascript" src="js/jquery-3.6.0.min.js"></script>
-<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="{{asset('custom_resource/js/jquery-3.6.0.min.js')}}"></script>
+<script type="text/javascript" src="{{asset('custom_resource/js/bootstrap.min.js')}}"></script>
 
 <!-- owl-js -->
-<script src='js/owl.carousel.min.js'></script>
+<script src='{{asset('custom_resource/js/owl.carousel.min.js')}}'></script>
 <!-- owl-js -->
 
-<script type="text/javascript" src="js/custome.js"></script>
+<script type="text/javascript" src="{{asset('custom_resource/js/custome.js')}}"></script>
 
 
 

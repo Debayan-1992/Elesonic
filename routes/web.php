@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Dashboard\HomeController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -11,18 +13,19 @@
 |
 */
 
-Route::get('/', function () {return view('welcome');})->name('index');
+Route::get('/i', function () {return view('welcome');})->name('index');
+Route::get('/', [HomeController::class, 'i'])->name('landing');
 
 Auth::routes(['verify' => true]);
 
-Route::post('/login', 'Auth\LoginController@login')->name('login');
 Route::any('/logout', 'Auth\LoginController@logout')->name('logout');
 Route::post('/register', 'Auth\RegisterController@register')->name('register');
 
 Route::prefix('/dashboard')->name('dashboard.')->namespace('Dashboard')->middleware('auth','checkuser')->group(function(){
-    Route::get('/home', 'HomeController@index')->name('home');
-    Route::get('/profile/{id?}', 'HomeController@profile')->name('profile');
-    Route::post('/profile', 'HomeController@updateProfile')->name('profile');
+    //Route::get('/home', 'HomeController@index')->name('home');
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
+    Route::get('/profile/{id?}', [HomeController::class, 'profile'])->name('profile');
+    Route::post('/profile', [HomeController::class, 'updateProfile'])->name('profile');
 
     Route::any('/common/fetchdata/{type?}/{fetch?}/{id?}', 'CommonController@fetchdata')->name('fetchdata');
 

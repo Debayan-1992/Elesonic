@@ -28,6 +28,12 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
+    public function i()
+    {
+        dd('dsfsdfs');
+        return view('index');
+    }
+
     public function index()
     {
         $data['activemenu']['main'] = 'dashboard';
