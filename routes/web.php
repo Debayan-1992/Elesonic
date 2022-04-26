@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Dashboard\HomeController;
+use App\Http\Controllers\Dashboard\CategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -91,5 +92,14 @@ Route::prefix('/dashboard')->name('dashboard.')->namespace('Dashboard')->middlew
     Route::prefix('/setup')->name('setup.')->middleware('checkrole:superadmin|admin')->group(function(){
         Route::get('/{type}', 'SetupController@index')->name('index');
         Route::post('/submit', 'SetupController@submit')->name('submit');
+    });
+
+      //== Category Routes == //
+      Route::prefix('/category')->name('category.')->middleware('checkrole:superadmin|admin')->group(function(){
+        Route::get('/index/{type}', [CategoryController::class, 'index'])->name('index');
+        Route::post('/store', [CategoryController::class, 'store'])->name('store');
+        Route::post('/statusChange',[CategoryController::class, 'statusChange'])->name('statusChange');
+        Route::get('/edit/{id}',[CategoryController::class, 'edit'])->name('edit');
+        Route::post('/update', [CategoryController::class, 'update'])->name('update');
     });
 });

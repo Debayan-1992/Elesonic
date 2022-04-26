@@ -54,7 +54,23 @@
                     </li>
                 @endif
 
-                <!-- @if(Myhelper::can(['view_bank_membership_packages','view_agent_membership_packages']))
+                @if(Myhelper::can(['category']))
+                    <li class="treeview {{(isset($activemenu['main']) && $activemenu['main'] == 'category') ? 'active menu-open' : ''}}">
+                        <a href="javascript:void(0);">
+                           <i class="fa fa-cog" aria-hidden="true"></i> <span>Category Management</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            @if(Myhelper::can('category'))
+                                <li class="{{(isset($activemenu['sub']) && $activemenu['sub'] == 'category') ? 'active' : ''}}"><a href="{{route('dashboard.category.index', ['type' => 'category'])}}"><i class="fa fa-circle-o"></i> Category</a></li>
+                            @endif
+                        </ul>
+                    </li>
+                @endif
+
+                @if(Myhelper::can(['view_bank_membership_packages','view_agent_membership_packages']))
                     <li class="treeview {{(isset($activemenu['main']) && $activemenu['main'] == 'resources') ? 'active menu-open' : ''}}">
                         <a href="javascript:void(0);">
                             <i class="fa fa-globe"></i> <span>Resources</span>
@@ -87,9 +103,9 @@
                             @endif
                         </ul>
                     </li>
-                @endif -->
+                @endif 
 
-                <!-- @if(Myhelper::can(['view_faqs', 'view_contents', 'view_testimonials']))
+                 @if(Myhelper::can(['view_faqs', 'view_contents', 'view_testimonials']))
                     <li class="treeview {{(isset($activemenu['main']) && $activemenu['main'] == 'cms') ? 'active menu-open' : ''}}">
                         <a href="javascript:void(0);">
                             <i class="fa fa-gears"></i> <span>Content Management</span>
@@ -111,9 +127,9 @@
                             @endif
                         </ul>
                     </li>
-                @endif -->
+                @endif 
 
-                <!-- @if(Myhelper::can(['view_blogs', 'add_blog']))
+                 @if(Myhelper::can(['view_blogs', 'add_blog']))
                     <li class="treeview {{(isset($activemenu['main']) && $activemenu['main'] == 'blogs') ? 'active menu-open' : ''}}">
                         <a href="javascript:void(0);">
                             <i class="fa fa-newspaper-o"></i> <span>Blogs Management</span>
@@ -131,9 +147,9 @@
                             @endif
                         </ul>
                     </li>
-                @endif -->
+                @endif 
 
-                <!-- @if(Myhelper::can(['account_notification', 'sms_notification', 'push_notification', 'email_notification']))
+                 @if(Myhelper::can(['account_notification', 'sms_notification', 'push_notification', 'email_notification']))
                     <li class="treeview {{(isset($activemenu['main']) && $activemenu['main'] == 'notifications') ? 'active menu-open' : ''}}">
                         <a href="javascript:void(0);">
                             <i class="fa fa-bell"></i> <span>Notifications</span>
@@ -159,9 +175,9 @@
                             @endif
                         </ul>
                     </li>
-                @endif -->
+                @endif 
 
-                <!-- @if(Myhelper::can(['view_loantypes']))
+                 @if(Myhelper::can(['view_loantypes']))
                     <li class="treeview {{(isset($activemenu['main']) && $activemenu['main'] == 'setup') ? 'active menu-open' : ''}}">
                         <a href="javascript:void(0);">
                             <i class="fa fa-gears"></i> <span>Setup</span>
@@ -173,7 +189,7 @@
                             <li class="{{(isset($activemenu['sub']) && $activemenu['sub'] == 'loantypes') ? 'active' : ''}}"><a href="{{route('dashboard.setup.index', ['type' => 'loantypes'])}}"><i class="fa fa-circle-o"></i> Loan Types</a></li>
                         </ul>
                     </li>
-                @endif -->
+                @endif 
 
                 @if(Myhelper::hasrole('superadmin'))
                     <li class="treeview {{(isset($activemenu['main']) && $activemenu['main'] == 'tools') ? 'active menu-open' : ''}}">

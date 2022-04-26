@@ -10,7 +10,7 @@ class Category extends Model
 {
    
 
-    //protected $appends = ['iconpath','gradientimagepath','featureimagepath'];
+    protected $appends = ['iconpath','gradientimagepath','featureimagepath'];
     protected $table   = 'categories';
 
     public function getTranslation($field = '', $lang = false)
@@ -63,12 +63,12 @@ class Category extends Model
         return $this->hasMany(Category::class, 'parent_id')->select(['id', 'parent_id', 'name', 'icon']);
     }
 
-   /* public function getIconpathAttribute()
+    public function getIconpathAttribute()
     {
         return uploaded_asset($this->icon);
-    }*/
+    }
 
-  /*  public function getFeatureimagepathAttribute()
+    public function getFeatureimagepathAttribute()
     {
         return uploaded_asset($this->feature_image);
     }
@@ -76,7 +76,7 @@ class Category extends Model
      public function getgradientimagepathAttribute()
     {
         return uploaded_asset($this->gradientimage);
-    }*/
+    }
 
     public function categoryattribute()
     {

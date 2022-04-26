@@ -15,7 +15,7 @@ use App\Model\MembershipPlan;
 use App\Model\TestimonialContent;
 use App\Model\LoanType;
 use App\Model\Scheme;
-
+use App\Model\Category;
 class CommonController extends Controller
 {
     public function fetchData($type, $fetch='all', $id='none', Request $request){
@@ -27,6 +27,12 @@ class CommonController extends Controller
 
             case 'permissions':
                 $query = Permission::query();
+                $request['searchdata'] = [];
+            break;
+
+            case 'category':
+                $query = Category::query();
+                $query->where('status','!=','D');
                 $request['searchdata'] = [];
             break;
 
