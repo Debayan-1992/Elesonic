@@ -11,7 +11,8 @@ class SettingsController extends Controller
 {
     public function index(){
         $data['activemenu'] = array(
-            'main' => 'settings'
+            'main' => 'settings',
+            'sub' => 'settings'
         );
 
         $data['settings'] = Setting::findorfail(1);

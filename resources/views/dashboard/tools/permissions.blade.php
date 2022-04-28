@@ -155,7 +155,6 @@
                 {
                     render: function(data, type, full, meta){
                         var html = '';
-
                         var menu = `<div class="btn-group">\
                                 <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">\
                                     <i class="fa fa-bars"></i>&nbsp;&nbsp;<span class="fa fa-caret-down"></span>\

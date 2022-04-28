@@ -5,6 +5,11 @@ use App\Http\Controllers\Dashboard\CategoryController;
 use App\Http\Controllers\Dashboard\AttributeController;
 use App\Http\Controllers\Dashboard\BrandController;
 use App\Http\Controllers\Dashboard\ProductController;
+use App\Http\Controllers\Dashboard\LandingBannerController;
+use App\Http\Controllers\Dashboard\ServiceController;
+use App\Http\Controllers\Dashboard\ToolsController;
+use App\Http\Controllers\Dashboard\DepartmentController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -35,12 +40,12 @@ Route::prefix('/dashboard')->name('dashboard.')->namespace('Dashboard')->middlew
 
     //== Tools Routes == //
     Route::prefix('/tools')->name('tools.')->middleware('checkrole:superadmin')->group(function(){
-        Route::get('/roles', 'ToolsController@roles')->name('roles');
-        Route::post('/roles/submit', 'ToolsController@submitrole')->name('submitrole');
-        Route::get('/permissions', 'ToolsController@permissions')->name('permissions');
-        Route::post('/permissions/submit', 'ToolsController@submitpermission')->name('submitpermission');
-        Route::get('/role/permissions/{role_id?}', 'ToolsController@rolepermissions')->name('rolepermissions');
-        Route::post('/role/permissions/submit', 'ToolsController@rolepermissionssubmit')->name('rolepermissions.submit');
+        Route::get('/roles', [ToolsController::class, 'roles'])->name('roles');
+        Route::post('/roles/submit', [ToolsController::class, 'submitrole'])->name('submitrole');
+        Route::get('/permissions', [ToolsController::class, 'permissions'])->name('permissions');
+        Route::post('/permissions/submit', [ToolsController::class, 'submitpermission'])->name('submitpermission');
+        Route::get('/role/permissions/{role_id?}', [ToolsController::class, 'rolepermissions'])->name('rolepermissions');
+        Route::post('/role/permissions/submit', [ToolsController::class, 'rolepermissionssubmit'])->name('rolepermissions.submit');
     });
 
     //== Settings Routes == //
@@ -96,7 +101,7 @@ Route::prefix('/dashboard')->name('dashboard.')->namespace('Dashboard')->middlew
         Route::post('/submit', 'SetupController@submit')->name('submit');
     });
 
-      //== Products Routes == //
+      //== Category Routes == //
     Route::prefix('/category')->name('category.')->middleware('checkrole:superadmin|admin')->group(function(){
         Route::get('/index/{type}', [CategoryController::class, 'index'])->name('index');
         Route::post('/store',       [CategoryController::class, 'store'])->name('store');
@@ -105,6 +110,7 @@ Route::prefix('/dashboard')->name('dashboard.')->namespace('Dashboard')->middlew
         Route::post('/update',      [CategoryController::class, 'update'])->name('update');
     });
 
+    //== Attributes Routes == //
     Route::prefix('/attributes')->name('attributes.')->middleware('checkrole:superadmin|admin')->group(function(){
         Route::get('/index/{type}', [AttributeController::class, 'index'])->name('index');
         Route::post('/store',       [AttributeController::class, 'store'])->name('store');
@@ -113,6 +119,7 @@ Route::prefix('/dashboard')->name('dashboard.')->namespace('Dashboard')->middlew
         Route::post('/update',      [AttributeController::class, 'update'])->name('update');
     });
 
+    //== Brand Routes == //
     Route::prefix('/brand')->name('brand.')->middleware('checkrole:superadmin|admin')->group(function(){
         Route::get('/index/{type}', [BrandController::class, 'index'])->name('index');
         Route::post('/store',       [BrandController::class, 'store'])->name('store');
@@ -120,6 +127,8 @@ Route::prefix('/dashboard')->name('dashboard.')->namespace('Dashboard')->middlew
         Route::get('/edit/{id}',    [BrandController::class, 'edit'])->name('edit');
         Route::post('/update',      [BrandController::class, 'update'])->name('update');
     });
+
+    //== Products Routes == //
     Route::prefix('/product')->name('product.')->middleware('checkrole:superadmin|admin')->group(function(){
         Route::get('/index/{type}', [ProductController::class, 'index'])->name('index');
         Route::get('/create',       [ProductController::class, 'create'])->name('create');
@@ -127,5 +136,29 @@ Route::prefix('/dashboard')->name('dashboard.')->namespace('Dashboard')->middlew
         Route::post('/statusChange',[ProductController::class, 'statusChange'])->name('statusChange');
         Route::get('/edit/{id}',    [ProductController::class, 'edit'])->name('edit');
         Route::post('/update',      [ProductController::class, 'update'])->name('update');
+    });
+
+    //Landing Banner
+    Route::prefix('/banner')->name('banner.')->middleware('checkrole:superadmin')->group(function(){
+        Route::get('/index', [LandingBannerController::class, 'index'])->name('index');
+        Route::post('/store', [LandingBannerController::class, 'store'])->name('submit');
+        Route::post('/delete', [LandingBannerController::class, 'delete'])->name('delete');
+        Route::post('/statusChange', [LandingBannerController::class, 'statusChange'])->name('statusChange');
+    });
+
+    //Services
+    Route::prefix('/service')->name('service.')->middleware('checkrole:superadmin')->group(function(){
+        Route::get('/index', [ServiceController::class, 'index'])->name('index');
+        Route::post('/store', [ServiceController::class, 'store'])->name('submit');
+        Route::post('/delete', [ServiceController::class, 'delete'])->name('delete');
+        Route::post('/statusChange', [ServiceController::class, 'statusChange'])->name('statusChange');
+    });
+
+    //Departments
+    Route::prefix('/department')->name('department.')->middleware('checkrole:superadmin')->group(function(){
+        Route::get('/index', [DepartmentController::class, 'index'])->name('index');
+        Route::post('/store', [DepartmentController::class, 'store'])->name('submit');
+        Route::post('/delete', [DepartmentController::class, 'delete'])->name('delete');
+        Route::post('/statusChange', [DepartmentController::class, 'statusChange'])->name('statusChange');
     });
 });

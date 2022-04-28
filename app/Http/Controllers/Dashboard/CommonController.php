@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -11,6 +12,7 @@ use App\Model\Role;
 use App\Model\Permission;
 use App\Model\FaqContent;
 use App\Model\CmsContent;
+use App\Model\LandingBanner;
 use App\Model\MembershipPlan;
 use App\Model\TestimonialContent;
 use App\Model\LoanType;
@@ -19,9 +21,12 @@ use App\Model\Category;
 use App\Model\Attribute;
 use App\Model\Brand;
 use App\Model\Product;
+use App\Model\Service;
+use App\Model\Department;
 class CommonController extends Controller
 {
     public function fetchData($type, $fetch='all', $id='none', Request $request){
+       
         switch($type){
             case 'roles':
                 $query = Role::query();
@@ -128,6 +133,26 @@ class CommonController extends Controller
             case 'schemes':
                 $query = Scheme::query();
                 $request['searchdata'] = ['role_id'];
+            break;
+
+            case 'banners':
+                //$query = LandingBanner::whereNotIn('status',['D'])->get();
+                $query = LandingBanner::query();
+                $query->whereNotIn('status',['D']);
+                $request['searchdata'] = []; //Mention with what a search can be done
+            break;
+
+            case 'services':
+                //$query = LandingBanner::whereNotIn('status',['D'])->get();
+                $query = Service::query();
+                $query->whereNotIn('status',['D']);
+                $request['searchdata'] = []; //Mention with what a search can be done
+            break;
+            case 'departments':
+                //$query = LandingBanner::whereNotIn('status',['D'])->get();
+                $query = Department::query();
+                $query->whereNotIn('status',['D']);
+                $request['searchdata'] = []; //Mention with what a search can be done
             break;
 
             default:

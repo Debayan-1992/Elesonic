@@ -107,7 +107,8 @@ class ToolsController extends Controller
                     $post['role_id'] = json_encode($post->role_id);
                 }
 
-                $action = Permission::updateorcreate(['id' => $post->id], $post->all());
+                $action = Permission::updateorcreate(['id' => $post->id], $post->all()); 
+                //if id exists then update else just take 2nd param and create
             break;
         }
 

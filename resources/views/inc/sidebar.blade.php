@@ -216,11 +216,42 @@
                 @endif
 
                 @if(Myhelper::hasrole('superadmin'))
-                    <li class="{{(isset($activemenu['main']) && $activemenu['main'] == 'settings') ? 'active' : ''}}">
-                        <a href="{{route('dashboard.settings.index')}}"><i class="fa fa-code"></i>
-                            <span>Site Settings</span>
+                    <li class="treeview {{(isset($activemenu['main']) && $activemenu['main'] == 'settings') ? 'active menu-open' : ''}}"> 
+                        <a href="javascript:void(0);">
+                            <i class="fa fa-gear"></i> <span>Site Settings</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
                         </a>
+                        <ul class="treeview-menu">
+                            <li class="{{(isset($activemenu['sub']) && $activemenu['sub'] == 'settings') ? 'active' : ''}}"><a href="{{route('dashboard.settings.index')}}"><i class="fa fa-circle-o"></i> Settings</a></li>
+                            @if(Myhelper::can('view_banner'))
+                            <li class="{{(isset($activemenu['sub']) && $activemenu['sub'] == 'banners') ? 'active' : ''}}"><a href="{{route('dashboard.banner.index')}}"><i class="fa fa-circle-o"></i> Banners</a></li>
+                            @endif
+                        </ul>
                     </li>
+                @endif
+
+                @if(Myhelper::hasrole('superadmin'))
+                    <li class="treeview {{(isset($activemenu['main']) && $activemenu['main'] == 'services') ? 'active menu-open' : ''}}"> 
+                        <a href="javascript:void(0);">
+                            <i class="fa fa-gear"></i> <span>Services</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li class="{{(isset($activemenu['sub']) && $activemenu['sub'] == 'services') ? 'active' : ''}}"><a href="{{route('dashboard.service.index')}}"><i class="fa fa-circle-o"></i> Services</a></li>
+                        </ul>
+                    </li>
+                @endif
+
+                @if(Myhelper::hasrole('superadmin'))
+                <li class="{{(isset($activemenu['main']) && $activemenu['main'] == 'department') ? 'active' : ''}}">
+                    <a href="{{route('dashboard.department.index')}}"><i class="fa fa-dashboard"></i>
+                        <span>Departments</span>
+                    </a>
+                </li>
                 @endif
             @endif
         </ul>
