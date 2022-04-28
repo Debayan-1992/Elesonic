@@ -1,10 +1,10 @@
-@section('pageheader', 'Categories')
+@section('pageheader', 'Brand')
 @extends('layouts.app')
 
 @section('content')
     <section class="content-header">
         <h1>
-           Categories
+        Brand
         </h1>
      
     </section>
@@ -12,7 +12,7 @@
     <section class="content">
         <div class="box">
             <div class="box-header with-border">
-                <h3 class="box-title">Categories</h3>
+                <h3 class="box-title">Brand</h3>
 
                 <div class="box-tools pull-right">
                     <button class="btn btn-primary btn-sm" onclick="add()"><i class="fa fa-plus"></i> Add New</button>
@@ -36,7 +36,7 @@
         </div>
     </section>
 
-    <div class="modal fade-in" id="categorymodal">
+    <div class="modal fade-in" id="brandmodal">
         <div class="modal-dialog modal-md">
             <div class="modal-content">
                 <div class="modal-header">
@@ -44,7 +44,7 @@
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
 
-                <form action="{{route('dashboard.category.store')}}" method="POST" id="categoryform" enctype="multipart/form-data">
+                <form action="{{route('dashboard.brand.store')}}" method="POST" id="brandform" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="id" value="">
                     <input type="hidden" name="operation" value="">
@@ -54,39 +54,10 @@
                             <label>Name <span class="text-danger">*</span></label>
                             <input type="text" value="" name="name" class="form-control" placeholder="Enter Name" required>
                         </div>
-
                         <div class="form-group">
-                            <label>Slug <span class="text-danger">*</span></label>
-                            <input type="text" value="" name="slug" class="form-control" placeholder="Enter Slug" required>
+                            <label>Image</label>
+                            <input type="file" class="form-control" name="brand_image">
                         </div>
-
-                        <div class="form-group">
-                            <label>Parent</label>
-                            <select class="select2 form-control" name="parent_id" data-toggle="select2" data-placeholder="Choose ..." data-live-search="true">
-
-                            <option value="0">No Parent</option>
-
-                            @foreach ($categories as $category)
-
-                                <option value="{{ $category->id }}">{{ $category->name }}</option>
-
-                                @foreach ($category->childrenCategories as $childCategory)
-
-                                @include('categories.child_category', ['child_category' => $childCategory])
-
-                               @endforeach
-
-                            @endforeach
-
-                        </select>
-                        </div>
-
-
-                        <div class="form-group">
-                            <label>Description <span class="text-danger">*</span></label>
-                            <textarea  name="description" class="form-control" required></textarea>
-                        </div>
-
                         <div class="form-group">
                             <label>Meta Title</label>
                             <input type="text"  name="meta_title" class="form-control" placeholder="Meta Title">
@@ -103,6 +74,7 @@
                         </div>
                     </div>
 
+
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-success">Submit</button>
                         <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
@@ -117,7 +89,7 @@
     <script src="//unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script>
         function edit(id){
-            var url = '{{ route("dashboard.category.edit", ":slug") }}';
+            var url = '{{ route("dashboard.brand.edit", ":slug") }}';
             url = url.replace(':slug', id);
             window.location.href = url;
         }
@@ -133,7 +105,7 @@
 			if (willDelete) {
                 Pace.track(function(){
                     $.ajax({
-                            url: "{{route('dashboard.category.statusChange')}}",
+                            url: "{{route('dashboard.brand.statusChange')}}",
                             method: "POST",
                             data: {'_token':'{{csrf_token()}}','type':'delete','id':id},
                             success: function(data){
@@ -151,7 +123,7 @@
         function changeAction(id){
             Pace.track(function(){
                 $.ajax({
-                    url: "{{route('dashboard.category.statusChange')}}",
+                    url: "{{route('dashboard.brand.statusChange')}}",
                     method: "POST",
                     data: {'_token':'{{csrf_token()}}','type':'statusChange','id':id},
                     success: function(data){
@@ -167,7 +139,7 @@
             processing: true,
             serverSide: true,
             ajax: {
-                url: "{{route('dashboard.fetchdata', ['type' => 'category'])}}",
+                url: "{{route('dashboard.fetchdata', ['type' => 'brand'])}}",
                 type: "POST",
                 data:function( d )
                 {
@@ -231,17 +203,11 @@
             ]
         });
 
-        $('#categoryform').validate({
+        $('#brandform').validate({
             rules: {
                 name: {
                     required: true,
                 },
-                slug: {
-                    required: true,
-                },
-                description: {
-                    required: true,
-                }
             },
             errorElement: "p",
             errorPlacement: function ( error, element ) {
@@ -252,7 +218,7 @@
                 }
             },
             submitHandler: function() {
-                var form = $('#categoryform');
+                var form = $('#brandform');
 
                 Pace.track(function(){
                     form.ajaxSubmit({
@@ -265,7 +231,7 @@
                             // form[0].reset();
                             // form.find('#role_id').val('').trigger('change');
                             $("form")[0].reset();
-                            $('#categorymodal').modal('hide');
+                            $('#brandmodal').modal('hide');
                             form.find('button[type="submit"]').button('reset');
                             $('#my-datatable').dataTable().api().ajax.reload();
                         },
@@ -278,11 +244,11 @@
             }
         });
         function add(){
-            $('#categorymodal').find('.modal-title').text('Add New Category');
-            $('#categorymodal').find('[name=id]').val('');
-            $('#categorymodal').find('[name=operation]').val('new');
-            $('#categorymodal').find('#role_id').val('').trigger('change');
-            $('#categorymodal').modal('show');
+            $('#brandmodal').find('.modal-title').text('Add New Brand');
+            $('#brandmodal').find('[name=id]').val('');
+            $('#brandmodal').find('[name=operation]').val('new');
+            $('#brandmodal').find('#role_id').val('').trigger('change');
+            $('#brandmodal').modal('show');
         }
     </script>
 @endpush

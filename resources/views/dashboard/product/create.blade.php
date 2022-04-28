@@ -1,0 +1,195 @@
+<?php error_reporting(0) ?>
+@section('pageheader', 'Add Product')
+@extends('layouts.app')
+
+@section('content')
+    <section class="content-header">
+        <h1>
+            Product Management
+            <small>Add</small>
+        </h1>
+    </section>
+
+    <section class="content">
+        <div class="box">
+            <div class="box-header with-border">
+                <h3 class="box-title">Add product</h3>
+
+                <div class="box-tools pull-right">
+                    {{-- Tools --}}
+                </div>
+            </div>
+            <form action="{{route('dashboard.product.store')}}" method="POST" id="productform">
+                <div class="box-body">
+                    @csrf
+
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label>Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" placeholder="Title"  name="name">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Slug <span class="text-danger">*</span></label>
+                            <input type="text" onkeyup="slugname(this.value)" id="slug" class="form-control" placeholder="Slug"  name="slug">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Image <span class="text-danger">*</span></label>
+                            <input type="file" class="form-control" name="image">
+                           
+                        </div>
+                         <div class="form-group col-md-6">
+                            <label>Category <span class="text-danger">*</span></label>
+                            <select class="form-control select2" name="category_id" data-toggle="select2" data-placeholder="Choose ..." data-live-search="true">
+                                <option value="">Choose Category</option>
+                                @foreach($categories as $row)
+                                <option value="{{$row->id}}">{{$row->name}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                         <div class="form-group col-md-6">
+                            <label>Brand <span class="text-danger">*</span></label>
+                            <select class="form-control select2" name="brand_id" data-toggle="select2" data-placeholder="Choose ..." data-live-search="true">
+                                <option value="">Choose Brand</option>
+                                @foreach($brands as $row)
+                                <option value="{{$row->id}}">{{$row->name}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>MRP ($) <span class="text-danger">*</span></label>
+                            <input type="text" onkeyup="calculatePrice(this.value)" placeholder="MRP" class="form-control" id="mrp" name="mrp">
+                           
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Discount <span class="text-danger">*</span></label>
+                            <input value="0" onkeyup="calculatePrice(this.value)" type="text" placeholder="Discount (%)" class="form-control" id="discount" name="discount">
+                           
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Net Price ($) <span class="text-danger">*</span></label>
+                            <input type="text" readonly="" placeholder="Net Price" class="form-control" id="net_price" name="net_price">
+                           
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Meta Title </label>
+                            <input type="text" class="form-control"  placeholder="Meta title"  name="meta_title">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Meta keyword </label>
+                            <input type="text" class="form-control" placeholder="Meta Keyword"  name="meta_keyword">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Meta Description </label>
+                            <input type="text" class="form-control" placeholder="Meta Description"  name="meta_description">
+                        </div>
+                    </div>
+                </div>
+                <div class="box-footer">
+                    <button type="submit" class="btn btn-md btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </section>
+@endsection
+
+@push('script')
+    <script>
+        function slugname(value){
+            var value = value;
+            var new_value =value.toLowerCase();
+            var new_value =new_value.replace(/ /g, "-");
+            $("#slug").val(new_value);
+        }
+        function calculatePrice(){
+            var mrp      = $("#mrp").val();
+            var discount = $("#discount").val();
+            console.log(discount);
+            var net = parseFloat(mrp) - (parseFloat(mrp)*parseFloat(discount))/100;
+            $("#net_price").val(net.toFixed(2));
+        }
+        function setInputFilter(textbox, inputFilter) {
+        ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function(event) {
+            textbox.addEventListener(event, function() {
+            if (inputFilter(this.value)) {
+                this.oldValue = this.value;
+                this.oldSelectionStart = this.selectionStart;
+                this.oldSelectionEnd = this.selectionEnd;
+            } else if (this.hasOwnProperty("oldValue")) {
+                this.value = this.oldValue;
+                this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+            } else {
+                this.value = "";
+            }
+            });
+        });
+        }
+        setInputFilter(document.getElementById("mrp"), function(value) {
+         return /^-?\d*[.,]?\d*$/.test(value); });
+        setInputFilter(document.getElementById("discount"), function(value) {
+         return /^-?\d*[.,]?\d*$/.test(value); });
+        $('#productform').validate({
+            rules: {
+                name: {
+                    required: true,
+                },
+                slug: {
+                    required: true,
+                },
+                image: {
+                    required: true,
+                },
+                category_id: {
+                    required: true,
+                },
+                brand_id: {
+                    required: true,
+                },
+                mrp: {
+                    required: true,
+                },
+                discount: {
+                    required: true,
+                },
+                net_price: {
+                    required: true,
+                },
+            },
+            errorElement: "p",
+            errorPlacement: function ( error, element ) {
+                if ( element.prop("tagName").toLowerCase() === "select" ) {
+                    error.insertAfter( element.closest( ".form-group" ).find(".select2") );
+                } else {
+                    error.insertAfter( element );
+                }
+            },
+            submitHandler: function() {
+                for (instance in CKEDITOR.instances) {
+                    CKEDITOR.instances[instance].updateElement();
+                }
+
+                var form = $('#productform');
+
+                Pace.track(function(){
+                    form.ajaxSubmit({
+                        dataType:'json',
+                        beforeSubmit:function(){
+                            form.find('button[type="submit"]').button('loading');
+                        },
+                        success:function(data){
+                            notify(data.status, 'success');
+                            form.find('button[type="submit"]').button('reset');
+
+                            @if(!isset($blog))
+                                location.reload();
+                            @endif
+                        },
+                        error: function(errors) {
+                            form.find('button[type="submit"]').button('reset');
+                            showErrors(errors, form);
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+@endpush

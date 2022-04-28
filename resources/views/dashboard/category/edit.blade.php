@@ -23,7 +23,7 @@
                 <div class="box-body">
                     @csrf
                     <input type="hidden" name="id" value="{{$category->id}}">
-                 
+                 <!-- <input type="text" value="{{ $category->parent_id }}"> -->
 
                     <div class="row">
                         <div class="form-group col-md-6">
@@ -38,9 +38,13 @@
                             <label>Parent </label>
                             <select class="select2 form-control" name="parent_id" data-toggle="select2" data-placeholder="Choose ..."data-live-search="true" data-selected="{{ $category->parent_id }}">
 
+                                @if($category->parent_id == 0)
+                                <option value="0">No Parent</option>
+                                @endif
+                          
                             @foreach ($categories as $categorych)
 
-                            <option value="{{ $categorych->id }}">{{ $categorych->name }}</option>
+                            <option value="{{ $categorych->id }}" {{ ( $categorych->id == $category->parent_id) ? 'selected' : '' }}>{{ $categorych->name }}</option>
 
                             @foreach ($categorych->childrenCategories as $childCategory)
 
@@ -75,7 +79,7 @@
 
                         <div class="form-group col-md-6">
                             <label>Meta Keywords</label>
-                            <textarea class="form-control" name="meta_keywords">{{isset($category) ? $category->meta_keywords : ''}}</textarea>
+                            <textarea class="form-control" name="meta_keywords">{{isset($category) ? $category->meta_keyword : ''}}</textarea>
                         </div>
                     </div>
                 </div>
@@ -114,7 +118,7 @@
                     CKEDITOR.instances[instance].updateElement();
                 }
 
-                var form = $('#contentform');
+                var form = $('#categoryform');
 
                 Pace.track(function(){
                     form.ajaxSubmit({

@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\Dashboard\HomeController;
 use App\Http\Controllers\Dashboard\CategoryController;
-
+use App\Http\Controllers\Dashboard\AttributeController;
+use App\Http\Controllers\Dashboard\BrandController;
+use App\Http\Controllers\Dashboard\ProductController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -94,12 +96,36 @@ Route::prefix('/dashboard')->name('dashboard.')->namespace('Dashboard')->middlew
         Route::post('/submit', 'SetupController@submit')->name('submit');
     });
 
-      //== Category Routes == //
-      Route::prefix('/category')->name('category.')->middleware('checkrole:superadmin|admin')->group(function(){
+      //== Products Routes == //
+    Route::prefix('/category')->name('category.')->middleware('checkrole:superadmin|admin')->group(function(){
         Route::get('/index/{type}', [CategoryController::class, 'index'])->name('index');
-        Route::post('/store', [CategoryController::class, 'store'])->name('store');
+        Route::post('/store',       [CategoryController::class, 'store'])->name('store');
         Route::post('/statusChange',[CategoryController::class, 'statusChange'])->name('statusChange');
-        Route::get('/edit/{id}',[CategoryController::class, 'edit'])->name('edit');
-        Route::post('/update', [CategoryController::class, 'update'])->name('update');
+        Route::get('/edit/{id}',    [CategoryController::class, 'edit'])->name('edit');
+        Route::post('/update',      [CategoryController::class, 'update'])->name('update');
+    });
+
+    Route::prefix('/attributes')->name('attributes.')->middleware('checkrole:superadmin|admin')->group(function(){
+        Route::get('/index/{type}', [AttributeController::class, 'index'])->name('index');
+        Route::post('/store',       [AttributeController::class, 'store'])->name('store');
+        Route::post('/statusChange',[AttributeController::class, 'statusChange'])->name('statusChange');
+        Route::get('/edit/{id}',    [AttributeController::class, 'edit'])->name('edit');
+        Route::post('/update',      [AttributeController::class, 'update'])->name('update');
+    });
+
+    Route::prefix('/brand')->name('brand.')->middleware('checkrole:superadmin|admin')->group(function(){
+        Route::get('/index/{type}', [BrandController::class, 'index'])->name('index');
+        Route::post('/store',       [BrandController::class, 'store'])->name('store');
+        Route::post('/statusChange',[BrandController::class, 'statusChange'])->name('statusChange');
+        Route::get('/edit/{id}',    [BrandController::class, 'edit'])->name('edit');
+        Route::post('/update',      [BrandController::class, 'update'])->name('update');
+    });
+    Route::prefix('/product')->name('product.')->middleware('checkrole:superadmin|admin')->group(function(){
+        Route::get('/index/{type}', [ProductController::class, 'index'])->name('index');
+        Route::get('/create',       [ProductController::class, 'create'])->name('create');
+        Route::post('/store',       [ProductController::class, 'store'])->name('store');
+        Route::post('/statusChange',[ProductController::class, 'statusChange'])->name('statusChange');
+        Route::get('/edit/{id}',    [ProductController::class, 'edit'])->name('edit');
+        Route::post('/update',      [ProductController::class, 'update'])->name('update');
     });
 });

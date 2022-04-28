@@ -16,6 +16,9 @@ use App\Model\TestimonialContent;
 use App\Model\LoanType;
 use App\Model\Scheme;
 use App\Model\Category;
+use App\Model\Attribute;
+use App\Model\Brand;
+use App\Model\Product;
 class CommonController extends Controller
 {
     public function fetchData($type, $fetch='all', $id='none', Request $request){
@@ -32,6 +35,22 @@ class CommonController extends Controller
 
             case 'category':
                 $query = Category::query();
+                $query->where('status','!=','D');
+                $request['searchdata'] = [];
+            break;
+            case 'attributes':
+                $query = Attribute::query();
+                $query->where('status','!=','D');
+                $request['searchdata'] = [];
+            break;
+
+            case 'brand':
+                $query = Brand::query();
+                $query->where('status','!=','D');
+                $request['searchdata'] = [];
+            break;
+            case 'product':
+                $query = Product::query();
                 $query->where('status','!=','D');
                 $request['searchdata'] = [];
             break;
