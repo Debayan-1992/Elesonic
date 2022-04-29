@@ -31,7 +31,7 @@ class Myhelper {
             }
             $output = UserPermission::where('user_id', $id)->whereIn('permission_id', $mypermissionss)->count();
         }else{
-            $mypermission = \DB::table('permissions')->where('slug' ,$permission)->first(['id']);
+            $mypermission = \DB::table('permissions')->where('slug' ,$permission->slug)->first(['id']);
             if($mypermission){
                 $output = UserPermission::where('user_id', $id)->where('permission_id', $mypermission->id)->count();
             }else{
