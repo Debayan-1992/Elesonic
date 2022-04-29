@@ -8,6 +8,8 @@ use Carbon\Carbon;
 use App\model\Category;
 use App\model\Brand;
 use Auth;
+use App\model\Product_related_images;
+use App\Utility\CategoryUtility;
 class ProductController extends Controller
 {
     /**
@@ -26,11 +28,12 @@ class ProductController extends Controller
     function create(){
         $data['activemenu']['sub'] = 'index';
         $data['activemenu']['main'] = 'products';
-        $category = Category::where('status','A')
+        $categories = Category::where('parent_id', 0)->where('status','A')
+        ->with('childrenCategories')
         ->get();
         $brand = Brand::where('status','A')
         ->get();
-        $data['categories'] = $category;
+        $data['categories'] = $categories;
         $data['brands'] = $brand;
         return view('dashboard.product.create', $data);
     }
@@ -54,12 +57,13 @@ class ProductController extends Controller
         }
         $request->net_price = number_format((float)$request->net_price, 2, '.', '');
         $product->unit_price  = $request->net_price;
+        $product->description = $request->description;
         $product->purchase_price  = $request->mrp;
         $product->discount  = $request->discount;
         $product->meta_title = $request->meta_title;
         $product->meta_description = $request->meta_description;
         $product->meta_keyword = $request->meta_keyword;
-        $product->user_id = 1;
+        $product->user_id = Auth()->user()->id;
         $chkSlug = Product::where('slug',$request->slug)->count();
         if($chkSlug > 0){
             return response()->json(['status' => 'Slug exist'], 400);
@@ -69,9 +73,14 @@ class ProductController extends Controller
         } else {
             $product->slug = preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $request->name)) . '-' . Str::random(5);
         }
+       
         if($request->file('image')){
             $file = $request->file('image');
-            $filename = Carbon::now()->timestamp.'_'.$file->getClientOriginalName();
+            
+            $ext = substr(strrchr($file->getClientOriginalName(), '.'), 1);
+            $new_name1 = str_replace(".", "", microtime());
+            $new_name = str_replace(" ", "_", $new_name1);
+            $filename = $new_name.'.'.$ext;
 
             if(\Image::make($file->getRealPath())->save('uploads/products/'.$filename)){
                 $product->photos = $filename;
@@ -80,10 +89,31 @@ class ProductController extends Controller
             }
         }
         $product->save();
+        $multiImages = $request->file('related_image');
+        if($multiImages){
+           
+            for($i=0;$i<count($multiImages);$i++){
+                $Product_related_images = new Product_related_images;
+                $ext = substr(strrchr($multiImages[$i]->getClientOriginalName(), '.'), 1);
+                $new_name1 = str_replace(".", "", microtime());
+                $new_name = str_replace(" ", "_", $new_name1);
+                $multifilename = $new_name.'.'.$ext;
+                if(\Image::make($multiImages[$i]->getRealPath())->save('uploads/products/'.$multifilename)){
+                $Product_related_images->image = $multifilename;
+                $Product_related_images->product_id = $product->id;
+                $Product_related_images->save();
+                }
+            }
+        }
         return response()->json(['status' => 'Product added'], 200);
     }
 
-
+    function imageDelete(Request $request){
+        $id = $request->id;
+        if($id){
+            $res=Product_related_images::where('id',$id)->delete();
+        }
+    }
 
     public function statusChange(Request $request){
         switch($request->type){
@@ -124,9 +154,25 @@ class ProductController extends Controller
         $data['activemenu']['main'] = 'products';
         $data['activemenu']['sub'] = 'edit';
         $id =  request()->segment(4);
-        $brand = Brand::findOrFail($id);
-        $data['brand'] = $brand;
-        return view('dashboard.brand.edit', $data);
+        $product = Product::findOrFail($id);
+        $categories = Category::where('parent_id', 0)->where('status','A')
+        ->with('childrenCategories')
+        ->get();
+
+        $categories = Category::where('parent_id', 0)
+        ->with('childrenCategories')
+        ->get();
+
+        $multiImage = Product_related_images::where('product_id', $id)
+        ->get();
+ 
+        $brand = Brand::where('status','A')
+        ->get();
+        $data['categories'] = $categories;
+        $data['brands'] = $brand;
+        $data['product'] = $product;
+        $data['multiImage'] = $multiImage;
+        return view('dashboard.product.edit', $data);
     }
 
     /**
@@ -139,27 +185,63 @@ class ProductController extends Controller
     public function update(Request $request)
     {
         $id = $request->id;
-        $brand = Brand::findOrFail($id);
-        $brand->name = $request->name;
-        $brand->meta_title = $request->meta_title;
-        $brand->meta_description = $request->meta_description;
-        $brand->meta_keyword = $request->meta_keyword;
-        if($request->file('brand_image') != NULL){
-            $deletefile = 'uploads/blogs/'.$brand->logo;
+        $product = Product::findOrFail($id);
+        $product->name = $request->name;
+        $product->category_id  = $request->category_id;
+        $product->brand_id  = $request->brand_id;
+        if($request->net_price == ""){
+            $request->net_price = $request->mrp - ($request->mrp * $request->discount)/100;
+        }else{
+            $request->net_price = $request->net_price;
         }
-        if($request->file('brand_image') != ""){
-            $file = $request->file('brand_image');
-            $filename = Carbon::now()->timestamp.'_'.$file->getClientOriginalName();
+        $request->net_price = number_format((float)$request->net_price, 2, '.', '');
+        $product->unit_price  = $request->net_price;
+        $product->description = $request->description;
+        $product->purchase_price  = $request->mrp;
+        $product->discount  = $request->discount;
+        $product->meta_title = $request->meta_title;
+        $product->meta_description = $request->meta_description;
+        $product->meta_keyword = $request->meta_keyword;
+        $product->user_id = Auth()->user()->id;
+        $chkSlug = Product::where('slug',$request->slug)->count();
+        
+        if ($request->slug != null) {
+            $product->slug = $request->slug;
+        } else {
+            $product->slug = preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $request->name)) . '-' . Str::random(5);
+        }
+       
+        if($request->file('image')){
+            $file = $request->file('image');
+            
+            $ext = substr(strrchr($file->getClientOriginalName(), '.'), 1);
+            $new_name1 = str_replace(".", "", microtime());
+            $new_name = str_replace(" ", "_", $new_name1);
+            $filename = $new_name.'.'.$ext;
 
-            if(\Image::make($file->getRealPath())->save('uploads/brands/'.$filename)){
-                @unlink(config('app.url').'/uploads/brands/'.$brand->logo);
-                $brand->logo = $filename;
-               
+            if(\Image::make($file->getRealPath())->save('uploads/products/'.$filename)){
+                $product->photos = $filename;
             } else{
                 return response()->json(['status' => 'File cannot be saved to server.'], 400);
             }
         }
-        $brand->save();
-        return response()->json(['status' => 'Brand updated'], 200);
+        $product->save();
+        $multiImages = $request->file('related_image');
+        if($multiImages){
+           
+            for($i=0;$i<count($multiImages);$i++){
+                $Product_related_images = new Product_related_images;
+                $ext = substr(strrchr($multiImages[$i]->getClientOriginalName(), '.'), 1);
+                $new_name1 = str_replace(".", "", microtime());
+                $new_name = str_replace(" ", "_", $new_name1);
+                $multifilename = $new_name.'.'.$ext;
+                if(\Image::make($multiImages[$i]->getRealPath())->save('uploads/products/'.$multifilename)){
+                $Product_related_images->image = $multifilename;
+                $Product_related_images->product_id = $product->id;
+                $Product_related_images->save();
+                }
+            }
+        }
+        return response()->json(['status' => 'Product updated'], 200);
     }
 }

@@ -136,6 +136,7 @@ Route::prefix('/dashboard')->name('dashboard.')->namespace('Dashboard')->middlew
         Route::post('/statusChange',[ProductController::class, 'statusChange'])->name('statusChange');
         Route::get('/edit/{id}',    [ProductController::class, 'edit'])->name('edit');
         Route::post('/update',      [ProductController::class, 'update'])->name('update');
+        Route::post('/imageDelete', [ProductController::class, 'imageDelete'])->name('imageDelete');
     });
 
     //Landing Banner

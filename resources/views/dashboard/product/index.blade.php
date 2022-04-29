@@ -23,6 +23,7 @@
                     <thead>
                         <tr>
                             <th>ID</th>
+                            <th>Image</th>
                             <th>Name</th>
                             <th>Status</th>
                             <th>Is Popular</th>
@@ -120,6 +121,14 @@
                     render: function(data, type, full, meta){
                         return '<b class="text-primary">' + data + '</b>';
                     },
+                },
+                {
+                    data:'photos',
+                    name: 'photos',
+                    render: function(data, type, full, meta){
+                        return '<img src='+'{{config('app.url')}}/uploads/products/'+data+' height="50px" width="50px">';
+                    },
+                    searchable: true,
                 },
                 {
                     data:'name',

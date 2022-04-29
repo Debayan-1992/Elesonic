@@ -10,7 +10,7 @@
 
 @endphp
 
-<option value="{{ $child_category->id }}">{{ $value." ".$child_category->name }}</option>
+<option value="{{ $child_category->id }}" {{ ( $child_category->id == $cat_id) ? 'selected' : '' }}>{{ $value." ".$child_category->name }}</option>
 
 @if ($child_category->categories)
 

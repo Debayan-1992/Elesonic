@@ -1,7 +1,30 @@
 <?php error_reporting(0) ?>
 @section('pageheader', 'Add Product')
 @extends('layouts.app')
-
+<style>
+.imageThumb {
+  max-height: 75px;
+  border: 2px solid;
+  padding: 1px;
+  cursor: pointer;
+}
+.pip {
+  display: inline-block;
+  margin: 10px 10px 0 0;
+}
+.remove {
+  display: block;
+  background: #444;
+  border: 1px solid black;
+  color: white;
+  text-align: center;
+  cursor: pointer;
+}
+.remove:hover {
+  background: white;
+  color: black;
+}
+</style>
 @section('content')
     <section class="content-header">
         <h1>
@@ -34,15 +57,28 @@
                         </div>
                         <div class="form-group col-md-6">
                             <label>Image <span class="text-danger">*</span></label>
-                            <input type="file" class="form-control" name="image">
+                            <input type="file" accept="image/*" class="form-control" name="image">
+                           
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Related Images (use ctrl+select)</label>
+                            <input type="file" id="files" accept="image/*" class="form-control" name="related_image[]" multiple>
                            
                         </div>
                          <div class="form-group col-md-6">
                             <label>Category <span class="text-danger">*</span></label>
                             <select class="form-control select2" name="category_id" data-toggle="select2" data-placeholder="Choose ..." data-live-search="true">
                                 <option value="">Choose Category</option>
-                                @foreach($categories as $row)
-                                <option value="{{$row->id}}">{{$row->name}}</option>
+                                @foreach ($categories as $category)
+
+                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+
+                                @foreach ($category->childrenCategories as $childCategory)
+
+                                @include('categories.child_category', ['child_category' => $childCategory])
+
+                                @endforeach
+
                                 @endforeach
                             </select>
                         </div>
@@ -71,6 +107,10 @@
                            
                         </div>
                         <div class="form-group col-md-6">
+                            <label> Description </label>
+                            <textarea class="description form-control"  name="description"></textarea>
+                        </div>
+                        <div class="form-group col-md-6">
                             <label>Meta Title </label>
                             <input type="text" class="form-control"  placeholder="Meta title"  name="meta_title">
                         </div>
@@ -93,7 +133,40 @@
 @endsection
 
 @push('script')
+<script src="//cloud.tinymce.com/stable/tinymce.min.js"></script>
+<script>
+    tinymce.init({
+        selector:'textarea.description',
+        width: 900,
+        height: 100
+    });
+</script>
     <script>
+        $(document).ready(function() {
+        if (window.File && window.FileList && window.FileReader) {
+            $("#files").on("change", function(e) {
+            var files = e.target.files,
+                filesLength = files.length;
+            for (var i = 0; i < filesLength; i++) {
+                var f = files[i]
+                var fileReader = new FileReader();
+                fileReader.onload = (function(e) {
+                var file = e.target;
+                $("<span class=\"pip\">" +
+                    "<img height=\"50px\" width=\"50px\" class=\"imageThumb\" src=\"" + e.target.result + "\" title=\"" + file.name + "\"/>" +
+                    "<br/><span style=\"cursor:pointer\" class=\"remove\">Remove</span>" +
+                    "</span>").insertAfter("#files");
+                $(".remove").click(function(){
+                    $(this).parent(".pip").remove();
+                });
+                });
+                fileReader.readAsDataURL(f);
+            }
+            });
+        } else {
+            alert("Your browser doesn't support")
+        }
+        });
         function slugname(value){
             var value = value;
             var new_value =value.toLowerCase();

@@ -48,7 +48,7 @@
 
                             @foreach ($categorych->childrenCategories as $childCategory)
 
-                                @include('categories.child_category', ['child_category' => $childCategory])
+                                @include('categories.child_category', ['child_category' => $childCategory,'cat_id' =>$category->parent_id])
 
                             @endforeach
 
