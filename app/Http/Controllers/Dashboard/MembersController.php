@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Helpers\Myhelper;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Mail\UserCreateMail;
+use App\Mail\UserCreateOTPMail;
 use Carbon\Carbon;
 
 use App\Model\Role;
@@ -11,15 +14,17 @@ use App\Model\Permission;
 use App\Model\UserPermission;
 use App\Model\DefaultPermission;
 use App\User;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class MembersController extends Controller
 {
     public function index($type){
+        // dd(Myhelper::otp_get());
         $data['activemenu']['main'] = 'members';
 
         $users = User::query();
         $role = Role::query();
-
         switch ($type) {
             case 'customer':
                 $data['activemenu']['sub'] = 'customer';
@@ -30,6 +35,17 @@ class MembersController extends Controller
                 });
 
                 $role->where('slug', 'customer');
+            break;
+
+            case 'seller':
+                $data['activemenu']['sub'] = 'seller';
+                $permission = 'view_sellers';
+
+                $users->whereHas('role', function($q){
+                    $q->where('slug', 'seller');
+                });
+
+                $role->where('slug', 'seller');
             break;
 
             case 'bank':
@@ -84,6 +100,14 @@ class MembersController extends Controller
                 $role->where('slug', 'customer');
             break;
 
+            case 'seller':
+                $data['activemenu']['sub'] = 'seller';
+                $permission = 'add_seller';
+                $view = 'addseller';
+
+                $role->where('slug', 'seller');
+            break;
+
             case 'bank':
                 $data['activemenu']['sub'] = 'bank';
                 $permission = 'add_bank';
@@ -116,6 +140,7 @@ class MembersController extends Controller
     }
 
     public function create($type, Request $post){
+        //return (new UserCreateMail('sdfsd', 'dbo@asd.com', '34534asdfs'))->render();
         switch ($type) {
             case 'admin':
                 $rules = array(
@@ -126,6 +151,14 @@ class MembersController extends Controller
             break;
 
             case 'customer':
+                $rules = array(
+                    'name' => 'required',
+                    'email' => 'required|unique:users',
+                    'mobile' => 'required|unique:users',
+                );
+            break;
+
+            case 'seller':
                 $rules = array(
                     'name' => 'required',
                     'email' => 'required|unique:users',
@@ -166,6 +199,24 @@ class MembersController extends Controller
                     'permission_id' => $value->permission_id
                 ]);
             }
+           
+            if($type == 'seller' || $type == 'customer')
+            {
+                $otp = Myhelper::otp_get();
+                DB::table('otps')
+                ->insert([
+                    'email' => $post->email,
+                    'phone' => $post->mobile,
+                    'otp' => $otp,
+                    'is_active' => 1,
+                    'expiry' => Carbon::now()->addMinutes(10)->format('Y-m-d h:i:s'), //Adding 10 mins as expiry
+                    'created_at' => Carbon::now()->format('Y-m-d h:i:s'),
+                ]);
+                Mail::to($post->email)->send(new UserCreateMail($post->name, $post->email, $password));
+                Mail::to($post->email)->send(new UserCreateOTPMail($post->name, $post->email, $otp));
+
+
+            }
 
             return response()->json(['status' => 'User created successfully.'], 200);
         } else{
@@ -198,6 +249,14 @@ class MembersController extends Controller
 
                 $permission = 'edit_customer';
             break;
+
+            case 'seller':
+                $rules = array(
+                    'id' => 'required',
+                );
+
+                $permission = 'edit_seller';
+            break;
         }
 
         if(isset($rules)){
@@ -216,6 +275,7 @@ class MembersController extends Controller
         switch ($post->role) {
             case 'admin':
             case 'bank':
+            case 'seller':
             case 'customer':
                 $user = User::findorfail($post->id);
                 if($user->status){

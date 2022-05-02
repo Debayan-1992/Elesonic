@@ -150,4 +150,11 @@ class Myhelper {
             return "no";
         }
     }
+
+    public static function otp_get()
+    {
+        $otp = rand(111111, 999999);
+        $data['otp'] = $otp;
+        return $data['otp'];
+    }
 }

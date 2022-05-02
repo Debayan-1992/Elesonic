@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Helpers\Myhelper;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-
+use App\Mail\UserCreateOTPMail;
 use App\User;
 use Carbon\Carbon;
 use App\Model\City;
 use App\Model\OtpVerification;
 use App\Model\CustomerDetail;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class HomeController extends Controller
 {
@@ -31,12 +34,12 @@ class HomeController extends Controller
     public function landing()
     {
         //dd('dsfsdfs');
-        return view('index');
+        return view('frontend.index');
     }
 
     public function welcome()
     {
-        return view('welcome');
+        return view('frontend.welcome');
     }
 
     public function index()
@@ -46,6 +49,16 @@ class HomeController extends Controller
         return view('dashboard.home', $data);
     }
 
+    public function signin()
+    {
+        return view('frontend.login');
+    }
+
+    public function signup()
+    {
+        return view('frontend.sign-up');
+    }
+    
     public function profile($id = 'none'){
         $data['activemenu']['main'] = 'profile';
 
@@ -66,6 +79,7 @@ class HomeController extends Controller
     }
 
     public function updateProfile(Request $post){
+        $user_data = auth()->user();
         if(!$post->has('id')){
             $post['id'] = \Auth::id();
         }
@@ -210,49 +224,89 @@ class HomeController extends Controller
                 }
             break;
 
-            case 'verifymobile':
-                if(in_array($post->otp, ['send','resend'])){
-                    $post['otp'] = rand(111111, 999999);
+            case 'verifymobile': 
+                if(in_array($post->otp, ['send','resend'])){ //If pressed Send OTP button, coming from dashboard/profile.blade
+                    //dd($post->all(), session()->all(), $user_data->email);
+                    $post['otp'] = Myhelper::otp_get();
+                    $mailFromId = 'elesonic@gm.com';
+                    Mail::to($user_data->email)->send(new UserCreateOTPMail($user_data->name, $mailFromId, $post['otp']));
+                    DB::table('otps')
+                    ->insert([
+                        'email' => $user_data->email,
+                        'phone' => '',
+                        'otp' => $post['otp'],
+                        'is_active' => 1,
+                        'expiry' => Carbon::now()->addMinutes(10)->format('Y-m-d h:i:s'), //Adding 10 mins as expiry
+                        'created_at' => Carbon::now()->format('Y-m-d h:i:s'),
+                    ]);
+                    return response()->json(['status' => 'An OTP has been successfully sent to your Email.'], 200);
+                    // $post['otp'] = rand(111111, 999999);
+                    // $body = "Dear $userdata->name, your verification code is $post->otp. Team ".config('app.name').".";
+                    // if(\Myhelper::sms($userdata->mobile, $body)){
+                    //     OtpVerification::where('mobile', $userdata->mobile)->where('email', $userdata->email)->delete(); #delete prev records
 
-                    $body = "Dear $userdata->name, your verification code is $post->otp. Team ".config('app.name').".";
-                    if(\Myhelper::sms($userdata->mobile, $body)){
-                        OtpVerification::where('mobile', $userdata->mobile)->where('email', $userdata->email)->delete(); #delete prev records
+                    //     $action = OtpVerification::create([
+                    //         'email' => $userdata->email,
+                    //         'mobile' => $userdata->mobile,
+                    //         'otp' => $post->otp,
+                    //     ]);
 
-                        $action = OtpVerification::create([
-                            'email' => $userdata->email,
-                            'mobile' => $userdata->mobile,
-                            'otp' => $post->otp,
+                    //     if($action){
+                    //         \Session::put('registerdata', $post->all());
+                    //         return response()->json(['status' => 'An OTP has been successfully sent to your Mobile Number.'], 200);
+                    //     } else{
+                    //         return response()->json(['status' => 'Internal server error. Please try again later.'], 400);
+                    //     }
+                    // } 
+                   // else{return response()->json(['status' => 'OTP cannot be sent. Please try again later.'], 400);}
+                } else{ //coming from layouts/app.blade, when submitting OTP
+                    $record = DB::table('otps')
+                        ->where('email', $user_data->email)
+                        ->where('is_active', 1)
+                        ->where('expiry', '>=', Carbon::now()->format('Y-m-d H:i:s'))
+                        ->orderBy('created_at', 'desc')->first();
+                        //dd(session()->all(), $user_data, $post->all(), $record, Carbon::now()->format('Y-m-d H:i:s'));
+                    if($record != null && $record->otp == $post->otp)
+                    {
+                        DB::table('otps')
+                        ->where('id', $record->id)
+                        ->update([
+                            'is_active' => 0,
+                            'updated_at' => Carbon::now()->format('Y-m-d H:i:s'),
                         ]);
 
-                        if($action){
-                            \Session::put('registerdata', $post->all());
-                            return response()->json(['status' => 'An OTP has been successfully sent to your Mobile Number.'], 200);
-                        } else{
-                            return response()->json(['status' => 'Internal server error. Please try again later.'], 400);
-                        }
-                    } else{
-                        return response()->json(['status' => 'OTP cannot be sent. Please try again later.'], 400);
-                    }
-                } else{
-                    $verfication = OtpVerification::where('mobile', $userdata->mobile)->whereBetween('created_at', [Carbon::now()->subMinutes(15)->format('Y-m-d H:i:s'), Carbon::now()->format('Y-m-d H:i:s')])->first(); #valiate only otp with mobile number
-                    if($verfication){
-                        if(!\Hash::check($post->otp, $verfication->otp)){
-                            return response()->json(['status' => "The otp you entered doesn't matched"], 400);
-                        }
+                        DB::table('users')
+                        ->where('id', $user_data->id)
+                        ->update([
+                            'mobile_verified_at' => Carbon::now()->format('Y-m-d H:i:s'),
+                        ]);
 
-                        $update = array();
-                        $update['mobile_verified_at'] = Carbon::now()->format('Y-m-d H:i:s');
-                        $action = User::where('id', $post->id)->update($update);
-                        if($action){
-                            $verfication->delete();
-                            \Session::flash('success', 'Mobile number verified successfully');
-                            return response()->json(['status' => 'Mobile number verified successfully'], 200);
-                        } else{
-                            return response()->json(['status' => 'Task failed. Please try again later'], 400);
-                        }
-                    } else{
+                        return response()->json(['status' => 'Mobile number verified successfully'], 200);
+                    }
+                    elseif($record == null){ //if expired
                         return response()->json(['status' => 'The otp you entered is invalid or may have been expired'], 400);
                     }
+                        
+                    
+                    // $verfication = OtpVerification::where('mobile', $userdata->mobile)->whereBetween('created_at', [Carbon::now()->subMinutes(15)->format('Y-m-d H:i:s'), Carbon::now()->format('Y-m-d H:i:s')])->first(); #valiate only otp with mobile number
+                    // if($verfication){
+                    //     if(!\Hash::check($post->otp, $verfication->otp)){
+                    //         return response()->json(['status' => "The otp you entered doesn't matched"], 400);
+                    //     }
+
+                    //     $update = array();
+                    //     $update['mobile_verified_at'] = Carbon::now()->format('Y-m-d H:i:s');
+                    //     $action = User::where('id', $post->id)->update($update);
+                    //     if($action){
+                    //         $verfication->delete();
+                    //         \Session::flash('success', 'Mobile number verified successfully');
+                    //         return response()->json(['status' => 'Mobile number verified successfully'], 200);
+                    //     } else{
+                    //         return response()->json(['status' => 'Task failed. Please try again later'], 400);
+                    //     }
+                    // } 
+                    
+                    //else{return response()->json(['status' => 'The otp you entered is invalid or may have been expired'], 400);}
                 }
             break;
 
@@ -309,5 +363,24 @@ class HomeController extends Controller
                 return response()->json(['status' => 'Unsupported request'], 400);
             break;
         }
+    }
+
+    public function validate_user(Request $request)
+    {
+        $d_token = decrypt($request->_token);
+        $val = User::where('email', $d_token)->firstOrFail();
+        if($val->email_verified_at == null)
+        {
+            $val->email_verified_at = date("Y-m-d h:i:s");
+            if($val->save()) //true or false
+            {
+                return redirect()->route('signin')->with('success', 'Success! User created');
+                //dd('Email verified');
+            }
+            dd('Some error'); 
+        }    
+        else
+            return redirect()->route('signin')->with('success', 'Email was already verified');
+        //dd('Email was already verified at '.$val->email_verified_at); //Paste view here
     }
 }

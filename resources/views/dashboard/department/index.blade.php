@@ -263,6 +263,7 @@
         
 
         function changeAction(id){
+            if(this.value = 'status')
             Pace.track(function(){
                 $.ajax({
                     url: "{{route('dashboard.department.statusChange')}}",

@@ -50,6 +50,10 @@
                             @if(Myhelper::can('view_admins'))
                                 <li class="{{(isset($activemenu['sub']) && $activemenu['sub'] == 'admin') ? 'active' : ''}}"><a href="{{route('dashboard.members.index', ['type' => 'admin'])}}"><i class="fa fa-circle-o"></i> Admins</a></li>
                             @endif
+
+                            @if(Myhelper::can('view_sellers'))
+                                <li class="{{(isset($activemenu['sub']) && $activemenu['sub'] == 'seller') ? 'active' : ''}}"><a href="{{route('dashboard.members.index', ['type' => 'seller'])}}"><i class="fa fa-circle-o"></i> Sellers</a></li>
+                            @endif
                         </ul>
                     </li>
                 @endif

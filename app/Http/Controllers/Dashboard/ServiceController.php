@@ -97,6 +97,15 @@ class ServiceController extends Controller
                 }
                 Service::where('id', $request->id)->update($request->except(['_token','type']));
             break;
+            case 'popular_st_change':
+                $status = Service::findorfail($request->id);
+                if($status->popular == true ){
+                    $request['popular'] = false;
+                } else{
+                    $request['popular'] = true;
+                }
+                Service::where('id', $request->id)->update($request->except(['_token','type']));
+            break;
             case 'delet':
                 $request['status'] = 'D';
                 Service::where('id', $request->id)->update($request->except(['_token','type']));

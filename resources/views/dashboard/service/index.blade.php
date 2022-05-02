@@ -155,10 +155,15 @@
                     data:'popular',
                     name: 'popular',
                     render: function(data, type, full, meta){
-                        return `<b class="text-primary" style="text-transform: capitalize">`+data+`</b>`
+                        if(data == true){
+                            html = `<a onclick="popular_st_change(`+full.id+`)" class="btn btn-sm btn-success"><i class="fa fa-check-circle"></i>&nbsp;Active</a>`;
+                        } else if(data== false){
+                            html = `<a onclick="popular_st_change(`+full.id+`)" class="btn btn-sm btn-warning"><i class="fa fa-remove"></i>&nbsp;Inactive</a>`;
+                        }else{
+                            html = '';
+                        }
+                        return html;
                     },
-                    searchable: false,
-                    orderable: false,
                 },
                 {
                     data:'status',
@@ -285,6 +290,21 @@
                     url: "{{route('dashboard.service.statusChange')}}",
                     method: "POST",
                     data: {'_token':'{{csrf_token()}}','type':'statusChange','id':id},
+                    success: function(data){
+                        $('#my-datatable').dataTable().api().ajax.reload();
+                    }, error: function(errors){
+                        showErrors(errors);
+                    }
+                });
+            });
+        }
+
+        function popular_st_change(id){
+            Pace.track(function(){
+                $.ajax({
+                    url: "{{route('dashboard.service.statusChange')}}",
+                    method: "POST",
+                    data: {'_token':'{{csrf_token()}}','type':'popular_st_change','id':id},
                     success: function(data){
                         $('#my-datatable').dataTable().api().ajax.reload();
                     }, error: function(errors){

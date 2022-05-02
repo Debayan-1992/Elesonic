@@ -144,9 +144,9 @@
         });
 
         function changeAction(id){
-            @if(!Myhelper::can('edit_'.$role->type))
-                return false;
-            @endif
+            // @if(!Myhelper::can('edit_'.$role->type))
+            //     return false;
+            // @endif
 
             Pace.track(function(){
                 $.ajax({

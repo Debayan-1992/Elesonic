@@ -44,7 +44,7 @@
                     <ul class="nav nav-tabs">
                         <li class="bg-gray active"><a href="#basicdetails" data-toggle="tab"><i class="fa fa-gear"></i> Basic Details</a></li>
 
-                        @if (in_array($user->role->slug, ['customer']))
+                        @if (in_array($user->role->slug, ['seller']))
                             <li class="bg-gray "><a href="#businessdoc" data-toggle="tab"><i class="fa fa-file"></i> Documents</a></li>
                         @endif
 
@@ -70,11 +70,11 @@
                                     </div>
 
                                     <div class="form-group col-md-4">
-                                        <label>Mobile {!! $user->role->slug == 'customer' ? '<span class="text-danger">*</span>' : '' !!} </label>
+                                        <label>Mobile {!! ($user->role->slug == 'customer' || $user->role->slug == 'seller') ? '<span class="text-danger">*</span>' : '' !!} </label>
                                         <input name="mobile" value="{{$user->mobile}}" class="form-control" placeholder="Enter mobile number">
                                     </div>
 
-                                    @if($user->role->slug == 'customer')
+                                    @if($user->role->slug == 'customer' || $user->role->slug == 'seller')
                                         <div class="form-group col-md-4">
                                             <label>Pancard <span class="text-danger">*</span></label>
                                             <input name="pancard" value="{{$user->pancard}}" class="form-control" placeholder="Enter pancard number">
@@ -117,7 +117,7 @@
                             </form>
                         </div>
 
-                        @if (in_array($user->role->slug, ['customer']))
+                        @if (in_array($user->role->slug, ['seller']))
                             {{-- Business Documents Tab --}}
                             <div class="tab-pane" id="businessdoc">
                                 <form id="businessdocform" method="POST" action="{{route('dashboard.profile')}}" enctype="multipart/form-data">

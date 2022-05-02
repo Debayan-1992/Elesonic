@@ -88,6 +88,14 @@ class CommonController extends Controller
                 $request['searchdata'] = [];
             break;
 
+            case 'seller':
+                $query = User::whereHas('role', function($q){
+                    $q->where('slug', 'seller');
+                });
+
+                $request['searchdata'] = [];
+            break;
+
             case 'agent':
                 $query = User::whereHas('role', function($q){
                     $q->where('slug', 'agent');
