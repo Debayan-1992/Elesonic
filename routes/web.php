@@ -9,6 +9,7 @@ use App\Http\Controllers\Dashboard\LandingBannerController;
 use App\Http\Controllers\Dashboard\ServiceController;
 use App\Http\Controllers\Dashboard\ToolsController;
 use App\Http\Controllers\Dashboard\DepartmentController;
+use App\Http\Controllers\Frontend\FrontendController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,13 +24,13 @@ use App\Http\Controllers\Dashboard\DepartmentController;
 
 // Route::get('/i', function () {return view('welcome');})->name('i');
 Route::get('/welcome', [HomeController::class, 'welcome'])->name('welcome');
-Route::get('/', [HomeController::class, 'landing'])->name('landing');
+//Route::get('/', [HomeController::class, 'landing'])->name('landing');
 
 Auth::routes(['verify' => true]);
 
 Route::any('/logout', 'Auth\LoginController@logout')->name('logout');
 Route::post('/register', 'Auth\RegisterController@register')->name('register');
-
+Route::get('/', [FrontendController::class, 'index'])->name('index');
 Route::prefix('/dashboard')->name('dashboard.')->namespace('Dashboard')->middleware('auth','checkuser')->group(function(){
     //Route::get('/home', 'HomeController@index')->name('home');
     Route::get('/home', [HomeController::class, 'index'])->name('home');
