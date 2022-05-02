@@ -46,6 +46,7 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     { 
+        
         $product = new Product;
         $product->name = $request->name;
         $product->category_id  = $request->category_id;
@@ -57,7 +58,6 @@ class ProductController extends Controller
         }
         $request->net_price = number_format((float)$request->net_price, 2, '.', '');
         $product->unit_price  = $request->net_price;
-        $product->description = $request->description;
         $product->purchase_price  = $request->mrp;
         $product->discount  = $request->discount;
         $product->meta_title = $request->meta_title;
@@ -88,6 +88,8 @@ class ProductController extends Controller
                 return response()->json(['status' => 'File cannot be saved to server.'], 400);
             }
         }
+       
+        $product->description = $request->prodescription;
         $product->save();
         $multiImages = $request->file('related_image');
         if($multiImages){
@@ -196,7 +198,6 @@ class ProductController extends Controller
         }
         $request->net_price = number_format((float)$request->net_price, 2, '.', '');
         $product->unit_price  = $request->net_price;
-        $product->description = $request->description;
         $product->purchase_price  = $request->mrp;
         $product->discount  = $request->discount;
         $product->meta_title = $request->meta_title;
@@ -225,6 +226,7 @@ class ProductController extends Controller
                 return response()->json(['status' => 'File cannot be saved to server.'], 400);
             }
         }
+        $product->description = $request->description;
         $product->save();
         $multiImages = $request->file('related_image');
         if($multiImages){

@@ -108,7 +108,7 @@
                         </div>
                         <div class="form-group col-md-6">
                             <label> Description </label>
-                            <textarea class="description form-control"  name="description"></textarea>
+                            <textarea class="description form-control"  name="prodescription"></textarea>
                         </div>
                         <div class="form-group col-md-6">
                             <label>Meta Title </label>
