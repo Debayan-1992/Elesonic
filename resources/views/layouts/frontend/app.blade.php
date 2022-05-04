@@ -2,7 +2,8 @@
 <html>
 
 <head>
-	<title>Elesonic Canada</title>
+	
+	<title>@yield('pageheader', 'Elesonic') | {{config('app.name', 'Laravel')}} - {{config('app.title', 'Laravel E-Commerce')}}</title>
 	  <meta charset="utf-8">
 	  <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -30,7 +31,8 @@
 
 	<link rel="stylesheet" type="text/css" href="{{asset('custom_resource/css/style.css')}}">
 
-@yield('header')
+	@yield('header')
+	@stack('header')
 	 <!-- countru-code -->
 
 </head>
@@ -43,7 +45,7 @@
 			<div class="container-fluid">
 
 				<div class="logo-block">
-				  <a class="navbar-brand" href="#"><img src="{{asset('custom_resource/images/logo.png')}}"></a>
+				  <a class="navbar-brand" href="{{route('index')}}"><img src="{{asset('custom_resource/images/logo.png')}}"></a>
 				</div>
 
 				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -88,7 +90,7 @@
 						<div class="icon-block">
 							<ul>
 								<li class="sell-product"><a href="#">Sell on Elesonic</a></li>
-								<li class="user-icon"><a href="{{route('welcome')}}"><img src="{{asset('custom_resource/images/user-icon.png')}}"></a></li>
+								<li class="user-icon"><a href="{{route('login')}}"><img src="{{asset('custom_resource/images/user-icon.png')}}"></a></li>
 								<li class="cagrt-icon" ><a href="#"><img src="{{asset('custom_resource/images/cart-icon.png')}}"></a></li>
 							</ul>
 						</div>
@@ -103,7 +105,127 @@
 
 @yield('content')
 
+<!-- footer-block start-->
+<div class="footer-block">
+	<div class="container">
 
+		<div class="footer-bd">
+			<div class="row">
+
+				
+				<!-- item -->
+					<div class="col-lg-3">
+						<div class="item quick-links-block">
+							<h4>CATEGORIES</h4>
+							<ul>
+								<li><a href="#">Consumables & Disposables</a></li>
+								<li><a href="#">Lab Diagnostics & Instruments</a></li>
+								<li><a href="#">Medical Device & Equipment</a></li>
+								<li><a href="#">Dental</a></li>
+								<li><a href="#">Medical Implants</a></li>
+								<li><a href="#">Surgical Instruments</a></li>
+								<li><a href="#">Hospital Establishment</a></li>
+							</ul>
+						</div>
+					</div>
+				<!-- item -->
+				
+				<!-- item -->
+				<div class="col-lg-3">
+					<div class="item quick-links-block">
+						<h4>SERVICES</h4>
+						<ul>
+							<li><a href="#">Sell on Elesonic</a></li>
+							<li><a href="#">Annual Maintenance Contract</a></li>
+							<li><a href="#">Ultrasound Machine Service</a></li>
+							<li><a href="#">Oxygen Concentrator Service</a></li>
+							<li><a href="#">Write for Us</a></li>
+						</ul>
+					</div>
+				</div>
+				<!-- item -->
+
+				<!-- item -->
+					<div class="col-lg-2">
+						<div class="item quick-links-block">
+							<h4>ABOUT</h4>
+							<ul>
+								<li><a href="#">Our Story</a></li>
+								<li><a href="{{route('contact_us')}}">Contact Us</a></li>
+								<li><a href="#">News</a></li>
+								<li><a href="#">Blogs</a></li>
+							</ul>
+						</div>
+					</div>
+				<!-- item -->
+
+			
+
+				<!-- item -->
+				<div class="col-lg-4 ">
+					<div class="item submit-mail">
+						<h4>Subscribe for our newsletter</h4>
+
+
+						<form class="formbd-sec">
+							<input type="email" placeholder="Email address" name="">
+							<div class="submit-btn">
+								<input type="submit" name="">
+							</div>
+						</form>
+
+						<div class="social-icon">
+							<ul>
+								<li><a href="#" target="_blank"><i class="fa fa-facebook"></i></a></li>
+								<li><a href="#" target="_blank"><i class="fa fa-twitter"></i></a></li>
+								<li><a href="#" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+								<li><a href="#" target="_blank"><i class="fa fa-instagram"></i></a></li>
+								
+							</ul>
+						</div>
+
+					</div>
+				</div>
+				<!-- item -->
+
+
+			</div>
+		</div>
+
+		<!--copyright-->
+		<div class="copyright-block">
+
+			<!---->
+			<div class="item">
+				<div class="menu-sec">
+					<ul>
+						<li><a href="#">Terms of Use</a></li>
+						<li><a href="#">Privacy Policy</a></li>
+						<li><a href="#">FAQs</a></li>
+						<li><a href="#">Return Policy</a></li>
+						<li><a href="#">Disclaimer</a></li>
+					</ul>
+				</div>
+			</div>
+			<!---->
+
+
+			<!---->
+			<div class="item">
+
+				<p>&copy; 2021 Elesonic | Website designed and developed by</p>
+				<a href="https://www.ivaninfotech.com/" target="_blank">Ivan Infotech</a>
+			</div>
+			<!---->
+
+			
+
+		</div>
+		<!-- copyright -->
+
+	</div>
+</div>
+<!-- footer-block  end -->
 
 <!-- js-link -->
 
@@ -117,7 +239,7 @@
 <script type="text/javascript" src="{{asset('custom_resource/js/custome.js')}}"></script>
 
 @yield('script')
-
+@stack('script')
 
 </body>
 </html>

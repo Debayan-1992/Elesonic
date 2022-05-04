@@ -16,6 +16,8 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected $namespace = 'App\Http\Controllers';
 
+    public const ADMIN_HOME = '/admin/dashboard1'; //Purposely kept
+
     /**
      * Define your route model bindings, pattern filters, etc.
      *

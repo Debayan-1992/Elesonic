@@ -11,7 +11,7 @@
         <div class="login-box-body">
             <p class="login-box-msg">Sign in to start your session</p>
 
-            <form id="loginform" action="{{route('login')}}" method="post">
+            <form id="loginform" action="{{route('admin_login_form')}}" method="post">
                 @csrf
 
                 <div class="form-group has-feedback">

@@ -31,6 +31,7 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
+
     public function landing()
     {
         //dd('dsfsdfs');
@@ -49,16 +50,6 @@ class HomeController extends Controller
         return view('dashboard.home', $data);
     }
 
-    public function signin()
-    {
-        return view('frontend.login');
-    }
-
-    public function signup()
-    {
-        return view('frontend.sign-up');
-    }
-    
     public function profile($id = 'none'){
         $data['activemenu']['main'] = 'profile';
 

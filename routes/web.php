@@ -11,6 +11,7 @@ use App\Http\Controllers\Dashboard\ToolsController;
 use App\Http\Controllers\Dashboard\DepartmentController;
 use App\Http\Controllers\Frontend\FrontendController;
 use App\Http\Controllers\Dashboard\MembersController;
+use App\Http\Controllers\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,21 +27,44 @@ use App\Http\Controllers\Dashboard\MembersController;
 // Route::get('/i', function () {return view('welcome');})->name('i');
 Route::get('/welcome', [HomeController::class, 'welcome'])->name('welcome');
 //Route::get('/', [HomeController::class, 'landing'])->name('landing');
-Route::get('/signin', [HomeController::class, 'signin'])->name('signin');
-Route::get('/signup', [HomeController::class, 'signup'])->name('signup');
-Route::get('/contact_us', [HomeController::class, 'signup'])->name('contact');
+Route::get('/', [FrontendController::class, 'index'])->name('index');
+Route::get('/login', [FrontendController::class, 'signin'])->name('login'); //Frontend Login
+Route::post('login', [FrontendController::class, 'signin_post'])->name('login'); 
+Route::get('/signup', [FrontendController::class, 'signup'])->name('signup');
+Route::post('/signup', [FrontendController::class, 'signup_post'])->name('signup');
+Route::get('/contact_us', [FrontendController::class, 'contact_us'])->name('contact_us');
 
-Auth::routes(['verify' => true]);
+//Auth::routes(['verify' => true]); //This has been removed because these routes are being manually used
 
+//Auth routes
+//
+//Route::get('login', 'Auth\LoginController@showLoginForm')->name('admin_login'); //Admin panel login
+//Route::post('login', 'Auth\LoginController@login')->name('login'); //Original login controller which comes from Laravel Auth
+
+
+// Registration Routes...
+Route::get('register', 'Auth\RegisterController@showRegistrationForm')->name('register');
+Route::post('register', 'Auth\RegisterController@register')->name('register');
+
+//
+Route::get('/admin/login', [Auth\LoginController::class, 'showLoginForm'])->name('admin_login_form'); //AuthenticatesUsers trait's showLoginForm function is being overridden by LoginController class's showLoginForm function
+Route::post('/admin/login', [Auth\LoginController::class, 'login'])->name('admin_login_form'); //AuthenticatesUsers trait's showLoginForm function is being overridden by LoginController class's showLoginForm function
 Route::any('/logout', 'Auth\LoginController@logout')->name('logout');
 Route::post('/register', 'Auth\RegisterController@register')->name('register');
-Route::get('/', [FrontendController::class, 'index'])->name('index');
 
 Route::get('/validate-user', [HomeController::class, 'validate_user']); //Email verify
 
-Route::prefix('/dashboard')->name('dashboard.')->namespace('Dashboard')->middleware('auth','checkuser')->group(function(){
+// Password Reset Routes...
+Route::name('password.')->group(function() {
+    Route::get('password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('request');
+    Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('email');
+    Route::get('password/reset/{token}', 'Auth\ResetPasswordController@showResetForm')->name('reset');
+    Route::post('password/reset', 'Auth\ResetPasswordController@reset')->name('reset');
+});
+
+Route::prefix('/admin/dashboard')->name('dashboard.')->namespace('Dashboard')->middleware('auth','checkuser')->group(function(){
     //Route::get('/home', 'HomeController@index')->name('home');
-    Route::get('/home', [HomeController::class, 'index'])->name('home');
+    Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::get('/profile/{id?}', [HomeController::class, 'profile'])->name('profile');
     Route::post('/profile', [HomeController::class, 'updateProfile'])->name('profile');
 
@@ -170,4 +194,8 @@ Route::prefix('/dashboard')->name('dashboard.')->namespace('Dashboard')->middlew
         Route::post('/delete', [DepartmentController::class, 'delete'])->name('delete');
         Route::post('/statusChange', [DepartmentController::class, 'statusChange'])->name('statusChange');
     });
+});
+
+Route::name('frontend.')->middleware('frontendauth','checkuser')->group(function(){
+    Route::get('/i', [FrontendController::class, 'd_index'])->name('d_index');
 });

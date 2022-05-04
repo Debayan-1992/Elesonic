@@ -1,106 +1,14 @@
-<!DOCTYPE html>
-<html>
+@extends('layouts.frontend.app')
 
-<head>
-	<title>Elesonic Canada</title>
-	  <meta charset="utf-8">
-	  <meta name="viewport" content="width=device-width, initial-scale=1">
+@push('header')
+  <link rel="stylesheet" href="https://adminlte.io/themes/AdminLTE/plugins/iCheck/square/blue.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.css" integrity="sha512-8D+M+7Y6jVsEa7RD6Kv/Z7EImSpNpQllgaEIQAtqHcI0H6F4iZknRj0Nx1DCdB+TwBaS+702BGWYC0Ze2hpExQ==" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw==" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/0.7.8/themes/black/pace-theme-flash.min.css" integrity="sha512-0c1cb0LYXVvb9L459008ryNuWW7NuZEFY0ns6fAOfpJhHnTX7Db2vbSrjaLgvUpcl+atb3hkawh2s+eEE3KaLQ==" crossorigin="anonymous" />
+{{--@endpush--}}
+@endpush
 
-	<link rel="shortcut icon" href="{{asset('custom_resource/images/favicon.ico')}}" type="image/x-icon">
-	<link rel="icon" href="{{asset('custom_resource/images/favicon.ico')}}" type="image/x-icon">
-
-	<!-- font -->
-	<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap" rel="stylesheet">
-
-	<!-- font-family: 'Abril Fatface', cursive; -->
-
-	<!-- font -->
-
-	 <link rel="stylesheet" type="text/css" href="{{asset('custom_resource/css/bootstrap.min.css')}}">
-
-	<!-- owl-slider -->
-	<link rel="stylesheet" type="text/css" href="{{asset('custom_resource/css/owl.carousel.min.css')}}">
-	<!-- owl-slider -->
-
-	<!-- font-awesome -->
-	<link rel="stylesheet" href="{{asset('custom_resource/css/font-awesome.min.css')}}">
-	<!-- font-awesome -->
-
-	<link rel="stylesheet" type="text/css" href="{{asset('custom_resource/css/style.css')}}">
-
-
-	 <!-- countru-code -->
-
-</head>
-<body>
-
-<!-- header start -->
-
-	<header class="header-block">
-		<nav class="navbar navbar-expand-lg ">
-			<div class="container-fluid">
-
-				<div class="logo-block">
-				  <a class="navbar-brand" href="{{route('welcome')}}"><img src="{{asset('custom_resource/images/logo.png')}}"></a>
-				</div>
-
-				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-				<span class="navbar-toggler-icon"></span>
-				</button>
-
-
-				<div class="collapse navbar-collapse navbar-manu-block" id="navbarSupportedContent">
-					<ul class="navbar-nav">
-
-					  <li class="nav-item department dropdown">
-					    <a class="nav-link" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					      Department
-					    </a>
-					    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-					      <a class="dropdown-item" href="#">Action</a>
-					      <a class="dropdown-item" href="#">Another action</a>
-					    </div>
-					  </li>
-
-					  <li class="nav-item services dropdown">
-					    <a class="nav-link " href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					      Services
-					    </a>
-					    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-					      <a class="dropdown-item" href="#">Action</a>
-					      <a class="dropdown-item" href="#">Another action</a>
-					    </div>
-					  </li>
-					</ul>
-				</div>
-
-				<!---->
-					<div class="right-block">
-
-						<div class="search-block">
-					  	<form>
-					      <input class="form-control" type="search" placeholder="Search" aria-label="Search">
-					    </form>
-						</div>
-
-						<div class="icon-block">
-							<ul>
-								<li class="sell-product"><a href="#">Sell on Elesonic</a></li>
-								<li class="user-icon"><a href="#"><img src="{{asset('custom_resource/images/user-icon.png')}}"></a></li>
-								<li class="cagrt-icon" ><a href="#"><img src="{{asset('custom_resource/images/cart-icon.png')}}"></a></li>
-							</ul>
-						</div>
-					</div>
-				<!---->
-
-			</div>
-		</nav>
-	</header>
-
-<!-- header end -->
-
-
-
+@section('content')
 <!-- login-block -->
 
 <div class="login-block">
@@ -109,7 +17,8 @@
         <div class="login_bd-sec">
           <!---->
           <div class="lt-sec">
-            <form>
+            <form id="loginform" action="{{route('login')}}" method="post">
+              @csrf
               <h4>Account Login</h4>
               <!-- item -->
               <div class="item">
@@ -118,7 +27,7 @@
               		<i class="fa fa-user-o"></i>
               	</div>
 
-                <input type="text" placeholder="User name" name="">
+                <input type="text" placeholder="User name" name="email">
               </div>
               <!-- item -->
 
@@ -127,7 +36,7 @@
               	<div class="icon">
               		<i class="fa fa-lock"></i>
               	</div>
-                <input type="password" placeholder="Password" name="">
+                <input type="password" placeholder="Password" name="password">
               </div>
               <!-- item -->
 
@@ -172,157 +81,82 @@
 
 <!-- login -->
 
+@endsection
 
+@push('script')
+  
 
-<!-- footer-block start-->
-	<div class="footer-block">
-		<div class="container">
+  <script src="https://adminlte.io/themes/AdminLTE/plugins/iCheck/icheck.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js" integrity="sha512-2ImtlRlf2VVmiGZsjm9bEyhjGW4dU7B6TNwh/hx/iSByxNENtj3WVE6o/9Lj4TJeVXPi4bnOIMXFIJJAeufa0A==" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.3.0/jquery.form.min.js" integrity="sha512-YUkaLm+KJ5lQXDBdqBqk7EVhJAdxRnVdT2vtCzwPHSweCzyMgYV/tgGF4/dCyqtCC2eCphz0lRQgatGVdfR0ww==" crossorigin="anonymous"></script>
+  <script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/0.7.8/pace.min.js" integrity="sha512-t3TewtT7K7yfZo5EbAuiM01BMqlU2+JFbKirm0qCZMhywEbHZWWcPiOq+srWn8PdJ+afwX9am5iqnHmfV9+ITA==" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.js" integrity="sha512-zlWWyZq71UMApAjih4WkaRpikgY9Bz1oXIW5G0fED4vk14JjGlQ1UmkGM392jEULP8jbNMiwLWdM8Z87Hu88Fw==" crossorigin="anonymous"></script>
 
-			<div class="footer-bd">
-				<div class="row">
+  <script src="{{asset('js/custom.js')}}"></script>
+@endpush
 
-					
-					<!-- item -->
-						<div class="col-lg-3">
-							<div class="item quick-links-block">
-								<h4>CATEGORIES</h4>
-								<ul>
-									<li><a href="#">Consumables & Disposables</a></li>
-									<li><a href="#">Lab Diagnostics & Instruments</a></li>
-									<li><a href="#">Medical Device & Equipment</a></li>
-									<li><a href="#">Dental</a></li>
-									<li><a href="#">Medical Implants</a></li>
-									<li><a href="#">Surgical Instruments</a></li>
-									<li><a href="#">Hospital Establishment</a></li>
-								</ul>
-							</div>
-						</div>
-					<!-- item -->
-					
-					<!-- item -->
-					<div class="col-lg-3">
-						<div class="item quick-links-block">
-							<h4>SERVICES</h4>
-							<ul>
-								<li><a href="#">Sell on Elesonic</a></li>
-								<li><a href="#">Annual Maintenance Contract</a></li>
-								<li><a href="#">Ultrasound Machine Service</a></li>
-								<li><a href="#">Oxygen Concentrator Service</a></li>
-								<li><a href="#">Write for Us</a></li>
-							</ul>
-						</div>
-					</div>
-					<!-- item -->
+@push('script')
 
-					<!-- item -->
-						<div class="col-lg-2">
-							<div class="item quick-links-block">
-								<h4>ABOUT</h4>
-								<ul>
-									<li><a href="#">Our Story</a></li>
-									<li><a href="#">Contact Us</a></li>
-									<li><a href="#">News</a></li>
-									<li><a href="#">Blogs</a></li>
-								</ul>
-							</div>
-						</div>
-					<!-- item -->
+    <script>
+        $(function () {
+            $('input').iCheck({ 
+                checkboxClass: 'icheckbox_square-blue',
+                radioClass: 'iradio_square-blue',
+                increaseArea: '20%' /* optional */
+            });
+        });
 
-				
+        $('#loginform').validate({
+            rules: {
+                email: {
+                    required: true,
+                    email: true
+                },
+                password: {
+                    required: true,
+                },
+            },
+            messages: {
+                email: {
+                    required: "Please enter your email address",
+                    email: "The inserted email address must be a email"
+                },
+                password: {
+                    required: "Please enter a password to continue"
+                }
+            },
+            // errorElement: "p",
+            // errorPlacement: function ( error, element ) {
+            //     if ( element.prop("tagName").toLowerCase() === "select" ) {
+            //         error.insertAfter( element.closest( ".form-group" ).find(".select2") );
+            //     } else {
+            //         error.insertAfter( element );
+            //     }
+            // },
+            submitHandler: function() {
+                var form = $('#loginform');
+                Pace.track(function(){
+                    form.ajaxSubmit({
+                        dataType:'json',
+                        beforeSubmit:function(){
+                            form.find('button[type="submit"]').button('loading');
+                        },
+                        success:function(data){
+                            // form.find('button[type="submit"]').button('reset');
 
-					<!-- item -->
-					<div class="col-lg-4 ">
-						<div class="item submit-mail">
-							<h4>Subscribe for our newsletter</h4>
-
-
-							<form class="formbd-sec">
-								<input type="email" placeholder="Email address" name="">
-								<div class="submit-btn">
-									<input type="submit" name="">
-								</div>
-							</form>
-
-							<div class="social-icon">
-								<ul>
-									<li><a href="#" target="_blank"><i class="fa fa-facebook"></i></a></li>
-									<li><a href="#" target="_blank"><i class="fa fa-twitter"></i></a></li>
-									<li><a href="#" target="_blank"><i class="fa fa-linkedin"></i></a></li>
-									<li><a href="#" target="_blank"><i class="fa fa-instagram"></i></a></li>
-									
-								</ul>
-							</div>
-
-						</div>
-					</div>
-					<!-- item -->
-
-
-				</div>
-			</div>
-
-			<!--copyright-->
-			<div class="copyright-block">
-
-				<!---->
-				<div class="item">
-					<div class="menu-sec">
-						<ul>
-							<li><a href="#">Terms of Use</a></li>
-							<li><a href="#">Privacy Policy</a></li>
-							<li><a href="#">FAQs</a></li>
-							<li><a href="#">Return Policy</a></li>
-							<li><a href="#">Disclaimer</a></li>
-						</ul>
-					</div>
-				</div>
-				<!---->
-
-
-				<!---->
-				<div class="item">
-
-					<p>&copy; 2021 Elesonic | Website designed and developed by</p>
-					<a href="https://www.ivaninfotech.com/" target="_blank">Ivan Infotech</a>
-				</div>
-				<!---->
-
-				
-
-			</div>
-			<!-- copyright -->
-
-		</div>
-	</div>
-<!-- footer-block  end -->
-
-
-
-
-<!-- js-link -->
-
-<script type="text/javascript" src="{{asset('custom_resource/js/jquery-3.6.0.min.js')}}"></script>
-<script type="text/javascript" src="{{asset('custom_resource/js/bootstrap.min.js')}}"></script>
-
-<!-- owl-js -->
-<script src="{{asset('custom_resource/js/owl.carousel.min.js')}}"></script>
-<!-- owl-js -->
-
-<script type="text/javascript" src="{{asset('custom_resource/js/custome.js')}}"></script>
-
-</body>
-</html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                            form[0].reset();
+                            notify(data.status, 'success');
+                            window.location.href = "{{route('frontend.d_index')}}";
+                        },
+                        error: function(errors) {
+                            form.find('button[type="submit"]').button('reset');
+                            showErrors(errors, form);
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+@endpush
