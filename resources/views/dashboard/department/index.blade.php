@@ -28,9 +28,10 @@
                     <thead>
                         <tr>
                             <th>ID</th>
+                            <th>Image</th>
                             <th>Name</th>
                             <th>Slug</th>
-                            <th>Description</th>
+                            
                             <th>Status</th>
                             <th>Action</th>
                         </tr>
@@ -55,6 +56,7 @@
                     @csrf
                     <input type="hidden" name="id" value="">
                     <input type="hidden" name="operation" value="">
+                    <input type="hidden" name="hidimage" value="">
 
                     <div class="modal-body">
                         <div class="form-group">
@@ -77,14 +79,6 @@
                             <input name="image" accept="image/*" class="form-control" type="file">
                         </div>
                         
-                        <div class="form-group">
-                            <label>Status <span class="text-danger">*</span></label>
-                            <select name="status" id="status" class="form-control select2" multiple style="width: 100%">
-                                @foreach ($statuses as $status)
-                                    <option value="{{$status}}">{{$status}}</option>
-                                @endforeach
-                            </select>
-                        </div>
                     </div>
 
                     <div class="modal-footer">
@@ -118,6 +112,14 @@
                         return '<b class="text-primary">' + data + '</b>';
                     },
                 },
+                 {
+                    data:'image',
+                    name: 'image',
+                    render: function(data, type, full, meta){
+                        return '<img src='+'{{config('app.url')}}/uploads/departments/'+data+' height="50px" width="50px">';
+                    },
+                    searchable: true,
+                },
                 {
                     data:'name',
                     name: 'name',
@@ -134,15 +136,7 @@
                     },
                     searchable: true,
                 },
-                {
-                    data:'description',
-                    name: 'description',
-                    render: function(data, type, full, meta){
-                        return `<b class="text-primary" style="text-transform: capitalize">`+data+`</b>`
-                    },
-                    searchable: false,
-                    orderable: false,
-                },
+            
                 {
                     data:'status',
                     name: 'status',
@@ -212,9 +206,9 @@
                         },
                         success:function(data){
                             notify(data.status, 'success');
-                            // form[0].reset();
+                             form[0].reset();
                             // form.find('#status').val('').trigger('change');
-                            // $('#bannermodal').modal('hide');
+                             $('#departmentmodal').modal('hide');
                             form.find('button[type="submit"]').button('reset');
                             $('#my-datatable').dataTable().api().ajax.reload();
                         },
@@ -241,6 +235,7 @@
                         $('#departmentmodal').find('[name=operation]').val('edit');
                         $('#departmentmodal').find('[name=name]').val(result.name);
                         $('#departmentmodal').find('[name=slug]').val(result.slug);
+                        $('#departmentmodal').find('[name=hidimage]').val(result.image);
                         $('#departmentmodal').find('[name=description]').val(result.description);
                         //$('#bannermodal').find('[name=type]').val(result.type);
                         $('#departmentmodal').find('#status').val(result.status).trigger('change'); //This is not an array

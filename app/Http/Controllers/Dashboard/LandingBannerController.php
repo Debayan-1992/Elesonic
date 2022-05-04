@@ -30,20 +30,20 @@ class LandingBannerController extends Controller
         switch ($request->operation) {
             case 'new': //For create
                 $rules = array(
-                    'title' => 'required',
-                    'description' => 'required',
+                  
+                   
                     'image' => 'required',
-                    'status' => 'required',
+                    
                 );
             break;
 
             case 'edit': //For edit
                 $rules = array(
                     'id' => 'required',
-                    'title' => 'required',
-                    'description' => 'required',
-                    'image' => 'required',
-                    'status' => 'required',
+                   
+                 
+                   
+                  
                 );
             break;
         }
@@ -61,17 +61,30 @@ class LandingBannerController extends Controller
             case 'edit':     
             //break; //Purposely doing fall through, uncomment to stop
             case 'new':
-
-                $file=$request->file('image');
-                $imgname=time().'_'.$file->getClientOriginalName();
+            if(@$request->file('image')){
+                $file = $request->file('image');
                 
-                $action = LandingBanner::updateOrCreate(['id' => $request->id], [
-                    'b_title' => $request->title,
-                    'b_description' => $request->description,
-                    'image' => $imgname,
-                    'status' => $request->status,
-                ]);
+                $ext = substr(strrchr($file->getClientOriginalName(), '.'), 1);
+                $new_name1 = str_replace(".", "", microtime());
+                $new_name = str_replace(" ", "_", $new_name1);
+                $filename = $new_name.'.'.$ext;
+
+                if(\Image::make($file->getRealPath())->save('uploads/banners/'.$filename)){
+                    $imgname = $filename;
+                } else{
+                    return response()->json(['status' => 'File cannot be saved to server.'], 400);
+                }
                 $file->move(public_path('uploads/banners'),$imgname);
+            }else{
+                $imgname = $request->hidimage;
+            }
+                $action = LandingBanner::updateOrCreate(['id' => $request->id], [
+                    'b_title' => "",
+                    'b_description' => "",
+                    'image' => @$imgname,
+                    'status' => 'A',
+                ]);
+                
                 //If id exist in request then update against id or create record by taking the 2nd param
             break;
         }

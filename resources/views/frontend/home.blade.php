@@ -8,15 +8,19 @@
 			<div id="banner-slider" class="owl-carousel">
 
 				<!-- item -->
-				<div class="item">
-					<img src="{{asset('custom_resource/images/banner1.jpg')}}">
-				</div>
+				@if($banners)
+					@foreach($banners as $row)
+					<div class="item">
+						<img src="{{config('app.url')}}/uploads/banners/{{ $row->image }}">
+					</div>
+					@endforeach
+				@endif
 				<!-- item -->
 
 				<!-- item -->
-				<div class="item">
+				<!-- <div class="item">
 					<img src="{{asset('custom_resource/images/banner1.jpg')}}">
-				</div>
+				</div> -->
 				<!-- item -->
 			</div>
 		</div>
@@ -24,8 +28,8 @@
 		<!-- text-block -->
 			<div class="text-block">
 				<div class="container">				
-					<h1>Innovation starts<br> at the source</h1>
-					<p>Our range of Digital Microprocessor-Based Radiographic X-Ray Machines with <br> Digital Flat-Panel (DR) and C-Arm Mobile Image Intensifier.</p>
+					<h1>{{ $titles->banner_title_one }}<br> {{ $titles->banner_title_two }}</h1>
+					{{ $titles->banner_description }}
 				</div>
 			</div>
 		<!-- text-block -->
@@ -34,6 +38,7 @@
 
 
 <!-- departments-block start-->
+@if(!empty($departments))
 	<div class="departments-block">
 		<div class="container">
 			<div class="top-block">
@@ -45,96 +50,31 @@
 				<div class="row">
 
 					<!-- item -->
+					@foreach($departments as $row)
 						<div class="col-lg-2">
 							<div class="item">
 								<a href="#">
 									<div class="figure">
-									<img src="{{asset('custom_resource/images/departments/depart-img1.png')}}">
+									<img src="{{config('app.url')}}/uploads/departments/{{ $row->image }}">
 									</div>
-									<p>Consumable & Disposable</p>
+									<p>{{ $row->name }}</p>
 								</a>
 							</div>
 						</div>
+						@endforeach
 					<!-- item -->
-
-					<!-- item -->
-						<div class="col-lg-2">
-							<div class="item">
-								<a href="#">
-									<div class="figure">
-									<img src="{{asset('custom_resource/images/departments/depart-img2.png')}}">
-									</div>
-									<p>Lab Diagnostics & Instruments</p>
-								</a>
-							</div>
-						</div>
-					<!-- item -->
-
-					<!-- item -->
-						<div class="col-lg-2">
-							<div class="item">
-								<a href="#">
-									<div class="figure">
-									<img src="{{asset('custom_resource/images/departments/depart-img3.png')}}">
-									</div>
-									<p>Medical Device & Equipment</p>
-								</a>
-							</div>
-						</div>
-					<!-- item -->
-
-
-					<!-- item -->
-						<div class="col-lg-2">
-							<div class="item">
-								<a href="#">
-									<div class="figure">
-									<img src="{{asset('custom_resource/images/departments/depart-img1.png')}}">
-									</div>
-									<p>Consumable & Disposable</p>
-								</a>
-							</div>
-						</div>
-					<!-- item -->
-
-
-					<!-- item -->
-						<div class="col-lg-2">
-							<div class="item">
-								<a href="#">
-									<div class="figure">
-									<img src="{{asset('custom_resource/images/departments/depart-img2.png')}}">
-									</div>
-									<p>Lab Diagnostics & Instruments</p>
-								</a>
-							</div>
-						</div>
-					<!-- item -->
-
-					<!-- item -->
-						<div class="col-lg-2">
-							<div class="item">
-								<a href="#">
-									<div class="figure">
-									<img src="{{asset('custom_resource/images/departments/depart-img3.png')}}">
-									</div>
-									<p>Medical Device & Equipment</p>
-								</a>
-							</div>
-						</div>
-					<!-- item -->
-
-
-
+			
 				</div>
 			</div>
 
 		</div>
 	</div>
+	@endif
 <!-- departments-block end -->
 
 
 <!-- popular-products -->
+@if(!empty($popularproducts))
 	<div class="popular-products">
 		<div class="container">
 			<h3>Popular Products</h3>
@@ -142,128 +82,34 @@
 			<!---->
 				<div class="slider-bd">
 					<div id="products-slider" class="owl-carousel">
-
+						@foreach($popularproducts as $row)
 						<!-- item -->
 						<div class="item">
 							<a href="#">
 								<div class="img-figure">
-									<img src="{{asset('custom_resource/images/popular-products/img1.png')}}">
+									<img src="{{config('app.url')}}/uploads/products/{{ $row->photos }}">
 								</div>
 
-								<p>Medical Diagnostic X-ray equipments</p>
+								<p>{{ $row->name }}</p>
 
 							</a>						
 						</div>
+						@endforeach
 						<!-- item -->
-
-						<!-- item -->
-						<div class="item">
-							<a href="#">
-								<div class="img-figure">
-									<img src="{{asset('custom_resource/images/popular-products/img2.png')}}">
-								</div>
-
-								<p>High quality & cost ffective CT Scan</p>
-
-							</a>						
-						</div>
-						<!-- item -->
-
-						<!-- item -->
-						<div class="item">
-							<a href="#">
-								<div class="img-figure">
-									<img src="{{asset('custom_resource/images/popular-products/img3.png')}}">
-								</div>
-
-								<p>ECG Machine</p>
-
-							</a>						
-						</div>
-						<!-- item -->
-
-						<!-- item -->
-						<div class="item">
-							<a href="#">
-								<div class="img-figure">
-									<img src="{{asset('custom_resource/images/popular-products/img4.png')}}">
-								</div>
-
-								<p>Medical Diagnostic X-ray equipments</p>
-
-							</a>						
-						</div>
-						<!-- item -->
-
-
-
-						<!-- item -->
-						<div class="item">
-							<a href="#">
-								<div class="img-figure">
-									<img src="{{asset('custom_resource/images/popular-products/img1.png')}}">
-								</div>
-
-								<p>Medical Diagnostic X-ray equipments</p>
-
-							</a>						
-						</div>
-						<!-- item -->
-
-						<!-- item -->
-						<div class="item">
-							<a href="#">
-								<div class="img-figure">
-									<img src="{{asset('custom_resource/images/popular-products/img2.png')}}">
-								</div>
-
-								<p>High quality & cost ffective CT Scan</p>
-
-							</a>						
-						</div>
-						<!-- item -->
-
-						<!-- item -->
-						<div class="item">
-							<a href="#">
-								<div class="img-figure">
-									<img src="{{asset('custom_resource/images/popular-products/img3.png')}}">
-								</div>
-
-								<p>ECG Machine</p>
-
-							</a>						
-						</div>
-						<!-- item -->
-
-						<!-- item -->
-						<div class="item">
-							<a href="#">
-								<div class="img-figure">
-									<img src="{{asset('custom_resource/images/popular-products/img4.png')}}">
-								</div>
-
-								<p>Medical Diagnostic X-ray equipments</p>
-
-							</a>						
-						</div>
-						<!-- item -->
-
-						
-												
-
 						
 					</div>
 				</div>
 			<!---->
 		</div>
 	</div>
+	@endif
 <!-- popular-products -->
 
 
 
 
 <!-- popular-services-block start-->
+@if(!empty($services))
 	<div class="popular-services-block">
 		<div class="container">
 			<div class="top-block">
@@ -275,170 +121,25 @@
 				<div class="row">
 
 					<!-- item -->
+					@foreach($services as $row)
 						<div class="col-lg-2">
 							<div class="item">
 								<a href="#">
 									<div class="figure">
-									<img src="{{asset('custom_resource/images/popular-services/img1.png')}}">
+									<img src="{{config('app.url')}}/uploads/services/{{ $row->image }}">
 									</div>
-									<p>Oxygen Concentrator</p>
+									<p>{{ $row->name }}</p>
 								</a>
 							</div>
 						</div>
+						@endforeach
 					<!-- item -->
-
-					<!-- item -->
-						<div class="col-lg-2">
-							<div class="item">
-								<a href="#">
-									<div class="figure">
-									<img src="{{asset('custom_resource/images/popular-services/img2.png')}}">
-									</div>
-									<p>X Ray Machine</p>
-								</a>
-							</div>
-						</div>
-					<!-- item -->
-
-					<!-- item -->
-						<div class="col-lg-2">
-							<div class="item">
-								<a href="#">
-									<div class="figure">
-									<img src="{{asset('custom_resource/images/popular-services/img3.png')}}">
-									</div>
-									<p>BiPAP Machine</p>
-								</a>
-							</div>
-						</div>
-					<!-- item -->
-
-					<!-- item -->
-						<div class="col-lg-2">
-							<div class="item">
-								<a href="#">
-									<div class="figure">
-									<img src="{{asset('custom_resource/images/popular-services/img4.png')}}">
-									</div>
-									<p>CT Scan</p>
-								</a>
-							</div>
-						</div>
-					<!-- item -->
-
-					<!-- item -->
-						<div class="col-lg-2">
-							<div class="item">
-								<a href="#">
-									<div class="figure">
-									<img src="{{asset('custom_resource/images/popular-services/img5.png')}}">
-									</div>
-									<p>Hemodialysis Machine</p>
-								</a>
-							</div>
-						</div>
-					<!-- item -->
-
-					<!-- item -->
-						<div class="col-lg-2">
-							<div class="item">
-								<a href="#">
-									<div class="figure">
-									<img src="{{asset('custom_resource/images/popular-services/img6.png')}}">
-									</div>
-									<p>Hemodialysis Machine</p>
-								</a>
-							</div>
-						</div>
-					<!-- item -->
-
-					<!-- item -->
-						<div class="col-lg-2">
-							<div class="item">
-								<a href="#">
-									<div class="figure">
-									<img src="{{asset('custom_resource/images/popular-services/img1.png')}}">
-									</div>
-									<p>Oxygen Concentrator</p>
-								</a>
-							</div>
-						</div>
-					<!-- item -->
-
-					<!-- item -->
-						<div class="col-lg-2">
-							<div class="item">
-								<a href="#">
-									<div class="figure">
-									<img src="{{asset('custom_resource/images/popular-services/img2.png')}}">
-									</div>
-									<p>X Ray Machine</p>
-								</a>
-							</div>
-						</div>
-					<!-- item -->
-
-					<!-- item -->
-						<div class="col-lg-2">
-							<div class="item">
-								<a href="#">
-									<div class="figure">
-									<img src="{{asset('custom_resource/images/popular-services/img3.png')}}">
-									</div>
-									<p>BiPAP Machine</p>
-								</a>
-							</div>
-						</div>
-					<!-- item -->
-
-					<!-- item -->
-						<div class="col-lg-2">
-							<div class="item">
-								<a href="#">
-									<div class="figure">
-									<img src="{{asset('custom_resource/images/popular-services/img4.png')}}">
-									</div>
-									<p>CT Scan</p>
-								</a>
-							</div>
-						</div>
-					<!-- item -->
-
-					<!-- item -->
-						<div class="col-lg-2">
-							<div class="item">
-								<a href="#">
-									<div class="figure">
-									<img src="{{asset('custom_resource/images/popular-services/img5.png')}}">
-									</div>
-									<p>Hemodialysis Machine</p>
-								</a>
-							</div>
-						</div>
-					<!-- item -->
-
-					<!-- item -->
-						<div class="col-lg-2">
-							<div class="item">
-								<a href="#">
-									<div class="figure">
-									<img src="{{asset('custom_resource/images/popular-services/img6.png')}}">
-									</div>
-									<p>Hemodialysis Machine</p>
-								</a>
-							</div>
-						</div>
-					<!-- item -->
-
-					
-
-
-
 				</div>
 			</div>
 
 		</div>
 	</div>
+	@endif
 <!-- departments-block end -->
 
 

@@ -41,6 +41,21 @@
                                             <label>Site Title <span class="text-danger">*</span></label>
                                             <input name="title" value="{{$settings->title}}" class="form-control">
                                         </div>
+
+                                        <div class="form-group col-md-6">
+                                            <label>Banner Title One<span class="text-danger">*</span></label>
+                                            <input name="banner_title_one" value="{{$settings->banner_title_one}}" class="form-control">
+                                        </div>
+
+                                        <div class="form-group col-md-6">
+                                            <label>Banner Title Two<span class="text-danger">*</span></label>
+                                            <input name="banner_title_two" value="{{$settings->banner_title_two}}" class="form-control">
+                                        </div>
+
+                                        <div class="form-group col-md-6">
+                                            <label>Banner Description<span class="text-danger">*</span></label>
+                                            <input name="banner_description" value="{{$settings->banner_description}}" class="form-control">
+                                        </div>
                                     </div>
                                     <footer class="text-left">
                                         <button type="button" onclick="anchor('smssettings')" class="btn btn-primary btn-md">Next&nbsp;<i class="fa fa-arrow-circle-right"></i></button>

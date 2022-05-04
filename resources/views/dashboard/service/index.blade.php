@@ -28,9 +28,9 @@
                     <thead>
                         <tr>
                             <th>ID</th>
+                             <th>Image</th>
                             <th>Name</th>
                             <th>Slug</th>
-                            <th>Description</th>
                             <th>Popular</th>
                             <th>Status</th>
                             <th>Action</th>
@@ -56,6 +56,7 @@
                     @csrf
                     <input type="hidden" name="id" value="">
                     <input type="hidden" name="operation" value="">
+                     <input type="hidden" name="hidimage" value="">
 
                     <div class="modal-body">
                         <div class="form-group">
@@ -85,14 +86,7 @@
                             </select>
                         </div>
                         
-                        <div class="form-group">
-                            <label>Status <span class="text-danger">*</span></label>
-                            <select name="status" id="status" class="form-control select2" multiple style="width: 100%">
-                                @foreach ($statuses as $status)
-                                    <option value="{{$status}}">{{$status}}</option>
-                                @endforeach
-                            </select>
-                        </div>
+                     
                     </div>
 
                     <div class="modal-footer">
@@ -127,6 +121,14 @@
                     },
                 },
                 {
+                    data:'image',
+                    name: 'image',
+                    render: function(data, type, full, meta){
+                        return '<img src='+'{{config('app.url')}}/uploads/services/'+data+' height="50px" width="50px">';
+                    },
+                    searchable: true,
+                },
+                {
                     data:'name',
                     name: 'name',
                     render: function(data, type, full, meta){
@@ -141,15 +143,6 @@
                         return data
                     },
                     searchable: true,
-                },
-                {
-                    data:'description',
-                    name: 'description',
-                    render: function(data, type, full, meta){
-                        return `<b class="text-primary" style="text-transform: capitalize">`+data+`</b>`
-                    },
-                    searchable: false,
-                    orderable: false,
                 },
                 {
                     data:'popular',
@@ -234,9 +227,9 @@
                         },
                         success:function(data){
                             notify(data.status, 'success');
-                            // form[0].reset();
+                             form[0].reset();
                             // form.find('#status').val('').trigger('change');
-                            // $('#bannermodal').modal('hide');
+                             $('#servicemodal').modal('hide');
                             form.find('button[type="submit"]').button('reset');
                             $('#my-datatable').dataTable().api().ajax.reload();
                         },
@@ -264,6 +257,7 @@
                         $('#servicemodal').find('[name=name]').val(result.name);
                         $('#servicemodal').find('[name=slug]').val(result.slug);
                         $('#servicemodal').find('[name=description]').val(result.description);
+                        $('#servicemodal').find('[name=hidimage]').val(result.image);
                         //$('#bannermodal').find('[name=type]').val(result.type);
                         $('#servicemodal').find('#status').val(result.status).trigger('change'); //This is not an array
                         $('#servicemodal').modal('show');

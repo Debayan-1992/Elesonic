@@ -32,7 +32,7 @@ class ServiceController extends Controller
                     'description' => 'required',
                     'image' => 'required',
                     'popular' => 'required',
-                    'status' => 'required',
+                    
                 );
             break;
 
@@ -42,9 +42,8 @@ class ServiceController extends Controller
                     'name' => 'required',
                     'slug' => 'required',
                     'description' => 'required',
-                    'image' => 'required',
                     'popular' => 'required',
-                    'status' => 'required',
+                  
                 );
             break;
         }
@@ -63,18 +62,33 @@ class ServiceController extends Controller
             //break; //Purposely doing fall through, uncomment to stop
             case 'new':
 
-                $file=$request->file('image');
-                $imgname=time().'_'.$file->getClientOriginalName();
+               if(@$request->file('image')){
+                $file = $request->file('image');
+                
+                $ext = substr(strrchr($file->getClientOriginalName(), '.'), 1);
+                $new_name1 = str_replace(".", "", microtime());
+                $new_name = str_replace(" ", "_", $new_name1);
+                $filename = $new_name.'.'.$ext;
+
+                if(\Image::make($file->getRealPath())->save('uploads/services/'.$filename)){
+                    $imgname = $filename;
+                } else{
+                    return response()->json(['status' => 'File cannot be saved to server.'], 400);
+                }
+                $file->move(public_path('uploads/services'),$imgname);
+            }else{
+                $imgname = $request->hidimage;
+            }
                 
                 $action = Service::updateOrCreate(['id' => $request->id], [
                     'name' => $request->name,
                     'slug' => strtolower(str_replace(' ', '_', $request->slug)),
                     'description' => $request->description,
-                    'image' => $imgname,
+                    'image' => @$imgname,
                     'popular' => $request->popular,
-                    'status' => $request->status,
+                    'status' => 'A',
                 ]);
-                $file->move(public_path('uploads/services'),$imgname);
+               
                 //If id exist in request then update against id or create record by taking the 2nd param
             break;
         }

@@ -28,8 +28,7 @@
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Title</th>
-                            <th>Description</th>
+                            <th>Image</th>
                             <th>Status</th>
                             <th>Action</th>
                         </tr>
@@ -54,14 +53,15 @@
                     @csrf
                     <input type="hidden" name="id" value="">
                     <input type="hidden" name="operation" value="">
+                     <input type="hidden" name="hidimage" value="">
 
                     <div class="modal-body">
-                        <div class="form-group">
+                        <div class="form-group" style="display: none;">
                             <label>Title <span class="text-danger">*</span></label>
                             <input type="text" value="" name="title" class="form-control" placeholder="Enter Banner Title" required>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group" style="display: none;">
                             <label>Description <span class="text-danger">*</span></label>
                             <input type="text" value="" name="description" class="form-control" placeholder="Enter Banner Description" required>
                         </div>
@@ -71,7 +71,7 @@
                             <input name="image" accept="image/*" class="form-control" type="file">
                         </div>
                         
-                        <div class="form-group">
+                        <div class="form-group" style="display: none;">
                             <label>Status <span class="text-danger">*</span></label>
                             <select name="status" id="status" class="form-control select2" multiple style="width: 100%">
                                 @foreach ($statuses as $status)
@@ -113,22 +113,14 @@
                     },
                 },
                 {
-                    data:'b_title',
-                    name: 'title',
+                    data:'image',
+                    name: 'image',
                     render: function(data, type, full, meta){
-                        return data
+                        return '<img src='+'{{config('app.url')}}/uploads/banners/'+data+' height="50px" width="50px">';
                     },
                     searchable: true,
                 },
-                {
-                    data:'b_description',
-                    name: 'description',
-                    render: function(data, type, full, meta){
-                        return `<b class="text-primary" style="text-transform: capitalize">`+data+`</b>`
-                    },
-                    searchable: false,
-                    orderable: false,
-                },
+               
                 {
                     data:'status',
                     name: 'status',
@@ -198,9 +190,9 @@
                         },
                         success:function(data){
                             notify(data.status, 'success');
-                            // form[0].reset();
+                             form[0].reset();
                             // form.find('#status').val('').trigger('change');
-                            // $('#bannermodal').modal('hide');
+                             $('#bannermodal').modal('hide');
                             form.find('button[type="submit"]').button('reset');
                             $('#my-datatable').dataTable().api().ajax.reload();
                         },
@@ -227,6 +219,7 @@
                         $('#bannermodal').find('[name=operation]').val('edit');
                         $('#bannermodal').find('[name=title]').val(result.b_title);
                         $('#bannermodal').find('[name=description]').val(result.b_description);
+                        $('#bannermodal').find('[name=hidimage]').val(result.image);
                         //$('#bannermodal').find('[name=type]').val(result.type);
                         $('#bannermodal').find('#status').val(result.status).trigger('change'); //This is not an array
                         $('#bannermodal').modal('show');
