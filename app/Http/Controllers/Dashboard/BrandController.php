@@ -80,7 +80,7 @@ class BrandController extends Controller
     {
         $data['activemenu']['main'] = 'products';
         $data['activemenu']['sub'] = 'edit';
-        $id =  request()->segment(4);
+        $id =  request()->segment(5);
         $brand = Brand::findOrFail($id);
         $data['brand'] = $brand;
         return view('dashboard.brand.edit', $data);

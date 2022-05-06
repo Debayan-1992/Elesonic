@@ -32,7 +32,7 @@
                         </div>
                         <div class="form-group col-md-6">
                             <label>Slug <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control"  name="slug" value="{{isset($category) ? $category->slug : ''}}">
+                            <input type="text" class="form-control" id="slug" onkeyup="slugname(this.value)"  name="slug" value="{{isset($category) ? $category->slug : ''}}">
                         </div>
                         <div class="form-group col-md-6">
                             <label>Parent </label>
@@ -93,6 +93,12 @@
 
 @push('script')
     <script>
+        function slugname(value){
+            var value = value;
+            var new_value =value.toLowerCase();
+            var new_value =new_value.replace(/ /g, "-");
+            $("#slug").val(new_value);
+        }
         $('#categoryform').validate({
             rules: {
                 name: {

@@ -16,7 +16,12 @@ use App\Model\Setting;
 use App\Model\Product;
 use App\Model\Department;
 use App\Model\Service;
+use App\Model\Brand;
+use App\Model\Category as Categorys;
+use App\Utility\CategoryUtility;
 
+use App\Model\Product_related_images;
+use DB;
 class FrontendController extends Controller
 {
     use AuthenticatesUsers;
@@ -57,6 +62,98 @@ class FrontendController extends Controller
         $data['departments']  = $departments;
         $data['services']  = $services;
         return view('frontend.home', $data);
+    }
+
+    function product_list(Request $request,$slug,$id){
+        $cat_id = base64_decode($id);
+        $all_brand  = [];
+        $parentCategory = Categorys::where('status','A')->where('parent_id',0)
+        ->get();
+        $category      = Categorys::select('parent_id','id', 'name', 'icon','slug','status')->where('id',@$cat_id)->where('status','A')->first();
+        $subCategories = Categorys::select('parent_id','id', 'name', 'icon','slug','status')->where('parent_id',@$cat_id)->where('status','A')->get();
+        if(!empty($subCategories)){
+            $category_ids = CategoryUtility::children_ids($cat_id);
+            $category_ids[] = $cat_id;
+        }
+        else{
+            $category_ids[] = $cat_id;
+        }
+       
+        $products  =  Product::whereIn('products.category_id', $category_ids)->with('category');
+        $products  =  $products->where('products.status','A')->orderBy('id','DESC');
+        $products  =  $products->paginate(10);
+
+        $productsCount  =  Product::whereIn('products.category_id', $category_ids)->with('category');
+        $productsCount  =  $productsCount->where('products.status','A')->orderBy('id','DESC');
+        $productsCount  =  $productsCount->get();
+        if(!empty($productsCount)){
+            foreach ($productsCount as $key => $product){
+            if($product->brand_id != null) {
+                    $brandName = Brand::where('id',$product->brand_id)->first();
+                    if(!in_array($brandName->id.'- '.$brandName->name, $all_brand)){
+                        array_push($all_brand,$brandName->id.'- '.$brandName->name);
+                    }
+                }
+            }
+        }
+        $data['subCategories']          = $subCategories;
+        $data['products']               = $products;
+        $data['category']               = $category;
+        $data['cat_id']                 = $cat_id;
+        $data['parentCategory']         = $parentCategory;
+        $data['productsCount']          = $productsCount;
+        $data['filterBrands']           = $all_brand;
+        return view('frontend.product_list',$data);
+    }
+    function product_details(Request $request,$slug,$id){
+        $pro_id = base64_decode($id);
+        $productsCount              =  Product::where('products.id', $pro_id);
+        $productsCount              =  $productsCount->where('products.status','A');
+        $productsCount              =  $productsCount->first();
+        $data['product']            =  $productsCount;
+        $relatedImage = Product_related_images::where('product_id',$pro_id)
+        ->get();
+        $relatedProducts = Product::where('products.status','A')->where('products.category_id',$productsCount->category_id)->where('products.id','!=',$pro_id)->with('category')
+        ->get();
+        
+        $data['relatedImage']       = $relatedImage;
+        $data['relatedProducts']    = $relatedProducts;
+        return view('frontend.product_details',$data);
+    }
+
+    function get_filter_data(Request $request){
+        $cat_id  = $request->catId;
+        $brandId = $request->brandId;
+        $priceShort = $request->priceShort;
+        $max_price =  $request->max_price;
+        $min_price =  $request->min_price;
+        $subCategories = Categorys::select('parent_id','id', 'name', 'icon','slug','status')->where('parent_id',@$cat_id)->where('status','A')->get();
+        if(!empty($subCategories)){
+            $category_ids = CategoryUtility::children_ids($cat_id);
+            $category_ids[] = $cat_id;
+        }
+        else{
+            $category_ids[] = $cat_id;
+        }
+       
+        $products  =  Product::whereIn('products.category_id', $category_ids)->with('category');
+        if(!empty($brandId)){
+            $products  =  $products->whereIn('products.brand_id',$brandId);
+        }
+        if($priceShort == "h_t_l"){
+            $products  =  $products->orderBy('products.unit_price','DESC');
+        }
+        if($priceShort == "l_t_h"){
+            $products  =  $products->orderBy('products.unit_price','ASC');
+        }
+        if($max_price != "" && $min_price != ""){
+            $products  =  $products->where('products.unit_price','<=',$max_price);
+            $products  =  $products->where('products.unit_price','>=',$min_price);
+        }
+        $products  =  $products->where('products.status','A')->orderBy('id','DESC');
+        $products  =  $products->get();
+        $data['products']               = $products;
+        return view('frontend.filter_data',$data);
     }
 
     public function d_index()

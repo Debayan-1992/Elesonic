@@ -65,7 +65,7 @@ class AttributeController extends Controller
     {
         $data['activemenu']['main'] = 'products';
         $data['activemenu']['sub'] = 'edit';
-        $id =  request()->segment(4);
+        $id =  request()->segment(5);
         $attribute = Attribute::findOrFail($id);
         $data['attribute'] = $attribute;
       

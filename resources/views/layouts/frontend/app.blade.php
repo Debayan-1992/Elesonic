@@ -16,7 +16,9 @@
 	<!-- font-family: 'Abril Fatface', cursive; -->
 
 	<!-- font -->
-
+<!-- font-awesome -->
+	<link rel="stylesheet" href="{{asset('custom_resource/css/font-awesome.min.css')}}">
+	<!-- font-awesome -->
 
 	 <link rel="stylesheet" type="text/css" href="{{asset('custom_resource/css/bootstrap.min.css')}}">
 
@@ -24,20 +26,30 @@
 	<!-- owl-slider -->
 	<link rel="stylesheet" type="text/css" href="{{asset('custom_resource/css/owl.carousel.min.css')}}">
 	<!-- owl-slider -->
-
-	<!-- font-awesome -->
-	<link rel="stylesheet" href="{{asset('custom_resource/css/font-awesome.min.css')}}">
-	<!-- font-awesome -->
+    <!-- zoomer -->
+		<link rel='stylesheet' href="{{asset('custom_resource/css/zoomer/xzoom.css')}}">
+	<!-- zoomer -->
+	
 
 	<link rel="stylesheet" type="text/css" href="{{asset('custom_resource/css/style.css')}}">
-
+	
 	@yield('header')
 	@stack('header')
 	 <!-- countru-code -->
 
 </head>
 <body>
+ <div id="loadList" style="text-align: center; display: none;position: fixed;top: 0;left: 0;width: 100%;height: 100%;z-index: 999;background: rgba(0, 0, 0, 0.8);" class="loader">
+  <div style="width: 100%;height: 100%;display: flex;flex-wrap: nowrap;justify-content: center;align-items: center;">
+    <div class="col-12">
+      <img src="https://img.icons8.com/material-outlined/96/ffffff/spinner--v4.png"><br>
 
+    <p style="color:  #fff;">Please wait... </p> 
+    </div>
+    
+  </div>
+
+</div>
 <!-- header start -->
 
 	<header class="header-block">
@@ -112,19 +124,24 @@
 		<div class="footer-bd">
 			<div class="row">
 
-				
+			@php
+				$categories = App\Model\Category::where('parent_id', 0)->where('status','A')
+				->get();
+			@endphp
 				<!-- item -->
 					<div class="col-lg-3">
 						<div class="item quick-links-block">
 							<h4>CATEGORIES</h4>
 							<ul>
-								<li><a href="#">Consumables & Disposables</a></li>
-								<li><a href="#">Lab Diagnostics & Instruments</a></li>
+								@foreach($categories as $row)
+								<li><a href="{{route('product-list')}}/{{ $row->slug }}/{{base64_encode($row->id)}}">{{ $row->name }}</a></li>
+								@endforeach
+								<!-- <li><a href="#">Lab Diagnostics & Instruments</a></li>
 								<li><a href="#">Medical Device & Equipment</a></li>
 								<li><a href="#">Dental</a></li>
 								<li><a href="#">Medical Implants</a></li>
 								<li><a href="#">Surgical Instruments</a></li>
-								<li><a href="#">Hospital Establishment</a></li>
+								<li><a href="#">Hospital Establishment</a></li> -->
 							</ul>
 						</div>
 					</div>
@@ -231,10 +248,14 @@
 
 <script type="text/javascript" src="{{asset('custom_resource/js/jquery-3.6.0.min.js')}}"></script>
 <script type="text/javascript" src="{{asset('custom_resource/js/bootstrap.min.js')}}"></script>
+<!-- owl-js -->
+<script type="text/javascript" src="{{asset('custom_resource/js/owl.carousel.min.js')}}"></script>
+<!-- owl-js -->
+<!-- zoomer -->
 
-<!-- owl-js -->
-<script src='{{asset('custom_resource/js/owl.carousel.min.js')}}'></script>
-<!-- owl-js -->
+<script  type="text/javascript" src="{{asset('custom_resource/js/zoomer/script.js')}}"></script>
+<script type="text/javascript" src="{{asset('custom_resource/js/zoomer/xzoom.min.js')}}"></script>
+<!-- zoomer -->
 
 <script type="text/javascript" src="{{asset('custom_resource/js/custome.js')}}"></script>
 

@@ -155,7 +155,7 @@ class ProductController extends Controller
     {
         $data['activemenu']['main'] = 'products';
         $data['activemenu']['sub'] = 'edit';
-        $id =  request()->segment(4);
+        $id =  request()->segment(5);
         $product = Product::findOrFail($id);
         $categories = Category::where('parent_id', 0)->where('status','A')
         ->with('childrenCategories')

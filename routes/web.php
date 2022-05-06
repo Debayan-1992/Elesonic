@@ -33,6 +33,10 @@ Route::post('login', [FrontendController::class, 'signin_post'])->name('login');
 Route::get('/signup', [FrontendController::class, 'signup'])->name('signup');
 Route::post('/signup', [FrontendController::class, 'signup_post'])->name('signup');
 Route::get('/contact_us', [FrontendController::class, 'contact_us'])->name('contact_us');
+Route::get('/product-list/{type?}/{id?}', [FrontendController::class, 'product_list'])->name('product-list');
+Route::get('/product-details/{type?}/{id?}', [FrontendController::class, 'product_details'])->name('product-details');
+Route::post('/get-filter-data', [FrontendController::class, 'get_filter_data'])->name('get-filter-data');
+
 
 //Auth::routes(['verify' => true]); //This has been removed because these routes are being manually used
 

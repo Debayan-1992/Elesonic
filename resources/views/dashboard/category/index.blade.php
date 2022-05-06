@@ -57,7 +57,7 @@
 
                         <div class="form-group">
                             <label>Slug <span class="text-danger">*</span></label>
-                            <input type="text" value="" name="slug" class="form-control" placeholder="Enter Slug" required>
+                            <input type="text" value="" onkeyup="slugname(this.value)" id="slug" name="slug" class="form-control" placeholder="Enter Slug" required>
                         </div>
 
                         <div class="form-group">
@@ -115,6 +115,12 @@
 
 @push('script')
     <script src="//unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    function slugname(value){
+            var value = value;
+            var new_value =value.toLowerCase();
+            var new_value =new_value.replace(/ /g, "-");
+            $("#slug").val(new_value);
+        }
     <script>
         function edit(id){
             var url = '{{ route("dashboard.category.edit", ":slug") }}';

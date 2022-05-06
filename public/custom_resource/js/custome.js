@@ -113,5 +113,32 @@ jQuery("#logo-slider").owlCarousel( {
 
 
 
+// seller-slider
+
+jQuery("#related-products").owlCarousel( {
+
+    margin:12,
+    autoplay: true,
+    responsiveClass: true,
+    autoplayTimeout: 5000,
+    smartSpeed: 800,
+    loop:false,
+    nav:true,
+    dots:false,
+     responsive: {
+      0: {
+        items: 1
+      },
+      600: {
+        items:2
+      },
+      1200: {
+        items:5
+      }
+    }
+});
+
+// seller-slider
+
 
 
