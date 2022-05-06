@@ -26,7 +26,7 @@ class AppServiceProvider extends ServiceProvider
     {
         Schema::defaultStringLength(191);
         $settings = \App\Model\Setting::findorfail(1);
-
+        //dd(config()->all());
         \Config::set([
             'app.name' => $settings->name,
             'app.title' => $settings->title,

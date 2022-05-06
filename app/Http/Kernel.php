@@ -63,7 +63,11 @@ class Kernel extends HttpKernel
 
         'checkrole' => \App\Http\Middleware\CheckRole::class, 
         'checkuser' => \App\Http\Middleware\CheckUser::class,
-        'frontendauth' => \App\Http\Middleware\FrontendAuthenticate::class,
+        'frontendguest' => \App\Http\Middleware\RedirectIfFrontendAuthenticated::class,
+        'adminauth' => \App\Http\Middleware\AdminPanelAuthenticate::class,
+        //'frontendauth' => \App\Http\Middleware\FrontendAuthenticate::class,
+        'customerauth' => \App\Http\Middleware\CustomerAuth::class,
+        'sellerauth' => \App\Http\Middleware\SellerAuth::class,
     ];
 
     /**

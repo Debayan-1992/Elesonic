@@ -13,6 +13,7 @@
 					<div class="item">
 						
 						<img src="{{config('app.url')}}/uploads/banners/{{ $row->image }}">
+						{{-- <img src="{{asset('uploads/banners/'.$row->image) }}"> --}}
 					</div>
 					@endforeach
 				@endif

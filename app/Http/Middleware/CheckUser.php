@@ -15,6 +15,7 @@ class CheckUser
      */
     public function handle($request, Closure $next, $guard = null)
     {
+        //dd($request, $next, auth()->user());
         if(\Auth::guard($guard)->check()){
             if(\Auth::guard($guard)->user()->status == 0){
                 if ($request->expectsJson()) {
@@ -24,8 +25,9 @@ class CheckUser
                     return redirect()->route('login')->with('warning', 'Your account has been deactivated, to activate the account contact or write to us');
                 }
             }
+            //dd(auth()->user());
+            return $next($request);
         }
 
-        return $next($request);
     }
 }

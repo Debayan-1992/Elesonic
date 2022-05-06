@@ -38,12 +38,12 @@ class HomeController extends Controller
         return view('frontend.index');
     }
 
-    public function welcome()
+    public function welcome()//This method needs to go in a controller where their's is no middleware verification 
     {
         return view('frontend.welcome');
     }
 
-    public function index()
+    public function index()//This method needs to go in a controller where their's is no middleware verification
     {
         $data['activemenu']['main'] = 'dashboard';
 
@@ -219,7 +219,7 @@ class HomeController extends Controller
                 if(in_array($post->otp, ['send','resend'])){ //If pressed Send OTP button, coming from dashboard/profile.blade
                     //dd($post->all(), session()->all(), $user_data->email);
                     $post['otp'] = Myhelper::otp_get();
-                    $mailFromId = 'elesonic@gm.com';
+                    $mailFromId = config()->get('mail.from.address');
                     Mail::to($user_data->email)->send(new UserCreateOTPMail($user_data->name, $mailFromId, $post['otp']));
                     DB::table('otps')
                     ->insert([
@@ -356,7 +356,7 @@ class HomeController extends Controller
         }
     }
 
-    public function validate_user(Request $request)
+    public function validate_user(Request $request) //This method needs to go in a controller where their's is no middleware verification
     {
         $d_token = decrypt($request->_token);
         $val = User::where('email', $d_token)->firstOrFail();
@@ -373,5 +373,11 @@ class HomeController extends Controller
         else
             return redirect()->route('signin')->with('success', 'Email was already verified');
         //dd('Email was already verified at '.$val->email_verified_at); //Paste view here
+    }
+
+    public function logout()//This method needs to go in a controller where their's is no middleware verification
+    {
+        \Auth::logout();
+        return redirect()->back();
     }
 }

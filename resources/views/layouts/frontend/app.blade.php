@@ -102,7 +102,11 @@
 						<div class="icon-block">
 							<ul>
 								<li class="sell-product"><a href="#">Sell on Elesonic</a></li>
-								<li class="user-icon"><a href="{{route('login')}}"><img src="{{asset('custom_resource/images/user-icon.png')}}"></a></li>
+								@if(Auth::check())
+									<li class="user-icon"><a href="{{route('lgt')}}"><img src="{{asset('custom_resource/images')}}"></a></li>
+								@else
+									<li class="user-icon"><a href="{{route('login')}}"><img src="{{asset('custom_resource/images/user-icon.png')}}"></a></li>
+								@endif
 								<li class="cagrt-icon" ><a href="#"><img src="{{asset('custom_resource/images/cart-icon.png')}}"></a></li>
 							</ul>
 						</div>

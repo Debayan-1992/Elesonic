@@ -31,7 +31,7 @@ class LoginController extends Controller
      * @var string
      */
     //protected $redirectTo = '/home';
-    protected $redirectTo = RouteServiceProvider::ADMIN_HOME;
+    //protected $redirectTo = RouteServiceProvider::ADMIN_HOME;
     
     
 
@@ -45,17 +45,17 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
-    protected function redirectTo()
-    {
-        $user=Auth::user();
+    // protected function redirectTo()
+    // {
+    //     $user=Auth::user();
 
-        if($user->account_type == 1){
-            return '/admin';
-        }else{
-            return '/home';
-        }
+    //     if($user->account_type == 1){
+    //         return '/admin';
+    //     }else{
+    //         return '/home';
+    //     }
 
-    }
+    // }
     public function showLoginForm()
     {
         return view('auth.login');

@@ -16,9 +16,14 @@ class Authenticate extends Middleware
     {
         //After successful login it comes here
         if (!$request->expectsJson()) { //Gets executed if accessing middleware checked route without authentications
-            //dd('Not logged in');
+            //dd('asdfasfas');
             //return route('login');
-            return route('admin_login_form');
+            return redirect()->route('admin_login_form');
+            //return redirect()->to('www.google.com');
         }
     }
+
+    
+
+    
 }

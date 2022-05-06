@@ -27,7 +27,7 @@
               		<i class="fa fa-user-o"></i>
               	</div>
 
-                <input type="text" placeholder="User name" name="email">
+                <input type="text" placeholder="Email" name="email">
               </div>
               <!-- item -->
 
@@ -49,7 +49,7 @@
                 <!---->
 
                 <div class="cl-rt">
-                  <a href="forgot-password.php">Forgot Password ?</a>
+                  <a href="{{route('frontend_password_reset')}}">Forgot Password ?</a>
                 </div>
                 <!---->
                 <div class="clearfix"></div>
@@ -145,10 +145,19 @@
                         },
                         success:function(data){
                             // form.find('button[type="submit"]').button('reset');
-
                             form[0].reset();
-                            notify(data.status, 'success');
-                            window.location.href = "{{route('frontend.d_index')}}";
+                            console.log(data.status);
+                            if(data.user_type == 'customer')
+                            {
+                              notify(data.status, 'success');
+                              window.location.href = "{{route('customer.customer_dashboard')}}";
+                            }
+                            else if(data.user_type == 'seller')
+                            {
+                              notify(data.status, 'success');
+                              window.location.href = "{{route('seller.seller_dashboard')}}";
+                            }
+                            
                         },
                         error: function(errors) {
                             form.find('button[type="submit"]').button('reset');

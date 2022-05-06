@@ -11,7 +11,7 @@
         <div class="login-box-body">
             <p class="login-box-msg">Signup to access our portal</p>
 
-            <form id="registerform" action="{{route('register')}}" method="post">
+            <form id="registerform" action="{{route('admin_register')}}" method="post">
                 @csrf
 
                 <div id="inputfields">
@@ -146,7 +146,7 @@
         function resentregotp(){
             Pace.track(function(){
                 $.ajax({
-                    url: "{{route('register')}}",
+                    url: "{{route('admin_register')}}",
                     method: "POST",
                     data: {'_token':'{{csrf_token()}}','type':'resendotp'},
                     success: function(data){

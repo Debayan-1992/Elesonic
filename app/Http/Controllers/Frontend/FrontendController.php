@@ -2,8 +2,13 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use App\Helpers\Myhelper;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Mail\FrontEndPasswordResetMail;
+use App\Mail\OnlyTextMail;
+use App\Mail\UserCreateMail;
+use App\Mail\UserCreateOTPMail;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
 use App\User;
@@ -19,9 +24,13 @@ use App\Model\Service;
 use App\Model\Brand;
 use App\Model\Category as Categorys;
 use App\Utility\CategoryUtility;
-
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Validator;
 use App\Model\Product_related_images;
-use DB;
+
 class FrontendController extends Controller
 {
     use AuthenticatesUsers;
@@ -30,10 +39,10 @@ class FrontendController extends Controller
      *
      * @return void
      */
-    public function __construct()
-    {
-        //$this->middleware('auth'); //For this function i function was not working
-    }
+    // public function __construct()
+    // {
+    //     //$this->middleware('auth'); //For this function i function was not working
+    // }
 
     /**
      * Show the application dashboard.
@@ -41,6 +50,11 @@ class FrontendController extends Controller
      * @return \Illuminate\Contracts\Support\Renderable
      */
  
+    public function __construct()
+    {
+        $this->middleware('frontendguest')->except('logout');
+    }
+
 
     public function index()
     {
@@ -175,7 +189,6 @@ class FrontendController extends Controller
             'email' => 'required|email|exists:users',
             'password' => 'required'
         );
-
         $validator = \Validator::make($request->all(), $rules);
         if($validator->fails()){
             foreach($validator->errors()->messages() as $key => $value){
@@ -199,13 +212,13 @@ class FrontendController extends Controller
             }
             elseif(\Auth::attempt(['email' => $request->email, 'password' => $request->password, 'role_id' => 5])) 
             {
-                \Session::flash('success', 'Customer Loggin in');
-                return response()->json(['status' => 'Customer Logging in'], 200);
+                \Session::flash('success', 'customer');
+                return response()->json(['status' => 'Customer Logging in', 'user_type' => 'customer'], 200);
             }
             elseif(\Auth::attempt(['email' => $request->email, 'password' => $request->password, 'role_id' => 6])) 
             {
-                \Session::flash('success', 'Customer Loggin in');
-                return response()->json(['status' => 'Seller Logging in'], 200);
+                \Session::flash('success', 'seller');
+                return response()->json(['status' => 'Seller Logging in', 'user_type' => 'seller'], 200);
             }
             else{
                 return response()->json(['status' => 'Account may be blocked'], 400);
@@ -220,19 +233,149 @@ class FrontendController extends Controller
         return view('frontend.sign-up');
     }
 
-    public function signup_post()
+    public function signup_post(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|unique:users,email', //Meaning unique in users table and email column
+            'password' => 'required|string|min:6|confirmed',
+            'mobile' => 'required|min:10|unique:users,mobile', //Meaning unique phone no. in users table
+            'role_id' => 'required',
+        ]);
 
+        if ($validator->fails()) {
+            
+            $arr = array('status' => implode(",",$validator->errors()->all()));
+            return response()->json($arr, 400);
+        }
+
+        $request->request->add(['status'=>1]);
+        $input = $request->all();
+        $input['password'] = Hash::make($input['password']);
+        $val = User::create($input);
+        
+        $post['otp'] = Myhelper::otp_get();
+        $mailFromId = config()->get('mail.from.address');
+        Mail::to($request->email)->send(new UserCreateOTPMail($request->name, $mailFromId, $post['otp']));
+        DB::table('otps')
+        ->insert([
+            'email' => $request->email,
+            'phone' => $request->mobile,
+            'otp' => $post['otp'],
+            'is_active' => 1,
+            'expiry' => Carbon::now()->addMinutes(10)->format('Y-m-d h:i:s'), //Adding 10 mins as expiry
+            'created_at' => Carbon::now()->format('Y-m-d h:i:s'),
+        ]);
+
+        Mail::to($request->email)->send(new UserCreateMail($request->name, $request->email, $request->password));
+        
+        return response()->json(['status' => 'OTP and verification mail has been successfully sent to your Email.'], 200);
     }
 
-    public function contact_us()
+    public function show_passwordreset_form()
     {
-        return view('frontend.contact-us');
+        return view('frontend.password_reset');
     }
 
-    public function contact_us_post()
+    public function passwordreset_post(Request $request)
     {
+        
+        $user = DB::table('users')->where('email', $request->email)->whereIn('role_id', [5,6])->first();
+        //Check if the user exists
+        if (empty($user)) {
+            return response()->json(['status' => 'No Customer/Seller records found with that email'], 400);
+        }
 
+        //Create Password Reset Token
+        DB::table('password_resets')->insert([
+            'email' => $request->email,
+            'token' => str_random(60),
+            'created_at' => Carbon::now()
+        ]);
+
+        //Get the token just created above
+        $tokenData = DB::table('password_resets')
+        ->where('email', $request->email)->first();
+
+        if ($this->sendResetEmail($request->email, $tokenData->token)) {
+            return response()->json(['status' => 'Email reset link has been sent'], 200);
+        } else {
+            return response()->json(['status' => 'A Network Error occurred. Please try again.'], 400);
+        }
     }
 
+    private function sendResetEmail($email, $token)
+    {
+        //Retrieve the user from the database
+        $user = DB::table('users')->where('email', $email)->select('name', 'email')->first();
+        //Generate, the password reset link. The token generated is embedded in the link
+        $link = URL::to("password-reset-form/?token=".$token."&email=".$user->email);
+       
+        try 
+        {
+            //Here send the link with CURL with an external email API 
+            $mailFromId = config()->get('mail.from.address');
+            Mail::to($user->email)->send(new FrontEndPasswordResetMail($user->name, $mailFromId, $link));
+            return response()->json(['status' => 'Email reset link has been sent'], 200);
+        } catch (\Exception $e) 
+        {
+            return false;
+        }
+    }
+
+    public function pass_reset_form_show()
+    {
+        return view('frontend.password_reset_form')->with(['email'=>request()->email, 'token'=>request()->token]);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        //Validate input
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|exists:users,email',
+            'password' => 'required|confirmed',
+            'token' => 'required' ]);
+
+        //check if payload is valid before moving on
+        
+        if ($validator->fails()) {
+            return response()->json(['status' => 'Password reset form fields not filled properly'], 400);
+        }
+
+        $password = $request->password;
+
+        // Validate the token
+        $tokenData = DB::table('password_resets')
+        ->where('token', $request->token)->first();
+        // Redirect the user back to the password reset request form if the token is invalid
+        // if (!$tokenData) return view('auth.passwords.email');
+
+        $user = User::where('email', $tokenData->email)->first();
+        // Redirect the user back if the email is invalid
+        if (!$user) return response()->json(['status' => 'Email not found'], 400);
+        //Hash and update the new password
+        
+        $user->password = Hash::make($password);
+        $user->update(); //or $user->save();
+
+        // //login the user immediately they change password successfully
+        // Auth::login($user);
+
+        //Delete the token
+        DB::table('password_resets')->where('email', $user->email)
+        ->delete();
+
+        //Send Email Reset Success Email
+        $txt = 'You have successfully reset your password';
+        $subject = 'Successfully updated Password - Elesonic';
+        $mailFromId = config()->get('mail.from.address');
+        Mail::to($user->email)->send(new OnlyTextMail($user->name, $mailFromId, $txt, $subject));
+        return redirect()->route('login');
+        // if ($this->sendSuccessEmail($tokenData->email)) {
+        //     return response()->route('login');
+        // } else {
+        //     return response()->json(['status' => 'Network error occured'], 400);
+        // }
+    
+    }
 }

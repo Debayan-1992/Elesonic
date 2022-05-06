@@ -19,14 +19,22 @@
         <div class="login_bd-sec">
           <!---->
           <div class="lt-sec">
-            <form id="signupform" action="{{route('signup')}}" method="post">
+            <form id="signupform" action="{{route('signup_post')}}" method="post">
+              @csrf
               <h4>Sign Up Account</h4>
               <!-- item -->
+              <div>
+                <input type="radio" id="customer" name="role_id" value="5">
+                <label for="html">Customer</label><br>
+                <input type="radio" id="seller" name="role_id" value="6">
+                <label for="css">Seller</label><br>
+
+              </div>
               <div class="item">
 				<div class="icon">
 					<i class="fa fa-user-o"></i>
 				</div>
-                <input type="text" placeholder="Name" name="">
+                <input type="text" placeholder="Name" name="name">
               </div>
               <!-- item -->
 
@@ -37,7 +45,7 @@
 					<i class="fa fa-phone"></i>
 				</div>
 
-                <input type="text" placeholder="Phone No" name="">
+                <input type="text" placeholder="Phone No" name="mobile">
               </div>
               <!-- item -->
 
@@ -46,7 +54,7 @@
               	<div class="icon">
 					<i class="fa fa-envelope-o"></i>
 				</div>
-                <input type="email" placeholder="Email" name="">
+                <input type="email" placeholder="Email" name="email">
               </div>
               <!-- item -->
 
@@ -56,7 +64,7 @@
               	<div class="icon">
               		<i class="fa fa-lock"></i>
               	</div>
-                <input type="password" placeholder="Password" name="">
+                <input type="password" placeholder="Password" name="password">
               </div>
               <!-- item -->
 
@@ -65,7 +73,7 @@
               	<div class="icon">
               		<i class="fa fa-lock"></i>
               	</div>
-                <input type="password" placeholder="Confirm password" name="">
+                <input type="password" placeholder="Confirm password" name="password_confirmation">
               </div>
               <!-- item -->
 
@@ -163,7 +171,7 @@
 
                             form[0].reset();
                             notify(data.status, 'success');
-                            window.location.href = "{{route('frontend.d_index')}}";
+                            window.location.href = "{{route('customer.customer_dashboard')}}";
                         },
                         error: function(errors) {
                             form.find('button[type="submit"]').button('reset');

@@ -11,7 +11,10 @@ use App\Http\Controllers\Dashboard\ToolsController;
 use App\Http\Controllers\Dashboard\DepartmentController;
 use App\Http\Controllers\Frontend\FrontendController;
 use App\Http\Controllers\Dashboard\MembersController;
+use App\Http\Controllers\Frontend\Customer\CustomerController;
+use App\Http\Controllers\Frontend\Seller\SellerController;
 use App\Http\Controllers\Auth;
+use App\Http\Controllers\Frontend\FrontendNoAuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,50 +26,46 @@ use App\Http\Controllers\Auth;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-// Route::get('/i', function () {return view('welcome');})->name('i');
+//A controller at route should be made for redirecting non middleware checked views, like homepage
 Route::get('/welcome', [HomeController::class, 'welcome'])->name('welcome');
-//Route::get('/', [HomeController::class, 'landing'])->name('landing');
-Route::get('/', [FrontendController::class, 'index'])->name('index');
-Route::get('/login', [FrontendController::class, 'signin'])->name('login'); //Frontend Login
-Route::post('login', [FrontendController::class, 'signin_post'])->name('login'); 
-Route::get('/signup', [FrontendController::class, 'signup'])->name('signup');
-Route::post('/signup', [FrontendController::class, 'signup_post'])->name('signup');
-Route::get('/contact_us', [FrontendController::class, 'contact_us'])->name('contact_us');
+Route::get('/', [FrontendController::class, 'index'])->name('index'); //When accessing / from admin goest to / route of admin, this should be in a place where their is no verification
 Route::get('/product-list/{type?}/{id?}', [FrontendController::class, 'product_list'])->name('product-list');
 Route::get('/product-details/{type?}/{id?}', [FrontendController::class, 'product_details'])->name('product-details');
 Route::post('/get-filter-data', [FrontendController::class, 'get_filter_data'])->name('get-filter-data');
 
+Route::get('/contact_us', [FrontendController::class, 'contact_us'])->name('contact_us');
+Route::post('/contact_us', [FrontendController::class, 'contact_us_post'])->name('contact_us');
 
-//Auth::routes(['verify' => true]); //This has been removed because these routes are being manually used
+// Frontend Login, Registration, Pass reset Routes...
+Route::get('/login', [FrontendController::class, 'signin'])->name('login'); //Frontend Login
+Route::post('/login', [FrontendController::class, 'signin_post'])->name('login_post'); 
+Route::get('/signup', [FrontendController::class, 'signup'])->name('signup');
+Route::post('/signup', [FrontendController::class, 'signup_post'])->name('signup_post');
+Route::get('/password-reset', [FrontendController::class, 'show_passwordreset_form'])->name('frontend_password_reset');
+Route::post('/password-reset', [FrontendController::class, 'passwordreset_post'])->name('frontend_password_reset');
+Route::post('/pass-update', [FrontendController::class, 'resetPassword'])->name('resetPassword');
 
-//Auth routes
-//
-//Route::get('login', 'Auth\LoginController@showLoginForm')->name('admin_login'); //Admin panel login
-//Route::post('login', 'Auth\LoginController@login')->name('login'); //Original login controller which comes from Laravel Auth
-
-
-// Registration Routes...
-Route::get('register', 'Auth\RegisterController@showRegistrationForm')->name('register');
-Route::post('register', 'Auth\RegisterController@register')->name('register');
-
-//
+// Admin Login, Registration, Pass reset Routes...
+Route::get('/admin/register', 'Auth\RegisterController@showRegistrationForm')->name('admin_register_form');
+Route::post('/admin/register', [Auth\RegisterController::class, 'register'])->name('admin_register');
 Route::get('/admin/login', [Auth\LoginController::class, 'showLoginForm'])->name('admin_login_form'); //AuthenticatesUsers trait's showLoginForm function is being overridden by LoginController class's showLoginForm function
 Route::post('/admin/login', [Auth\LoginController::class, 'login'])->name('admin_login_form'); //AuthenticatesUsers trait's showLoginForm function is being overridden by LoginController class's showLoginForm function
-Route::any('/logout', 'Auth\LoginController@logout')->name('logout');
-Route::post('/register', 'Auth\RegisterController@register')->name('register');
-
-Route::get('/validate-user', [HomeController::class, 'validate_user']); //Email verify
-
-// Password Reset Routes...
+Route::any('/admin/logout', [Auth\LoginController::class, 'logout'])->name('logout');
 Route::name('password.')->group(function() {
-    Route::get('password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('request');
-    Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('email');
-    Route::get('password/reset/{token}', 'Auth\ResetPasswordController@showResetForm')->name('reset');
-    Route::post('password/reset', 'Auth\ResetPasswordController@reset')->name('reset');
+    Route::get('/admin/password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('request');
+    Route::post('/admin/password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('email');
+    Route::get('/admin/password/reset/{token}', 'Auth\ResetPasswordController@showResetForm')->name('reset');
+    Route::post('/admin/password/reset', 'Auth\ResetPasswordController@reset')->name('reset');
 });
 
-Route::prefix('/admin/dashboard')->name('dashboard.')->namespace('Dashboard')->middleware('auth','checkuser')->group(function(){
+//Common to Admin and Fronend, these should be changed to non middleware checked controller
+Route::get('/validate-user', [HomeController::class, 'validate_user']); //Email verify
+Route::get('/password-reset-form', [FrontendController::class, 'pass_reset_form_show']); //Frontned Password reset form
+Route::get('/logout', [HomeController::class, 'logout'])->name('lgt'); 
+//Frontend Password reset form
+
+//Admin routes
+Route::prefix('/admin/dashboard')->name('dashboard.')->namespace('Dashboard')->middleware('adminauth','checkuser')->group(function(){
     //Route::get('/home', 'HomeController@index')->name('home');
     Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::get('/profile/{id?}', [HomeController::class, 'profile'])->name('profile');
@@ -83,20 +82,20 @@ Route::prefix('/admin/dashboard')->name('dashboard.')->namespace('Dashboard')->m
         Route::get('/role/permissions/{role_id?}', [ToolsController::class, 'rolepermissions'])->name('rolepermissions');
         Route::post('/role/permissions/submit', [ToolsController::class, 'rolepermissionssubmit'])->name('rolepermissions.submit');
     });
-
+    
     //== Settings Routes == //
     Route::prefix('/settings')->name('settings.')->middleware('checkrole:superadmin')->group(function(){
         Route::get('/index', 'SettingsController@index')->name('index');
         Route::post('/submit', 'SettingsController@submit')->name('submit');
     });
-
+    
     //== CMS Routes == //
     Route::prefix('/cms')->name('cms.')->middleware('checkrole:superadmin|admin')->group(function(){
         Route::get('/{type}', 'CmsController@index')->name('index');
         Route::get('/{type}/edit/{id?}', 'CmsController@edit')->name('edit');
         Route::post('/content/submit', 'CmsController@submitcms')->name('submitcms');
     });
-
+    
     //== Blog Routes == //
     Route::prefix('/blogs')->name('blogs.')->middleware('checkrole:superadmin|admin')->group(function(){
         Route::get('/index', 'BlogsController@index')->name('index');
@@ -200,6 +199,19 @@ Route::prefix('/admin/dashboard')->name('dashboard.')->namespace('Dashboard')->m
     });
 });
 
-Route::name('frontend.')->middleware('frontendauth','checkuser')->group(function(){
-    Route::get('/i', [FrontendController::class, 'd_index'])->name('d_index');
+//Frontnend Customer routes
+Route::prefix('/customer/dashboard')->name('customer.')->middleware('customerauth','checkuser')->group(function(){
+    Route::get('/', [FrontendNoAuthController::class, 'dashboard'])->name('customer_dashboard');
 });
+
+//Frontend Seller routes
+Route::prefix('/seller/dashboard')->name('seller.')->middleware('sellerauth','checkuser')->group(function(){
+    Route::get('/', [FrontendNoAuthController::class, 'dashboard'])->name('seller_dashboard');
+});
+    //Route::get('/login', [FrontendController::class, 'signin'])->name('login'); //Frontend Login
+    //Auth::routes(['verify' => true]); //This has been removed because these routes are being manually used
+    
+    //Auth routes
+    //
+    //Route::get('login', 'Auth\LoginController@showLoginForm')->name('admin_login'); //Admin panel login
+    //Route::post('login', 'Auth\LoginController@login')->name('login'); //Original login controller which comes from Laravel Auth
