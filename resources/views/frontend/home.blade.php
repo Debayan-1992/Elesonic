@@ -87,7 +87,7 @@
 						@foreach($popularproducts as $row)
 						<!-- item -->
 						<div class="item">
-							<a href="#">
+							<a href="{{route('product-details')}}/{{ $row->slug }}">
 								<div class="img-figure">
 									<img src="{{config('app.url')}}/uploads/products/{{ $row->photos }}">
 								</div>
@@ -116,7 +116,7 @@
 		<div class="container">
 			<div class="top-block">
 				<h3>Popular services</h3>
-				<a href="#">VIEW ALL</a>
+				<a href="{{route('services')}}">VIEW ALL</a>
 			</div>
 
 			<div class="departments-bd">

@@ -22,6 +22,11 @@ use App\Model\Product;
 use App\Model\Department;
 use App\Model\Service;
 use App\Model\Brand;
+use App\Model\CmsContent;
+use App\Model\FaqContent;
+
+use App\Model\Service_booking;
+
 use App\Model\Category as Categorys;
 use App\Utility\CategoryUtility;
 use Illuminate\Support\Facades\DB;
@@ -30,6 +35,8 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 use App\Model\Product_related_images;
+
+
 
 class FrontendController extends Controller
 {
@@ -78,8 +85,12 @@ class FrontendController extends Controller
         return view('frontend.home', $data);
     }
 
-    function product_list(Request $request,$slug,$id){
-        $cat_id = base64_decode($id);
+    function product_list(Request $request,$slug){
+        $catSlug = Categorys::select('parent_id','id', 'name', 'icon','slug','status')->where('slug',$slug)->where('status','A')->first();
+        if(empty($catSlug)){
+            return redirect()->route('index');
+        }
+        $cat_id = $catSlug->id;
         $all_brand  = [];
         $parentCategory = Categorys::where('status','A')->where('parent_id',0)
         ->get();
@@ -119,8 +130,13 @@ class FrontendController extends Controller
         $data['filterBrands']           = $all_brand;
         return view('frontend.product_list',$data);
     }
-    function product_details(Request $request,$slug,$id){
-        $pro_id = base64_decode($id);
+    function product_details(Request $request,$slug){
+        $proSlug = Product::select('slug','status','id')->where('slug',$slug)->where('status','A')->first();
+       
+        if(empty($proSlug)){
+            return redirect()->route('index');
+        }
+        $pro_id = $proSlug->id;
         $productsCount              =  Product::where('products.id', $pro_id);
         $productsCount              =  $productsCount->where('products.status','A');
         $productsCount              =  $productsCount->first();
@@ -168,6 +184,46 @@ class FrontendController extends Controller
         $products  =  $products->get();
         $data['products']               = $products;
         return view('frontend.filter_data',$data);
+    }
+
+    function services(){
+        $service = Service::where('status','A')
+        ->get();
+        $data['cities'] = City::all();
+        $data['services'] = $service;
+        return view('frontend.services',$data);
+    }
+
+    function servicebook(Request $request){
+        $Service_booking = new Service_booking;
+        $serviceId = $request->serviceId;
+        $Service_booking->name = $request->name;
+        $Service_booking->phone = $request->mobile;
+        $Service_booking->email = $request->email;
+        $Service_booking->city = $request->city;
+        $Service_booking->information = $request->information;
+        $Service_booking->service_id = $serviceId;
+        $Service_booking->save();
+        $service = Service::where('id',$serviceId)
+        ->first();
+        $servicename = $service->name;
+        $txt = 'Request has been sent successfully for '.$servicename.' ,We will reach out to you as
+        soon as we can';
+        $subject = 'Service Booking Quote - Elesonic';
+        $mailFromId = config()->get('mail.from.address');
+        Mail::to($request->email)->send(new OnlyTextMail($request->name, $mailFromId, $txt, $subject));
+        return redirect()->route('services')->with('message', 'Request has been sent successfully.');
+    }
+
+    function content_details(Request $request,$slug){
+        $CmsContent = CmsContent::where('slug',$slug)->first();
+        $data['cmsContent'] = $CmsContent;
+        return view('frontend.cms',$data);
+    }
+    function faq(Request $request){
+        $FaqContent = FaqContent::where('status','1')->get();
+        $data['faqContent'] = $FaqContent;
+        return view('frontend.faq',$data);
     }
 
     public function d_index()

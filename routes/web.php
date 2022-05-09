@@ -29,9 +29,13 @@ use App\Http\Controllers\Frontend\FrontendNoAuthController;
 //A controller at route should be made for redirecting non middleware checked views, like homepage
 Route::get('/welcome', [HomeController::class, 'welcome'])->name('welcome');
 Route::get('/', [FrontendController::class, 'index'])->name('index'); //When accessing / from admin goest to / route of admin, this should be in a place where their is no verification
-Route::get('/product-list/{type?}/{id?}', [FrontendController::class, 'product_list'])->name('product-list');
+Route::get('/product-list/{type?}', [FrontendController::class, 'product_list'])->name('product-list');
 Route::get('/product-details/{type?}/{id?}', [FrontendController::class, 'product_details'])->name('product-details');
 Route::post('/get-filter-data', [FrontendController::class, 'get_filter_data'])->name('get-filter-data');
+Route::get('/services', [FrontendController::class, 'services'])->name('services');
+Route::post('/servicebook', [FrontendController::class, 'servicebook'])->name('servicebook');
+Route::get('/faq', [FrontendController::class, 'faq'])->name('faq');
+Route::get('/content-details/{type?}', [FrontendController::class, 'content_details'])->name('content-details');
 
 Route::get('/contact_us', [FrontendController::class, 'contact_us'])->name('contact_us');
 Route::post('/contact_us', [FrontendController::class, 'contact_us_post'])->name('contact_us');

@@ -187,7 +187,7 @@
 									<p>( Showing <span id="filterWiseCountPro">{{count($products)}}</span> out of {{count($productsCount)}} products )</p>
 									<div class="select-price">
 										<span>Sort By Price</span>
-										<select id="sort_by_price" onclick="getFilterdata('')">
+										<select id="sort_by_price" onchange="getFilterdata('')">
 										    <option value=" ">Choose</option>
 											<option value="h_t_l">Price High to Low</option>
 											<option value="l_t_h">Price Low to High</option>
@@ -207,7 +207,7 @@
 										@foreach($products as $row)
 										<div class="col-lg-3 col-md-6 col-sm-12 comn-px0">
 											<div class="item">
-												<a href="{{route('product-details')}}/{{ $row->slug }}/{{base64_encode($row->id)}}">
+												<a href="{{route('product-details')}}/{{ $row->slug }}">
 													<div class="img-figure">
 													<img src="{{config('app.url')}}/uploads/products/{{ $row->photos }}">
 													</div>

@@ -9,7 +9,7 @@
 
 				<li><i class="fa fa-angle-right"></i></li>
 
-				<li><a href="{{route('product-list')}}/{{ $product->category->slug }}/{{base64_encode($product->category->id)}}" title="{{ $product->category->name }}">{{ $product->category->name}}</a></li>
+				<li><a href="{{route('product-list')}}/{{ $product->category->slug }}">{{ $product->category->name}}</a></li>
 
 				<!-- <li><i class="fa fa-angle-right"></i></li> -->
 
@@ -116,7 +116,7 @@
 						@if(!empty($relatedProducts))
 						@foreach($relatedProducts as $row)
 						<div class="item">
-							<a href="{{route('product-details')}}/{{ $row->slug }}/{{base64_encode($row->id)}}">
+							<a href="{{route('product-details')}}/{{ $row->slug }}">
 								<div class="img-figure">
 									<img src="{{config('app.url')}}/uploads/products/{{ $row->photos }}">
 								</div>

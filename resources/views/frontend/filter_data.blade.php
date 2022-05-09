@@ -5,7 +5,7 @@
 		@foreach($products as $row)
 		<div class="col-lg-3 col-md-6 col-sm-12 comn-px0">
 			<div class="item">
-				<a href="{{route('product-details')}}/{{ $row->slug }}/{{base64_encode($row->id)}}">
+				<a href="{{route('product-details')}}/{{ $row->slug }}">
 					<div class="img-figure">
 					<img src="{{config('app.url')}}/uploads/products/{{ $row->photos }}">
 					</div>

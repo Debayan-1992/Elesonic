@@ -82,7 +82,27 @@
                         </ul>
                     </li>
                 @endif
+                @if(Myhelper::hasrole('superadmin'))
+                    <li class="treeview {{(isset($activemenu['main']) && $activemenu['main'] == 'services') ? 'active menu-open' : ''}}"> 
+                        <a href="javascript:void(0);">
+                            <i class="fa fa-gear"></i> <span>Services</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li class="{{(isset($activemenu['sub']) && $activemenu['sub'] == 'services') ? 'active' : ''}}"><a href="{{route('dashboard.service.index')}}"><i class="fa fa-circle-o"></i> Services</a></li>
+                        </ul>
+                    </li>
+                @endif
 
+                @if(Myhelper::hasrole('superadmin'))
+                <li class="{{(isset($activemenu['main']) && $activemenu['main'] == 'department') ? 'active' : ''}}">
+                    <a href="{{route('dashboard.department.index')}}"><i class="fa fa-dashboard"></i>
+                        <span>Departments</span>
+                    </a>
+                </li>
+                @endif
              <!--    @if(Myhelper::can(['view_bank_membership_packages','view_agent_membership_packages']))
                     <li class="treeview {{(isset($activemenu['main']) && $activemenu['main'] == 'resources') ? 'active menu-open' : ''}}">
                         <a href="javascript:void(0);">
@@ -236,27 +256,7 @@
                     </li>
                 @endif
 
-                @if(Myhelper::hasrole('superadmin'))
-                    <li class="treeview {{(isset($activemenu['main']) && $activemenu['main'] == 'services') ? 'active menu-open' : ''}}"> 
-                        <a href="javascript:void(0);">
-                            <i class="fa fa-gear"></i> <span>Services</span>
-                            <span class="pull-right-container">
-                                <i class="fa fa-angle-left pull-right"></i>
-                            </span>
-                        </a>
-                        <ul class="treeview-menu">
-                            <li class="{{(isset($activemenu['sub']) && $activemenu['sub'] == 'services') ? 'active' : ''}}"><a href="{{route('dashboard.service.index')}}"><i class="fa fa-circle-o"></i> Services</a></li>
-                        </ul>
-                    </li>
-                @endif
-
-                @if(Myhelper::hasrole('superadmin'))
-                <li class="{{(isset($activemenu['main']) && $activemenu['main'] == 'department') ? 'active' : ''}}">
-                    <a href="{{route('dashboard.department.index')}}"><i class="fa fa-dashboard"></i>
-                        <span>Departments</span>
-                    </a>
-                </li>
-                @endif
+               
             @endif
         </ul>
     </section>

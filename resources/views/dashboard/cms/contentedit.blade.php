@@ -48,7 +48,7 @@
 
                         <div class="form-group col-md-12">
                             <label>Page Content</label>
-                            <textarea id="ck-editor" name="content">{!!$content->content!!}</textarea>
+                            <textarea  class="description form-control" name="content">{!!$content->content!!}</textarea>
                         </div>
                     </div>
 
@@ -85,7 +85,16 @@
 @endsection
 
 @push('script')
+<script src="//cloud.tinymce.com/stable/tinymce.min.js"></script>
+<script>
+    tinymce.init({
+        selector:'textarea.description',
+        width: 900,
+        height: 100
+    });
+</script>
     <script>
+
         $('#contentform').validate({
             rules: {
                 page_title: {

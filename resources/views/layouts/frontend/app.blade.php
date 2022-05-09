@@ -79,13 +79,13 @@
 					  </li>
 
 					  <li class="nav-item services dropdown">
-					    <a class="nav-link " href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					    <a class="nav-link " href="{{route('services')}}" >
 					      Services
 					    </a>
-					    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+					    <!-- <div class="dropdown-menu" aria-labelledby="navbarDropdown">
 					      <a class="dropdown-item" href="#">Action</a>
 					      <a class="dropdown-item" href="#">Another action</a>
-					    </div>
+					    </div> -->
 					  </li>
 					</ul>
 				</div>
@@ -131,6 +131,10 @@
 			@php
 				$categories = App\Model\Category::where('parent_id', 0)->where('status','A')
 				->get();
+				$services = App\Model\Service::where('status','A')
+                ->get();
+				$cms = App\Model\CmsContent::where('page_name','!=',' ')
+                ->get();
 			@endphp
 				<!-- item -->
 					<div class="col-lg-3">
@@ -138,7 +142,7 @@
 							<h4>CATEGORIES</h4>
 							<ul>
 								@foreach($categories as $row)
-								<li><a href="{{route('product-list')}}/{{ $row->slug }}/{{base64_encode($row->id)}}">{{ $row->name }}</a></li>
+								<li><a href="{{route('product-list')}}/{{ $row->slug }}">{{ $row->name }}</a></li>
 								@endforeach
 								<!-- <li><a href="#">Lab Diagnostics & Instruments</a></li>
 								<li><a href="#">Medical Device & Equipment</a></li>
@@ -156,10 +160,12 @@
 					<div class="item quick-links-block">
 						<h4>SERVICES</h4>
 						<ul>
-							<li><a href="#">Sell on Elesonic</a></li>
-							<li><a href="#">Annual Maintenance Contract</a></li>
+						@foreach($services as $row)
+							<li><a href="{{route('services')}}">{{ $row->name }}</a></li>
+						@endforeach
+							<!-- <li><a href="#">Annual Maintenance Contract</a></li>
 							<li><a href="#">Ultrasound Machine Service</a></li>
-							<li><a href="#">Oxygen Concentrator Service</a></li>
+							<li><a href="#">Oxygen Concentrator Service</a></li> -->
 							<li><a href="#">Write for Us</a></li>
 						</ul>
 					</div>
@@ -220,11 +226,10 @@
 			<div class="item">
 				<div class="menu-sec">
 					<ul>
-						<li><a href="#">Terms of Use</a></li>
-						<li><a href="#">Privacy Policy</a></li>
-						<li><a href="#">FAQs</a></li>
-						<li><a href="#">Return Policy</a></li>
-						<li><a href="#">Disclaimer</a></li>
+						@foreach($cms as $row)
+						<li><a href="{{route('content-details')}}/{{ $row->slug }}">{{ $row->page_name }}</a></li>
+						@endforeach
+						<li><a href="{{route('faq')}}">FAQs</a></li>
 					</ul>
 				</div>
 			</div>
