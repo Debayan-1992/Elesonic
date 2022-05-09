@@ -203,8 +203,14 @@ class FrontendController extends Controller
         if($user->status == 0){
             return response()->json(['status' => 'Your account has been deactivated. To activate your account contact or write to us.'], 400);
         }
+        elseif($user->email_verified_at == null){
+            return response()->json(['status' => 'Please verify your Email and then proceed to login.'], 400);
+        }
+        elseif($user->mobile_verified_at == null){
+            return response()->json(['status' => 'Please verify your mobile OTP and then proceed to login.'], 400);
+        }
     
-        if(\Auth::validate(['email' => $request->email, 'password' => $request->password],)){
+        if(\Auth::validate(['email' => $request->email, 'password' => $request->password])){
             if(\Auth::attempt(['email' => $request->email, 'password' => $request->password, 'role_id' => 1])){
                 \Session::flash('success', 'Logedin Successfully');
                 //return redirect()->route('frontend.d_index');

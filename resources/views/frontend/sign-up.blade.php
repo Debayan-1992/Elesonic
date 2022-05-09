@@ -23,11 +23,11 @@
               @csrf
               <h4>Sign Up Account</h4>
               <!-- item -->
-              <div>
+              <div class="user-select-area">
                 <input type="radio" id="customer" name="role_id" value="5">
-                <label for="html">Customer</label><br>
-                <input type="radio" id="seller" name="role_id" value="6">
-                <label for="css">Seller</label><br>
+               <label for="">Customer</label><br>
+               <input type="radio" id="seller" name="role_id" value="6">
+               <label for="">Seller</label><br>
 
               </div>
               <div class="item">

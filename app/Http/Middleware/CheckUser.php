@@ -25,6 +25,16 @@ class CheckUser
                     return redirect()->route('login')->with('warning', 'Your account has been deactivated, to activate the account contact or write to us');
                 }
             }
+            elseif(\Auth::guard($guard)->user()->email_verified_at == null)
+            {
+                \Auth::logout();
+                return redirect()->route('login')->with('warning', 'Please verify your Email and then proceed');
+            }
+            elseif(\Auth::guard($guard)->user()->mobile_verified_at == null)
+            {
+                \Auth::logout();
+                return response()->json(['status' => 'Please verify your OTP and then proceed'], 400);
+            }
             //dd(auth()->user());
             return $next($request);
         }

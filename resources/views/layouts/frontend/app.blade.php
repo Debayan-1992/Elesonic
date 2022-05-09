@@ -103,7 +103,7 @@
 							<ul>
 								<li class="sell-product"><a href="#">Sell on Elesonic</a></li>
 								@if(Auth::check())
-									<li class="user-icon"><a href="{{route('lgt')}}"><img src="{{asset('custom_resource/images')}}"></a></li>
+									<li class="user-icon"><a href="{{route('lgt')}}"><i class="fa fa-sign-out mr-2"></i> Logout</a></li>
 								@else
 									<li class="user-icon"><a href="{{route('login')}}"><img src="{{asset('custom_resource/images/user-icon.png')}}"></a></li>
 								@endif

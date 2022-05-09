@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\model\Brand;
+use App\Model\Brand;
 use Carbon\Carbon;
 
 class BrandController extends Controller

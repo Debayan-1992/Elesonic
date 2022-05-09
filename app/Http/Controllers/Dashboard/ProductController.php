@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\model\Product;
+use App\Model\Product;
 use Carbon\Carbon;
-use App\model\Category;
-use App\model\Brand;
+use App\Model\Category;
+use App\Model\Brand;
 use Auth;
-use App\model\Product_related_images;
+use App\Model\Product_related_images;
 use App\Utility\CategoryUtility;
 class ProductController extends Controller
 {

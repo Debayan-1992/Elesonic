@@ -359,19 +359,27 @@ class HomeController extends Controller
     public function validate_user(Request $request) //This method needs to go in a controller where their's is no middleware verification
     {
         $d_token = decrypt($request->_token);
-        $val = User::where('email', $d_token)->firstOrFail();
-        if($val->email_verified_at == null)
+        $user = User::where('email', $d_token)->firstOrFail();
+        if($user->email_verified_at == null)
         {
-            $val->email_verified_at = date("Y-m-d h:i:s");
-            if($val->save()) //true or false
+            $user->email_verified_at = date("Y-m-d h:i:s");
+            $user->save();
+            if($user->role_id == 1 || $user->role_id == 2) //true or false
             {
-                return redirect()->route('signin')->with('success', 'Success! User created');
+                
+                return redirect()->route('admin_login_form')->with('success', 'Success! User created');
+                //dd('Email verified');
+            }
+            elseif($user->role_id == 5 || $user->role_id == 6) //true or false
+            {
+                
+                return redirect()->route('login')->with('success', 'Success! User created');
                 //dd('Email verified');
             }
             dd('Some error'); 
         }    
         else
-            return redirect()->route('signin')->with('success', 'Email was already verified');
+            return redirect()->route('login')->with('success', 'Email was already verified');
         //dd('Email was already verified at '.$val->email_verified_at); //Paste view here
     }
 

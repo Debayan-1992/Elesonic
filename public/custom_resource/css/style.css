@@ -1475,6 +1475,15 @@ background: url(../images/right1.png) no-repeat center center var(--blue-bg-colo
     display: block !important;
 }
 
+
+/* #Custom css */
+.user-select-area label {
+    color: #fff;
+}
+
+.user-icon a {color: #fff;}
+
+.container {min-height: 350px;}
 /*-- related-products --*/
 
 
