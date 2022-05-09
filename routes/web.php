@@ -28,17 +28,17 @@ use App\Http\Controllers\Frontend\FrontendNoAuthController;
 */
 //A controller at route should be made for redirecting non middleware checked views, like homepage
 Route::get('/welcome', [HomeController::class, 'welcome'])->name('welcome');
-Route::get('/', [FrontendController::class, 'index'])->name('index'); //When accessing / from admin goest to / route of admin, this should be in a place where their is no verification
-Route::get('/product-list/{type?}', [FrontendController::class, 'product_list'])->name('product-list');
-Route::get('/product-details/{type?}/{id?}', [FrontendController::class, 'product_details'])->name('product-details');
-Route::post('/get-filter-data', [FrontendController::class, 'get_filter_data'])->name('get-filter-data');
-Route::get('/services', [FrontendController::class, 'services'])->name('services');
-Route::post('/servicebook', [FrontendController::class, 'servicebook'])->name('servicebook');
-Route::get('/faq', [FrontendController::class, 'faq'])->name('faq');
-Route::get('/content-details/{type?}', [FrontendController::class, 'content_details'])->name('content-details');
 
-Route::get('/contact_us', [FrontendController::class, 'contact_us'])->name('contact_us');
-Route::post('/contact_us', [FrontendController::class, 'contact_us_post'])->name('contact_us');
+Route::get('/', [FrontendNoAuthController::class, 'index'])->name('index'); //When accessing / from admin goest to / route of admin, this should be in a place where their is no verification
+Route::get('/product-list/{type?}', [FrontendNoAuthController::class, 'product_list'])->name('product-list');
+Route::get('/product-details/{type?}/{id?}', [FrontendNoAuthController::class, 'product_details'])->name('product-details');
+Route::post('/get-filter-data', [FrontendNoAuthController::class, 'get_filter_data'])->name('get-filter-data');
+Route::get('/services', [FrontendNoAuthController::class, 'services'])->name('services');
+Route::post('/servicebook', [FrontendNoAuthController::class, 'servicebook'])->name('servicebook');
+Route::get('/faq', [FrontendNoAuthController::class, 'faq'])->name('faq');
+Route::get('/content-details/{type?}', [FrontendNoAuthController::class, 'content_details'])->name('content-details');
+Route::get('/contact_us', [FrontendNoAuthController::class, 'contact_us'])->name('contact_us');
+Route::post('/contact_us', [FrontendNoAuthController::class, 'contact_us_post'])->name('contact_us');
 
 // Frontend Login, Registration, Pass reset Routes...
 Route::get('/login', [FrontendController::class, 'signin'])->name('login'); //Frontend Login
@@ -62,7 +62,7 @@ Route::name('password.')->group(function() {
     Route::post('/admin/password/reset', 'Auth\ResetPasswordController@reset')->name('reset');
 });
 
-//Common to Admin and Fronend, these should be changed to non middleware checked controller
+//Common to Admin(admin,superadmin) and Frontend(customer,seller), these should be changed to non middleware checked controller
 Route::get('/validate-user', [HomeController::class, 'validate_user']); //Email verify
 Route::get('/password-reset-form', [FrontendController::class, 'pass_reset_form_show']); //Frontned Password reset form
 Route::get('/logout', [HomeController::class, 'logout'])->name('lgt'); 
