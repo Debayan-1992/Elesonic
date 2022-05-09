@@ -1484,6 +1484,10 @@ background: url(../images/right1.png) no-repeat center center var(--blue-bg-colo
 .user-icon a {color: #fff;}
 
 /* .container {min-height: 350px;} */
+
+ul.list-group.list-group-flush a {
+    color: #283a6a;
+}
 /*-- related-products --*/
 
 

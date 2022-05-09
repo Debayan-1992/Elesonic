@@ -206,11 +206,17 @@ Route::prefix('/admin/dashboard')->name('dashboard.')->namespace('Dashboard')->m
 //Frontnend Customer routes
 Route::prefix('/customer/dashboard')->name('customer.')->middleware('customerauth','checkuser')->group(function(){
     Route::get('/', [FrontendNoAuthController::class, 'dashboard'])->name('customer_dashboard');
+    Route::get('password-change', [FrontendNoAuthController::class, 'password_change_form'])->name('frontend_change_pass');
+    Route::post('password-change', [FrontendNoAuthController::class, 'password_change_update'])->name('frontend_pass_upd');
+    Route::post('account-update', [FrontendNoAuthController::class, 'my_account_update'])->name('frontend_acc_upd');
 });
 
 //Frontend Seller routes
 Route::prefix('/seller/dashboard')->name('seller.')->middleware('sellerauth','checkuser')->group(function(){
     Route::get('/', [FrontendNoAuthController::class, 'dashboard'])->name('seller_dashboard');
+    Route::get('password-change', [FrontendNoAuthController::class, 'password_change_form'])->name('frontend_change_pass');
+    Route::post('password-change', [FrontendNoAuthController::class, 'password_change_update'])->name('frontend_pass_upd');
+    Route::post('account-update', [FrontendNoAuthController::class, 'my_account_update'])->name('frontend_acc_upd');
 });
     //Route::get('/login', [FrontendController::class, 'signin'])->name('login'); //Frontend Login
     //Auth::routes(['verify' => true]); //This has been removed because these routes are being manually used
