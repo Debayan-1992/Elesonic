@@ -40,6 +40,12 @@ Route::get('/content-details/{type?}', [FrontendNoAuthController::class, 'conten
 Route::get('/contact_us', [FrontendNoAuthController::class, 'contact_us'])->name('contact_us');
 Route::post('/contact_us', [FrontendNoAuthController::class, 'contact_us_post'])->name('contact_us');
 
+Route::post('/get-search-data', [FrontendNoAuthController::class, 'get_search_data'])->name('get-search-data');
+Route::post('/search-product', [FrontendNoAuthController::class, 'search_product'])->name('search-product');
+
+
+
+
 // Frontend Login, Registration, Pass reset Routes...
 Route::get('/login', [FrontendController::class, 'signin'])->name('login'); //Frontend Login
 Route::post('/login', [FrontendController::class, 'signin_post'])->name('login_post'); 

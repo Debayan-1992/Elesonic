@@ -123,6 +123,23 @@ class FrontendNoAuthController extends Controller
         return view('frontend.product_details',$data);
     }
 
+    function get_search_data(Request $request){
+        
+        $value    = $request->val;
+        $category = $request->cat_id;
+        $pro_arr=array();
+        $pro = Product::where('status', 'A')->where('name','LIKE','%'.$value.'%')->skip(0)->take(10)->get();
+      
+        $arr=$pro;
+        if(!empty($arr)){
+            foreach($arr as $row){
+            $pro_arr[]=$row->name;
+            }
+        }
+    echo json_encode($pro_arr);
+}
+
+
     function get_filter_data(Request $request){
         $cat_id  = $request->catId;
         $brandId = $request->brandId;

@@ -39,7 +39,7 @@
               		<i class="fa fa-user-o"></i>
               	</div>
 
-                  <input type="text" id="password" name="password"  name="password" placeholder="Enter password">
+                  <input type="password" id="password" name="password"  name="password" placeholder="Enter password">
               </div>
               <!-- item -->
 

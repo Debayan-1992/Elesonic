@@ -32,6 +32,10 @@
 	
 
 	<link rel="stylesheet" type="text/css" href="{{asset('custom_resource/css/style.css')}}">
+
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+	<link rel="stylesheet" type="text/css" href="{{asset('custom_resource/css/ul-css.css')}}">
 	
 	@yield('header')
 	@stack('header')
@@ -93,9 +97,9 @@
 				<!---->
 					<div class="right-block">
 
-						<div class="search-block">
-					  	<form>
-					      <input class="form-control" type="search" placeholder="Search" aria-label="Search">
+						<div class="search-block" id="pro_search">
+					  	<form action="{{route('search-product')}}" method="post">
+					      <input class="form-control" type="search" onkeypress="get_prod('search_name')"  id="search_name" name="search" placeholder="Search Products....." placeholder="Search" aria-label="Search">
 					    </form>
 						</div>
 
@@ -267,6 +271,33 @@
 <!-- zoomer -->
 
 <script type="text/javascript" src="{{asset('custom_resource/js/custome.js')}}"></script>
+
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<script type="text/javascript">
+function get_prod(text_id){
+	var textLength = $("#"+text_id).val().length;
+	if(textLength > 1){
+	var cat_id = 0;
+	$( "#"+text_id ).autocomplete({
+			source: function(request, response) {
+			$.ajax({
+			url: "{{ route('get-search-data') }}",
+			data:{'_token':'{{csrf_token()}}','val':$("#"+text_id).val(),'cat_id':cat_id},
+			dataType: "json",
+			type: "POST",
+				success: function(data){
+					
+				var arr_data=data.pro;
+				$("#pro_search").val(arr_data);
+				response(data);
+				}
+				});
+			},
+		});
+	}
+}
+</script>  
 
 @yield('script')
 @stack('script')

@@ -109,7 +109,7 @@
 
                             <p>
                             {{Auth::user()->name}} - {{Auth::user()->role->name}}
-                            <small>Member since {{Auth::user()->created_at}}</small>
+                          
                             </p>
                         </li>
 
