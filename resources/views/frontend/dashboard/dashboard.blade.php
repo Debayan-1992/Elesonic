@@ -127,6 +127,16 @@
                                 @endif
                             </div>
                         </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">Image</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                <input type="file" accept="image/*" class="form-control" id="profile_image" name="image">
+                                
+                                <img src="" class="previewHolder" style="display:none;" alt="User Image empty" class="rounded-circle p-1 bg-primary" width="110">  
+                            </div>
+                        </div>
                         
                         <div class="row">
                             <div class="col-sm-3"></div>
@@ -191,3 +201,26 @@
         crossorigin="anonymous"></script>
     <script src="{{ asset('js/custom.js') }}"></script>
 @endpush
+
+@push('script')
+<script>
+function readURL(input) 
+{
+    if (input.files && input.files[0]) 
+    {
+        var reader = new FileReader();
+        
+        reader.onload = function(e) 
+        {
+            $('.previewHolder').attr('src', e.target.result);
+            $('.previewHolder').show();
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+$("#profile_image").change(function() {
+    readURL(this);
+});
+</script>
+@endpush
+

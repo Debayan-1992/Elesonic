@@ -94,4 +94,11 @@ class LoginController extends Controller
             return response()->json(['status' => 'Invalid credentials.'], 400);
         }
     }
+
+    public function logout(Request $request)
+    {
+        $this->guard()->logout();
+        $request->session()->invalidate();
+        return $this->loggedOut($request) ?: redirect()->route('admin_login_form');
+    }
 }

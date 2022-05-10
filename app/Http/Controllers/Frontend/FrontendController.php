@@ -46,10 +46,6 @@ class FrontendController extends Controller
      *
      * @return void
      */
-    // public function __construct()
-    // {
-    //     //$this->middleware('auth'); //For this function i function was not working
-    // }
 
     /**
      * Show the application dashboard.
@@ -276,5 +272,12 @@ class FrontendController extends Controller
         //     return response()->json(['status' => 'Network error occured'], 400);
         // }
     
+    }
+
+    public function logout(Request $request)
+    {
+        $this->guard()->logout();
+        $request->session()->invalidate();
+        return $this->loggedOut($request) ?: redirect()->route('login');
     }
 }
