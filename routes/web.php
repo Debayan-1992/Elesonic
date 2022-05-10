@@ -41,8 +41,11 @@ Route::get('/contact_us', [FrontendNoAuthController::class, 'contact_us'])->name
 Route::post('/contact_us', [FrontendNoAuthController::class, 'contact_us_post'])->name('contact_us');
 
 Route::post('/get-search-data', [FrontendNoAuthController::class, 'get_search_data'])->name('get-search-data');
-Route::post('/search-product', [FrontendNoAuthController::class, 'search_product'])->name('search-product');
+Route::get('/search-product', [FrontendNoAuthController::class, 'search_product'])->name('search-product');
 
+Route::post('/subscribeEmail', [FrontendNoAuthController::class, 'subscribeEmail'])->name('subscribeEmail');
+
+Route::get('/departments', [FrontendNoAuthController::class, 'departments'])->name('departments');
 
 
 

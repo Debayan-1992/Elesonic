@@ -24,7 +24,7 @@ use App\Model\Product_related_images;
 use App\Model\Category as Categorys;
 use App\Utility\CategoryUtility;
 
-
+use App\Model\Subscribers;
 use App\Mail\OnlyTextMail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
@@ -124,7 +124,6 @@ class FrontendNoAuthController extends Controller
     }
 
     function get_search_data(Request $request){
-        
         $value    = $request->val;
         $category = $request->cat_id;
         $pro_arr=array();
@@ -136,8 +135,30 @@ class FrontendNoAuthController extends Controller
             $pro_arr[]=$row->name;
             }
         }
-    echo json_encode($pro_arr);
-}
+        echo json_encode($pro_arr);
+    }
+
+    function search_product(Request $request){
+        $search = $request->search;
+        $proSlug = Product::select('slug','status','id','name')->where('name',$search)->where('status','A')->first();
+       
+        if(empty($proSlug)){
+            return redirect()->route('index');
+        }
+        $pro_id = $proSlug->id;
+        $productsCount              =  Product::where('products.id', $pro_id);
+        $productsCount              =  $productsCount->where('products.status','A');
+        $productsCount              =  $productsCount->first();
+        $data['product']            =  $productsCount;
+        $relatedImage = Product_related_images::where('product_id',$pro_id)
+        ->get();
+        $relatedProducts = Product::where('products.status','A')->where('products.category_id',$productsCount->category_id)->where('products.id','!=',$pro_id)->with('category')
+        ->get();
+        
+        $data['relatedImage']       = $relatedImage;
+        $data['relatedProducts']    = $relatedProducts;
+        return view('frontend.product_details',$data);
+    }
 
 
     function get_filter_data(Request $request){
@@ -183,6 +204,13 @@ class FrontendNoAuthController extends Controller
         return view('frontend.services',$data);
     }
 
+    function departments(){
+        $departments = Department::where('status','A')
+        ->get();
+        $data['departments'] = $departments;
+        return view('frontend.departments',$data);
+    }
+
     function servicebook(Request $request){
         $Service_booking = new Service_booking;
         $serviceId = $request->serviceId;
@@ -202,6 +230,22 @@ class FrontendNoAuthController extends Controller
         $mailFromId = config()->get('mail.from.address');
         Mail::to($request->email)->send(new OnlyTextMail($request->name, $mailFromId, $txt, $subject));
         return redirect()->route('services')->with('message', 'Request has been sent successfully.');
+    }
+
+    function subscribeEmail(Request $request){
+        $Subscribers = new Subscribers;
+        $chkEmail = Subscribers::select('email')->where('email',$request->subscribermail)->where('status','A')->count();
+       
+        if($chkEmail > 0){
+            return redirect()->route('index')->with('subsmessage', 'Already subscribed.');
+        }
+        $Subscribers->email = $request->subscribermail;
+        $Subscribers->save();
+        $txt = 'E-mail has been subscribed successfully';
+        $subject = 'Subscription E-mail - Elesonic';
+        $mailFromId = config()->get('mail.from.address');
+        Mail::to($request->subscribermail)->send(new OnlyTextMail("", $mailFromId, $txt, $subject));
+        return redirect()->route('index')->with('subsmessage', 'Successfully subscribed.');
     }
 
     function content_details(Request $request,$slug){

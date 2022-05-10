@@ -1,6 +1,6 @@
 @extends('layouts.frontend.app')
 @section('content')
-@section('pageheader', 'Services')
+@section('pageheader', 'Departments')
 
 	<div class="innr-banner">
 
@@ -10,8 +10,7 @@
 
 		<div class="text-sec">
 			<div class="container">
-				<h3>Instrument Service Repair</h3>
-				<p>Fast, on-demand repair options</p>
+				
 			</div>
 		</div>
 
@@ -23,28 +22,21 @@
 
 	<div class="product-service">
 		<div class="container">
-		@if(session()->has('message'))
-			<div class="alert alert-success">
-				{{ session()->get('message') }}
-			</div>
-		@endif
-			<h3>Services</h3>
+			<h3>Departments</h3>
 			<div class="bd">
 				<div class="row">
 
 					<!-- item -->
-					@if(!empty($services))
-						@foreach($services as $row)
+					@if(!empty($departments))
+						@foreach($departments as $row)
 							<div class="col-lg-4 col-md-6 col-sm-12">
 								<div class="item">
 
 									<div class="text">
 										<h5>{{$row->name}}</h5>
-										<a href="#" data-toggle="modal" onclick="serviceBokkingModal('{{ $row->id }}','{{ $row->name }}')" >Book Now</a>
 									</div>
-
 									<div class="figure">
-										<img src="{{config('app.url')}}/uploads/services/{{ $row->image }}">
+										<img src="{{config('app.url')}}/uploads/departments/{{ $row->image }}">
 									</div>
 
 								</div>

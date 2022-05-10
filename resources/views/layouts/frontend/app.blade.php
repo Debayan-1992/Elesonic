@@ -36,6 +36,8 @@
 	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
 	<link rel="stylesheet" type="text/css" href="{{asset('custom_resource/css/ul-css.css')}}">
+
+	<link rel="stylesheet" href="{{config('app.url')}}/inhouse/bower_components/select2/dist/css/select2.min.css">
 	
 	@yield('header')
 	@stack('header')
@@ -73,13 +75,13 @@
 					<ul class="navbar-nav">
 
 					  <li class="nav-item department dropdown">
-					    <a class="nav-link" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					    <a class="nav-link" href="{{route('departments')}}">
 					      Department
 					    </a>
-					    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+					    <!-- <div class="dropdown-menu" aria-labelledby="navbarDropdown">
 					      <a class="dropdown-item" href="#">Action</a>
 					      <a class="dropdown-item" href="#">Another action</a>
-					    </div>
+					    </div> -->
 					  </li>
 
 					  <li class="nav-item services dropdown">
@@ -98,7 +100,7 @@
 					<div class="right-block">
 
 						<div class="search-block" id="pro_search">
-					  	<form action="{{route('search-product')}}" method="post">
+					  	<form action="{{route('search-product')}}" method="get">
 					      <input class="form-control" type="search" onkeypress="get_prod('search_name')"  id="search_name" name="search" placeholder="Search Products....." placeholder="Search" aria-label="Search">
 					    </form>
 						</div>
@@ -139,6 +141,8 @@
                 ->get();
 				$cms = App\Model\CmsContent::where('page_name','!=',' ')
                 ->get();
+
+				$city = App\Model\City::all();
 			@endphp
 				<!-- item -->
 					<div class="col-lg-3">
@@ -165,12 +169,12 @@
 						<h4>SERVICES</h4>
 						<ul>
 						@foreach($services as $row)
-							<li><a href="{{route('services')}}">{{ $row->name }}</a></li>
+							<li><a style="cursor:pointer" onclick="serviceBokkingModal('{{ $row->id }}','{{ $row->name }}')" >{{ $row->name }}</a></li>
 						@endforeach
 							<!-- <li><a href="#">Annual Maintenance Contract</a></li>
 							<li><a href="#">Ultrasound Machine Service</a></li>
 							<li><a href="#">Oxygen Concentrator Service</a></li> -->
-							<li><a href="#">Write for Us</a></li>
+							
 						</ul>
 					</div>
 				</div>
@@ -185,6 +189,7 @@
 								<li><a href="{{route('contact_us')}}">Contact Us</a></li>
 								<li><a href="#">News</a></li>
 								<li><a href="#">Blogs</a></li>
+								<li><a href="#">Write for Us</a></li>
 							</ul>
 						</div>
 					</div>
@@ -196,12 +201,17 @@
 				<div class="col-lg-4 ">
 					<div class="item submit-mail">
 						<h4>Subscribe for our newsletter</h4>
+						@if(session()->has('subsmessage'))
+							<div class="alert alert-success">
+								{{ session()->get('subsmessage') }}
+							</div>
+						@endif
 
-
-						<form class="formbd-sec">
-							<input type="email" placeholder="Email address" name="">
+						<form  action="{{route('subscribeEmail')}}" class="formbd-sec"  method="post">
+							@csrf
+							<input type="email" required="" placeholder="Email address" id="subscribermail" name="subscribermail">
 							<div class="submit-btn">
-								<input type="submit" name="">
+								<input type="submit">
 							</div>
 						</form>
 
@@ -255,6 +265,102 @@
 
 	</div>
 </div>
+<div class="modal fade booknow-popup " id="staticBackdrop" data-backdrop="static">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+
+      </div>
+
+      <div class="popup-body">
+
+        <div class="header">
+        	<h3>Book <span id="serviceName"></span></h3>
+        	<p>Please enter your details and we will reach out to you as<br> soon as we can.</p>
+        </div>
+
+        <div class="form-bd">
+			
+        	<form id="serviceBook" action="{{route('servicebook')}}" method="post">
+				@csrf
+				<input type="hidden" value="" name="serviceId" id="serviceId">
+        		<!-- item -->
+	        		<!-- <div class="item">
+	        			<label>Service category*</label>
+	        			<select>
+	        				<option>Oxygen Concentrator</option>
+	        				<option>Text 1</option>
+	        				<option>Text 2</option>
+	        				<option>Text 3</option>
+	        				<option>Text 4</option>
+	        			</select>
+	        		</div> -->
+        		<!-- item -->
+
+        		<!-- item -->
+	        		<div class="item">
+	        			<label>Your Name*</label>
+	        			<input type="text" placeholder="Enter your name" id="name" name="name">
+	        		</div>
+        		<!-- item -->
+
+				<!-- item -->
+					<div class="item">
+						<label>Mobile Number*</label>
+						<input type="text" onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10" minlength="10" name="mobile" id="mobile">
+					</div>
+				<!-- item -->
+
+        		<!-- item -->
+	        		<div class="item">
+	        			<label>Email*</label>
+	        			<input type="email" id="email" name="email">
+	        		</div>
+        		<!-- item -->
+
+
+				<!-- item -->
+				<div class="item">
+				<label>City</label>
+				<select name="city" id="city" class="form-control select2">
+					<option value="">Select City</option>
+					@foreach ($city as $item)
+						<option value="{{$item->name}}">{{$item->name}}</option>
+					@endforeach
+				</select>
+				</div>
+        		<!-- item -->
+
+
+				<!-- item -->
+					<div class="item">
+						<label>Enter additional information</label>
+						<textarea name="information"></textarea>
+					</div>
+				<!-- item -->
+
+				<!-- item -->
+					<div class="item">
+						<input type="button" onclick="bookService()" value="Request Quote">
+					</div>
+				<!-- item -->
+
+
+
+
+        	</form>
+        </div>
+
+      </div>
+      
+    </div>
+  </div>
+</div>
 <!-- footer-block  end -->
 
 <!-- js-link -->
@@ -273,6 +379,63 @@
 <script type="text/javascript" src="{{asset('custom_resource/js/custome.js')}}"></script>
 
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<script src="{{config('app.url')}}/inhouse/bower_components/select2/dist/js/select2.full.min.js"></script>
+<script src="//unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script>
+	function subscribe(){
+		var subscribermail = $("#subscribermail").val();
+		if(subscribermail == ""){
+			swal('Email required.');
+			return false;
+		}else if(!IsEmail(subscribermail)){
+			swal('Invalid email.');
+			return false;
+		}else{
+			$("#subscribermailform").submit();
+		}
+	}
+	function IsEmail(email) {
+        var regex = /^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        if(!regex.test(email)) {
+           return false;
+        }else{
+           return true;
+        }
+      }
+	$(document).ready(function() {
+     $('#city').select2();
+    });
+	function serviceBokkingModal(id,name){
+		
+		$("#serviceName").text(name);
+		$("#serviceId").val(id);
+		$("#staticBackdrop").modal('show');
+	}
+	function bookService(){
+		if($("#name").val() == ""){
+			swal('Name required.');
+			return false;
+		}else if($("#mobile").val() == ""){
+			swal('Phone required.');
+			return false;
+		}else if($("#email").val() == ""){
+			swal('Email required.');
+			return false;
+		}else if(!IsEmail($("#email").val())){
+			swal('Invalid email.');
+			return false;
+		}else if($("#city").val() == ""){
+			swal('City required.');
+			return false;
+		}else{
+			$("#serviceBook").submit();
+			$('#serviceBook')[0].reset();
+			$("#staticBackdrop").modal('hide');
+		}
+		
+	}
+</script>
 
 <script type="text/javascript">
 function get_prod(text_id){

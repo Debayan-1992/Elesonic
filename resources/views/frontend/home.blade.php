@@ -45,7 +45,7 @@
 		<div class="container">
 			<div class="top-block">
 				<h3>Your favorite departments</h3>
-				<a href="#">VIEW ALL</a>
+				<a href="{{route('departments')}}">VIEW ALL</a>
 			</div>
 
 			<div class="departments-bd">
