@@ -176,7 +176,8 @@
                             window.location.href = "{{route('customer.customer_dashboard')}}";
                         },
                         error: function(errors) {
-                            form.find('button[type="submit"]').button('reset');
+                            //form.find('button[type="submit"]').button('reset');
+                            $("#loadList").css('display','none');
                             showErrors(errors, form);
                         }
                     });

@@ -126,25 +126,19 @@
                     form.ajaxSubmit({
                         dataType:'json',
                         beforeSubmit:function(){
-                            form.find('button[type="submit"]').button('loading');
+                           // form.find('button[type="submit"]').button('loading');
+                           $("#loadList").css('display','block');
                         },
                         success:function(data){
+                          $("#loadList").css('display','none');
                             // form.find('button[type="submit"]').button('reset');
                             form[0].reset();
-                            console.log(data.status);
-                            if(data.user_type == 'customer')
-                            {
-                              notify(data.status, 'success');
-                              window.location.href = "{{route('customer.customer_dashboard')}}";
-                            }
-                            else if(data.user_type == 'seller')
-                            {
-                              notify(data.status, 'success');
-                              window.location.href = "{{route('seller.seller_dashboard')}}";
-                            }
+                           
+                            notify(data.status, 'success');
                             
                         },
                         error: function(errors) {
+                          $("#loadList").css('display','none');
                             form.find('button[type="submit"]').button('reset');
                             showErrors(errors, form);
                         }
