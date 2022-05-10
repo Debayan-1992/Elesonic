@@ -256,23 +256,23 @@ class FrontendNoAuthController extends Controller
             return redirect()->back()->withErrors($validator);
             //return redirect()->back()->with('message', 'Password must have a minimum length of 6 and both passwords should match.');
         }
+        
+        if($request->file('image')){
+            $file = $request->file('image');
+            $ext = substr(strrchr($file->getClientOriginalName(), '.'), 1);
+            $new_name1 = str_replace(".", "", microtime());
+            $new_name = str_replace(" ", "_", $new_name1);
+            $filename = $new_name.'.'.$ext;
 
-        // if($request->file('image')){
-        //     $file = $request->file('image');
-            
-        //     $ext = substr(strrchr($file->getClientOriginalName(), '.'), 1);
-        //     $new_name1 = str_replace(".", "", microtime());
-        //     $new_name = str_replace(" ", "_", $new_name1);
-        //     $filename = $new_name.'.'.$ext;
-
-        //     if(\Image::make($file->getRealPath())->save('uploads/products/'.$filename)){
-        //         $product->photos = $filename;
-        //     } else{
-        //         return response()->json(['status' => 'File cannot be saved to server.'], 400);
-        //     }
-        // }
+            \Image::make($file->getRealPath())->save('uploads/profile/'.$filename); 
+        }
+        else
+        {
+            $filename= $request->old_image;
+        }
         User::where('id', decrypt($request->user_id))->update([
             'name' => $request->name,
+            'profile_image' => $filename,
         ]);
         if(auth()->user()->role_id == Role::IS_CUSTOMER)
             return redirect()->route('customer.customer_dashboard')->with('message', 'Account details updated successfully.');

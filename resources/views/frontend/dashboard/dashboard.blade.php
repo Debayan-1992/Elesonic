@@ -37,7 +37,7 @@
                             @if($user->profile_image ==null)
                             <img src="{{asset('custom_resource/images/profile_no_image.png')}}" alt="User Image empty" class="rounded-circle p-1 bg-primary" width="110">
                             @else
-                            <img src="{{asset('profile/customers/'.$user->profile_image)}}" alt="User Image" class="rounded-circle p-1 bg-primary" width="110">
+                            <img src="{{asset('uploads/profile/'.$user->profile_image)}}" alt="User Image" class="rounded-circle p-1 bg-primary" width="110">
                             @endif
                             <div class="mt-3">
                                 <h4>{{ $user->name }}</h4>
@@ -49,7 +49,11 @@
                             
                             <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                                 
-                                <span class="text-secondary"><a href="">My Account</a></span>
+                                @if($user->role_id  == App\Model\Role::IS_CUSTOMER)
+                                <span class="text-secondary"><a href="{{route('customer.customer_dashboard')}}">My Account</a></span>
+                                @elseif($user->role_id  == App\Model\Role::IS_SELLER)
+                                <span class="text-secondary"><a href="{{route('seller.seller_dashboard')}}">My Account</a></span>
+                                @endif
                             </li>
 
                             <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
@@ -84,10 +88,10 @@
                 <div class="card">
                     <div class="card-body">
                         @if($user->role_id  == App\Model\Role::IS_CUSTOMER)
-                        <form action="{{route('customer.frontend_acc_upd')}}" method="post">
+                        <form action="{{route('customer.frontend_acc_upd')}}" method="post" enctype="multipart/form-data">
                         @endif
                         @if($user->role_id  == App\Model\Role::IS_SELLER)
-                        <form action="{{route('seller.frontend_acc_upd')}}" method="post">
+                        <form action="{{route('seller.frontend_acc_upd')}}" method="post" enctype="multipart/form-data">
                         @endif
                         @csrf
                         <input type="text" name="user_id" class="form-control" value="{{encrypt($user->id)}}" hidden>
@@ -132,7 +136,8 @@
                                 <h6 class="mb-0">Image</h6>
                             </div>
                             <div class="col-sm-9 text-secondary">
-                                <input type="file" accept="image/*" class="form-control" id="profile_image" name="image">
+                                <input type="file" accept="image/*" class="form-control" id="profile_image" name="image" >
+                                <input type="hidden"  class="form-control"  name="old_image" value="{{ $user->profile_image }}" >
                                 
                                 <img src="" class="previewHolder" style="display:none;" alt="User Image empty" class="rounded-circle p-1 bg-primary" width="110">  
                             </div>
