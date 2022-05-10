@@ -150,6 +150,7 @@ class FrontendController extends Controller
         $request->request->add(['status'=>1]);
         $input = $request->all();
         $input['password'] = Hash::make($input['password']);
+        $input['mobile_verified_at'] = date('Y-m-d H:i:s');
         $val = User::create($input);
         
         $post['otp'] = Myhelper::otp_get();

@@ -24,7 +24,7 @@
                     {{-- Tools --}}
                 </div>
             </div>
-            <form action="{{route('dashboard.cms.submitcms')}}" method="POST" id="contentform">
+            <form action="{{route('dashboard.cms.submitcms')}}" method="POST" >
                 <div class="box-body">
                     @csrf
                     <input type="hidden" name="operation" value="contentedit">
@@ -93,46 +93,5 @@
         height: 100
     });
 </script>
-    <script>
-
-        $('#contentform').validate({
-            rules: {
-                page_title: {
-                    required: true,
-                },
-            },
-            errorElement: "p",
-            errorPlacement: function ( error, element ) {
-                if ( element.prop("tagName").toLowerCase() === "select" ) {
-                    error.insertAfter( element.closest( ".form-group" ).find(".select2") );
-                } else {
-                    error.insertAfter( element );
-                }
-            },
-            submitHandler: function() {
-                for (instance in CKEDITOR.instances) {
-                    CKEDITOR.instances[instance].updateElement();
-                }
-
-                var form = $('#contentform');
-
-                Pace.track(function(){
-                    form.ajaxSubmit({
-                        dataType:'json',
-                        beforeSubmit:function(){
-                            form.find('button[type="submit"]').button('loading');
-                        },
-                        success:function(data){
-                            notify(data.status, 'success');
-                            form.find('button[type="submit"]').button('reset');
-                        },
-                        error: function(errors) {
-                            form.find('button[type="submit"]').button('reset');
-                            showErrors(errors, form);
-                        }
-                    });
-                });
-            }
-        });
-    </script>
+   
 @endpush

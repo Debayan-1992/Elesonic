@@ -164,13 +164,15 @@
                     form.ajaxSubmit({
                         dataType:'json',
                         beforeSubmit:function(){
-                            form.find('button[type="submit"]').button('loading');
+                            //form.find('button[type="submit"]').button('loading');
+                            $("#loadList").css('display','block');
                         },
                         success:function(data){
                             // form.find('button[type="submit"]').button('reset');
 
                             form[0].reset();
                             notify(data.status, 'success');
+                            $("#loadList").css('display','none');
                             window.location.href = "{{route('customer.customer_dashboard')}}";
                         },
                         error: function(errors) {

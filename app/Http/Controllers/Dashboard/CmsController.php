@@ -190,6 +190,7 @@ class CmsController extends Controller
 
             case 'contentedit':
                 $action = CmsContent::updateorcreate(['id' => $post->id], $post->all());
+                return redirect()->route('dashboard.cms.index', ['type' => 'contents']);
             break;
 
             case 'testimonialchangeaction':
