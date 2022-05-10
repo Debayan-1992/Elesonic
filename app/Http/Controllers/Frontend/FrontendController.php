@@ -234,7 +234,9 @@ class FrontendController extends Controller
         //check if payload is valid before moving on
         
         if ($validator->fails()) {
-            return response()->json(['status' => 'Password reset form fields not filled properly'], 400);
+            
+            $arr = array('status' => implode(",",$validator->errors()->all()));
+            return response()->json($arr, 400);
         }
 
         $password = $request->password;
@@ -265,7 +267,7 @@ class FrontendController extends Controller
         $subject = 'Successfully updated Password - Elesonic';
         $mailFromId = config()->get('mail.from.address');
         Mail::to($user->email)->send(new OnlyTextMail($user->name, $mailFromId, $txt, $subject));
-        return redirect()->route('login');
+        return response()->json(['status' => 'Password has been updated successfully'], 200);
         // if ($this->sendSuccessEmail($tokenData->email)) {
         //     return response()->route('login');
         // } else {

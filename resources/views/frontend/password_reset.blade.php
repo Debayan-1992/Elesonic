@@ -33,10 +33,7 @@
 
               <!-- item -->
               <div class="item forgot-psw">
-                <div class="cl-lt">
-                  <input type="checkbox" value="agree">
-                  <p>Remember me</p>
-                </div>
+                
                 <!---->
 
                 <div class="cl-rt">
