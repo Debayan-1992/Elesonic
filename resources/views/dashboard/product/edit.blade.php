@@ -121,6 +121,10 @@
                            
                         </div>
                         <div class="form-group col-md-6">
+                            <label>Quantity <span class="text-danger">*</span></label>
+                            <input type="number" value="{{$product->quantity}}" class="form-control" placeholder="Quantity"  name="quantity">
+                        </div>
+                        <div class="form-group col-md-6">
                             <label> Description </label>
                             <textarea class="description form-control"  name="description">{{$product->description}}</textarea>
                         </div>

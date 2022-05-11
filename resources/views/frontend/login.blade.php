@@ -156,6 +156,8 @@
                             {
                               notify(data.status, 'success');
                               window.location.href = "{{route('seller.seller_dashboard')}}";
+                            }else{
+                              window.location.href = "{{route('customer.carts')}}";
                             }
                             
                         },

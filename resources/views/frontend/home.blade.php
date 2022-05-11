@@ -126,7 +126,7 @@
 					@foreach($services as $row)
 						<div class="col-lg-2">
 							<div class="item">
-								<a href="#">
+							<a href="#" data-toggle="modal" onclick="serviceBokkingModal('{{ $row->id }}','{{ $row->name }}')" >
 									<div class="figure">
 									<img src="{{config('app.url')}}/uploads/services/{{ $row->image }}">
 									</div>

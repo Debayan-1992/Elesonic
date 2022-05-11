@@ -51,6 +51,7 @@ class ProductController extends Controller
         $product->name = $request->name;
         $product->category_id  = $request->category_id;
         $product->brand_id  = $request->brand_id;
+        $product->quantity  = $request->quantity;
         if($request->net_price == ""){
             $request->net_price = $request->mrp - ($request->mrp * $request->discount)/100;
         }else{
@@ -191,6 +192,7 @@ class ProductController extends Controller
         $product->name = $request->name;
         $product->category_id  = $request->category_id;
         $product->brand_id  = $request->brand_id;
+        $product->quantity  = $request->quantity;
         if($request->net_price == ""){
             $request->net_price = $request->mrp - ($request->mrp * $request->discount)/100;
         }else{

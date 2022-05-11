@@ -104,7 +104,28 @@
 					      <input class="form-control" type="search" onkeypress="get_prod('search_name')"  id="search_name" name="search" placeholder="Search Products....." placeholder="Search" aria-label="Search">
 					    </form>
 						</div>
-
+						
+						@php 
+							if(Auth::check() == false){
+								$user_id= "";
+							}else{
+								$user_id= auth()->user()->id;
+							}
+							if($user_id == ""){
+								$cart_sess_id= \Session::get('cart_session_id');
+								$mycartsItem=  App\Model\Cart_item::where('cart_session_id',$cart_sess_id)->get();
+								$totalQty = 0;
+								foreach($mycartsItem as $row){
+									$totalQty = $totalQty+$row->cart_item_qty;
+								}
+							}else{
+								$mycartsItem=  App\Model\Cart_item::where('user_id',$user_id)->get();
+								$totalQty = 0;
+								foreach($mycartsItem as $row){
+									$totalQty = $totalQty+$row->cart_item_qty;
+								}
+							}
+						@endphp
 						<div class="icon-block">
 							<ul>
 								<li class="sell-product"><a href="#">Sell on Elesonic</a></li>
@@ -113,7 +134,11 @@
 								@else
 									<li class="user-icon"><a href="{{route('login')}}"><img src="{{asset('custom_resource/images/user-icon.png')}}"></a></li>
 								@endif
-								<li class="cagrt-icon" ><a href="#"><img src="{{asset('custom_resource/images/cart-icon.png')}}"></a></li>
+								@if($user_id != "")
+								<li class="cagrt-icon" ><a href="{{route('customer.carts')}}"><img src="{{asset('custom_resource/images/cart-icon.png')}}"><span id="myCrtItem">{{$totalQty}}</span></a></li>
+								@else
+									<li class="cagrt-icon"><a href="{{route('login')}}"><img src="{{asset('custom_resource/images/cart-icon.png')}}"><span id="myCrtItem">{{$totalQty}}</span></a></li>
+								@endif
 							</ul>
 						</div>
 					</div>

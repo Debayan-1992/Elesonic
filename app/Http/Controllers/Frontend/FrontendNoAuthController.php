@@ -19,6 +19,9 @@ use App\Model\Service;
 use App\Model\Brand;
 use App\Model\CmsContent;
 use App\Model\FaqContent;
+use App\Model\Cart_item;
+use App\Model\Delivery_address;
+
 use App\Model\Service_booking;
 use App\Model\Product_related_images;
 use App\Model\Category as Categorys;
@@ -29,7 +32,7 @@ use App\Mail\OnlyTextMail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-
+use DB;
 
 class FrontendNoAuthController extends Controller
 {
@@ -205,6 +208,7 @@ class FrontendNoAuthController extends Controller
     }
 
     function departments(){
+       
         $departments = Department::where('status','A')
         ->get();
         $data['departments'] = $departments;
@@ -248,6 +252,291 @@ class FrontendNoAuthController extends Controller
         return redirect()->route('index')->with('subsmessage', 'Successfully subscribed.');
     }
 
+    function buy_now(Request $request){
+
+        $product_id = $request->Id;
+
+        $product_quantity = $request->product_quantity;
+
+        $cart_sess_id=\Session::get('cart_session_id');
+
+        if(\Auth::check() == false){
+            $user_id= "";
+        }else{
+            $user_id= auth()->user()->id;
+        }
+        $proQty = Product::select('unit_price','purchase_price','discount','slug','status','id','name','quantity')->where('id',$product_id)->where('status','A')->first();
+
+        if($proQty->quantity == 0) {
+            $res = 0;
+            $mycartsItem = array();
+        }
+        else{
+            if(@$cart_sess_id=='') {
+                $cart_id = 'Elesonic- '.time().rand(0000,9999);
+                $cart_sess = \Session::put('cart_session_id', $cart_id);
+                $cart_sess_id= \Session::get('cart_session_id');
+            }
+            else{
+                $cart_sess_id= \Session::get('cart_session_id');
+            }
+            $product_price = $proQty->purchase_price;
+
+            $product_discount = $proQty->discount;
+
+            $product_net_price = $proQty->unit_price;
+
+            $product_net_quantity =$proQty->quantity;
+            if($user_id==''){
+                $carts= Cart_item::where('cart_session_id',$cart_sess_id)->where('cart_item_id',$product_id)->count();
+                if($carts==0) {
+                $cartItem = new Cart_item;
+                $cartItem->cart_session_id = $cart_sess_id;
+                $cartItem->cart_item_id    = $product_id;
+                $cartItem->cart_item_qty   = $product_quantity;
+                $cartItem->cart_item_price = $product_price;
+                $cartItem->cart_item_price_disc = $product_discount;
+                $cartItem->cart_item_net_price = $product_net_price;
+                $cartItem->save();
+            }
+            else{
+                $cartsItem= Cart_item::where('cart_session_id',$cart_sess_id)->where('cart_item_id',$product_id)->first();
+                $p_qty=$cartsItem->cart_item_qty;
+                $new_p_qty=$product_quantity+$p_qty;
+                $cart_data= array(
+
+                            'cart_session_id'=>$cart_sess_id,                              
+
+                            'cart_item_qty'=>$new_p_qty,                                
+
+                            'cart_item_price'=>$product_price,
+
+                            'cart_item_price_disc'=>$product_discount,
+
+                            'cart_item_net_price'=>$product_net_price,
+
+                        );
+                    DB::table('cart_item')
+                    ->where('cart_item_id', $product_id)  
+                    ->where('cart_session_id', $cart_sess_id)  
+                    ->update($cart_data); 
+                    }
+                }
+                else{
+                $carts= Cart_item::where('user_id',$user_id)->where('cart_item_id',$product_id)->count();
+                    if($carts==0){
+                        $cartItem = new Cart_item;
+                        $cartItem->user_id = $user_id;
+                        $cartItem->cart_item_id    = $product_id;
+                        $cartItem->cart_item_qty   = $product_quantity;
+                        $cartItem->cart_item_price = $product_price;
+                        $cartItem->cart_item_price_disc = $product_discount;
+                        $cartItem->cart_item_net_price = $product_net_price;
+                        $cartItem->save();
+                }
+                else{
+                    $cartsItem= Cart_item::where('user_id',$user_id)->where('cart_item_id',$product_id)->first();
+                    $p_qty=$cartsItem->cart_item_qty;
+                    $new_p_qty=$product_quantity+$p_qty;
+                    $cart_data= array(       
+
+                        'cart_item_id'=>$product_id,
+
+                        'cart_item_qty'=>$new_p_qty,                                
+
+                        'cart_item_price'=>$product_price,
+
+                        'cart_item_price_disc'=>$product_discount,
+
+                        'cart_item_net_price'=>$product_net_price,
+
+                    );
+
+                    DB::table('cart_item')
+                    ->where('cart_item_id', $product_id)  
+                    ->where('user_id', $user_id)  
+                    ->update($cart_data);
+                    }
+                }
+                if($user_id==''){
+                    $mycartsItem= Cart_item::where('cart_session_id',$cart_sess_id)->get();
+                    $totalQty = 0;
+                    foreach($mycartsItem as $row){
+                        $totalQty = $totalQty+$row->cart_item_qty;
+                    }
+                }
+                else{
+                    $mycartsItem= Cart_item::where('user_id',$user_id)->get();
+                    $totalQty = 0;
+                    foreach($mycartsItem as $row) {
+                        $totalQty = $totalQty+$row->cart_item_qty;
+                    }
+                }
+                $res = 1;
+            }
+        echo json_encode($totalQty);
+    }
+
+    function add_cart(Request $request){
+
+        $product_id = $request->Id;
+
+        $product_quantity = $request->product_quantity;
+
+        $cart_sess_id=\Session::get('cart_session_id');
+
+        if(\Auth::check() == false){
+            $user_id= "";
+        }else{
+            $user_id= auth()->user()->id;
+        }
+        $proQty = Product::select('unit_price','purchase_price','discount','slug','status','id','name','quantity')->where('id',$product_id)->where('status','A')->first();
+
+        if($proQty->quantity == 0) {
+            $res = 0;
+            $mycartsItem = array();
+        }
+        else{
+            if(@$cart_sess_id=='') {
+                $cart_id = 'Elesonic- '.time().rand(0000,9999);
+                $cart_sess = \Session::put('cart_session_id', $cart_id);
+                $cart_sess_id= \Session::get('cart_session_id');
+            }
+            else{
+                $cart_sess_id= \Session::get('cart_session_id');
+            }
+            $product_price = $proQty->purchase_price;
+
+            $product_discount = $proQty->discount;
+
+            $product_net_price = $proQty->unit_price;
+
+            $product_net_quantity =$proQty->quantity;
+            if($user_id==''){
+                $carts= Cart_item::where('cart_session_id',$cart_sess_id)->where('cart_item_id',$product_id)->count();
+                if($carts==0) {
+                $cartItem = new Cart_item;
+                $cartItem->cart_session_id = $cart_sess_id;
+                $cartItem->cart_item_id    = $product_id;
+                $cartItem->cart_item_qty   = $product_quantity;
+                $cartItem->cart_item_price = $product_price;
+                $cartItem->cart_item_price_disc = $product_discount;
+                $cartItem->cart_item_net_price = $product_net_price;
+                $cartItem->save();
+            }
+            else{
+                $cartsItem= Cart_item::where('cart_session_id',$cart_sess_id)->where('cart_item_id',$product_id)->first();
+                $p_qty=$cartsItem->cart_item_qty;
+                $new_p_qty=$product_quantity+$p_qty;
+                $cart_data= array(
+
+                            'cart_session_id'=>$cart_sess_id,                              
+
+                            'cart_item_qty'=>$new_p_qty,                                
+
+                            'cart_item_price'=>$product_price,
+
+                            'cart_item_price_disc'=>$product_discount,
+
+                            'cart_item_net_price'=>$product_net_price,
+
+                        );
+                    DB::table('cart_item')
+                    ->where('cart_item_id', $product_id)  
+                    ->where('cart_session_id', $cart_sess_id)  
+                    ->update($cart_data); 
+                    }
+                }
+                else{
+                $carts= Cart_item::where('user_id',$user_id)->where('cart_item_id',$product_id)->count();
+                    if($carts==0){
+                        $cartItem = new Cart_item;
+                        $cartItem->user_id = $user_id;
+                        $cartItem->cart_item_id    = $product_id;
+                        $cartItem->cart_item_qty   = $product_quantity;
+                        $cartItem->cart_item_price = $product_price;
+                        $cartItem->cart_item_price_disc = $product_discount;
+                        $cartItem->cart_item_net_price = $product_net_price;
+                        $cartItem->save();
+                }
+                else{
+                    $cartsItem= Cart_item::where('user_id',$user_id)->where('cart_item_id',$product_id)->first();
+                    $p_qty=$cartsItem->cart_item_qty;
+                    $new_p_qty=$product_quantity+$p_qty;
+                    $cart_data= array(       
+
+                        'cart_item_id'=>$product_id,
+
+                        'cart_item_qty'=>$new_p_qty,                                
+
+                        'cart_item_price'=>$product_price,
+
+                        'cart_item_price_disc'=>$product_discount,
+
+                        'cart_item_net_price'=>$product_net_price,
+
+                    );
+
+                    DB::table('cart_item')
+                    ->where('cart_item_id', $product_id)  
+                    ->where('user_id', $user_id)  
+                    ->update($cart_data);
+                    }
+                }
+                if($user_id==''){
+                    $mycartsItem= Cart_item::where('cart_session_id',$cart_sess_id)->get();
+                    $totalQty = 0;
+                    foreach($mycartsItem as $row){
+                        $totalQty = $totalQty+$row->cart_item_qty;
+                    }
+                }
+                else{
+                    $mycartsItem= Cart_item::where('user_id',$user_id)->get();
+                    $totalQty = 0;
+                    foreach($mycartsItem as $row) {
+                        $totalQty = $totalQty+$row->cart_item_qty;
+                    }
+                }
+                $res = 1;
+            }
+        echo json_encode($totalQty);
+    }
+    function carts(Request $request){
+        $user_id= auth()->user()->id;
+        $mycartsItem= Cart_item::where('Cart_item.user_id',$user_id)->leftjoin('products','products.id','=','Cart_item.cart_item_id')->get();
+        $data['cartDetails']=$mycartsItem;
+        return view('frontend.carts',$data);
+    }
+    function update_product_cart(Request $request){
+        $aid = $request->aid;
+        $qty = $request->qty;
+        $mycartsItem= Cart_item::where('cart_id',$aid)->first();
+        $existingQty  =  $mycartsItem->cart_item_qty;
+        $newQty       =  $qty;
+        $cart_data = array('cart_item_qty'=>$newQty);
+        DB::table('cart_item')
+        ->where('cart_id', $aid)  
+        ->update($cart_data);
+        $res = 1;
+        echo json_encode($res);
+    }
+    function del_product_cart(Request $request){
+        $user_id= auth()->user()->id;
+        $aid = $request->aid;
+        $res1=Cart_item::where('cart_id',$aid)->delete();
+        $countPro=Cart_item::where('user_id',$user_id)->count();
+        $res = $countPro;
+        echo json_encode($res);
+    }
+
+    function address(){
+        $user_id= auth()->user()->id;
+        $user = auth()->user();
+        $delivery_address = Delivery_address::where('user_id',$user_id)->get();
+        $data['shippingAddress'] = $delivery_address;
+        $data['user'] = $user;
+        return view('frontend.delivery_address',$data);
+    }
     function content_details(Request $request,$slug){
         $CmsContent = CmsContent::where('slug',$slug)->first();
         $data['cmsContent'] = $CmsContent;

@@ -19,4 +19,10 @@ class Product extends Model
     {
         return $this->belongsTo(Brand::class);
     }
+    public function cart()
+      {
+
+        return $this->hasOne(Cart_item::class, 'cart_item_id', 'id')->select(['cart_id']);
+
+      }
 }

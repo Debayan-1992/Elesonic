@@ -107,6 +107,10 @@
                            
                         </div>
                         <div class="form-group col-md-6">
+                            <label>Quantity <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" placeholder="Quantity"  name="quantity">
+                        </div>
+                        <div class="form-group col-md-6">
                             <label> Description </label>
                             <textarea class="description form-control"  name="prodescription"></textarea>
                         </div>
@@ -226,6 +230,10 @@
                 net_price: {
                     required: true,
                 },
+                quantity: {
+                    required: true,
+                },
+                
             },
             errorElement: "p",
             errorPlacement: function ( error, element ) {

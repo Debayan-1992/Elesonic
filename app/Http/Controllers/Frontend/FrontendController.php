@@ -24,7 +24,7 @@ use App\Model\Service;
 use App\Model\Brand;
 use App\Model\CmsContent;
 use App\Model\FaqContent;
-
+use App\Model\Cart_item;
 use App\Model\Service_booking;
 
 use App\Model\Category as Categorys;
@@ -99,15 +99,22 @@ class FrontendController extends Controller
         }
     
         if(\Auth::validate(['email' => $request->email, 'password' => $request->password])){
-            if(\Auth::attempt(['email' => $request->email, 'password' => $request->password, 'role_id' => 1])){
-                \Session::flash('success', 'Logedin Successfully');
-                //return redirect()->route('frontend.d_index');
-                return response()->json(['status' => 'Logedin Successfully'], 200);
-            }
-            elseif(\Auth::attempt(['email' => $request->email, 'password' => $request->password, 'role_id' => 5])) 
+            if(\Auth::attempt(['email' => $request->email, 'password' => $request->password, 'role_id' => 5])) 
             {
                 \Session::flash('success', 'customer');
+                $cart_sess_id= \Session::get('cart_session_id');
+                if($cart_sess_id == ""){
                 return response()->json(['status' => 'Customer Logging in', 'user_type' => 'customer'], 200);
+                }else{
+                $mycartsItem= Cart_item::where('cart_session_id',$cart_sess_id)->count();
+                if($mycartsItem > 0){
+                    $cart_data = array('cart_session_id'=>"",'user_id'=>auth()->user()->id);
+                    DB::table('cart_item')
+                    ->where('cart_session_id', $cart_sess_id)  
+                    ->update($cart_data);
+                }
+                return response()->json(['status' => 'Customer Logging in', 'user_type' => 'customerCart'], 200);
+                }
             }
             elseif(\Auth::attempt(['email' => $request->email, 'password' => $request->password, 'role_id' => 6])) 
             {
@@ -115,7 +122,7 @@ class FrontendController extends Controller
                 return response()->json(['status' => 'Seller Logging in', 'user_type' => 'seller'], 200);
             }
             else{
-                return response()->json(['status' => 'Account may be blocked'], 400);
+                return response()->json(['status' => 'Invalid credentials.'], 400);
             }
         } else{
             return response()->json(['status' => 'Invalid credentials.'], 400);

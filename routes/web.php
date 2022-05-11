@@ -47,7 +47,9 @@ Route::post('/subscribeEmail', [FrontendNoAuthController::class, 'subscribeEmail
 
 Route::get('/departments', [FrontendNoAuthController::class, 'departments'])->name('departments');
 
+Route::post('/add-cart', [FrontendNoAuthController::class, 'add_cart'])->name('add-cart');
 
+Route::post('/buy-now', [FrontendNoAuthController::class, 'buy_now'])->name('buy-now');
 
 // Frontend Login, Registration, Pass reset Routes...
 Route::get('/login', [FrontendController::class, 'signin'])->name('login'); //Frontend Login
@@ -218,6 +220,13 @@ Route::prefix('/customer/dashboard')->name('customer.')->middleware('customeraut
     Route::get('password-change', [FrontendNoAuthController::class, 'password_change_form'])->name('frontend_change_pass');
     Route::post('password-change', [FrontendNoAuthController::class, 'password_change_update'])->name('frontend_pass_upd');
     Route::post('account-update', [FrontendNoAuthController::class, 'my_account_update'])->name('frontend_acc_upd');
+
+    Route::get('carts', [FrontendNoAuthController::class, 'carts'])->name('carts');
+    Route::post('update-product-cart', [FrontendNoAuthController::class, 'update_product_cart'])->name('update-product-cart');
+    Route::post('del-product-cart', [FrontendNoAuthController::class, 'del_product_cart'])->name('del-product-cart');
+    Route::get('address', [FrontendNoAuthController::class, 'address'])->name('address');
+
+    
 });
 
 //Frontend Seller routes

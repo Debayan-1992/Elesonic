@@ -385,7 +385,8 @@ class HomeController extends Controller
 
     public function logout()//This method needs to go in a controller where their's is no middleware verification
     {
+        
         \Auth::logout();
-        return redirect()->back();
+        return redirect()->route('login');
     }
 }

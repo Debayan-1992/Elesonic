@@ -67,6 +67,18 @@
                             @if($user->role_id  == App\Model\Role::IS_CUSTOMER)
                             <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                                 
+                                <span class="text-secondary"><a href="{{route('customer.address')}}">My Address</a></span>
+                            </li>
+                            @endif
+                            @if($user->role_id  == App\Model\Role::IS_CUSTOMER)
+                            <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                                
+                                <span class="text-secondary"><a href="{{route('customer.carts')}}">My Cart</a></span>
+                            </li>
+                            @endif
+                            @if($user->role_id  == App\Model\Role::IS_CUSTOMER)
+                            <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                                
                                 <span class="text-secondary"><a href="">My Orders</a></span>
                             </li>
                             @endif

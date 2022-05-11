@@ -75,8 +75,13 @@
 						</div>
 
 						<ul class="button-block">
-							<li><a href="#">ADD TO CART</a></li>
-							<li><a href="#">BUY NOW</a></li>
+							@if($product->quantity > 0)
+							<li><a href="javascript:void(0)" id="addCartBtn" onclick="addCart('{{ $product->id }}','{{ $product->quantity }}')">ADD TO CART</a></li>
+							 <li><a style="display: none" href="{{route('customer.carts')}}"  id="checkoutCartBtn">Go To Cart</a></li> 
+							 <li><a href="javascript:void(0)" id="addCartBtn" onclick="buyNow('{{ $product->id }}','{{ $product->quantity }}')">BUY NOW</a></li>
+							@else
+							<li><a href="javascript:void(0)">Out Of Stock</a></li>    
+							@endif
 						</ul>
 
 						<h6>{{ $product->name}}</h6>
@@ -139,8 +144,65 @@
 		</div>
 	</div>
 @endif
-	@endsection
+@endsection
+@push('script')
+<script>
+	
+	function addCart(Id,qty){
+        var product_quantity = 1;
+        if(qty == 0 || qty < 0){
+            swal('Out of Stock');
+			return false;
+        }
+        else{
+            $.ajax({
+			url: "{{ route('add-cart') }}",
+            type: "post",
+            datatype: "json",
+			data:{'_token':'{{csrf_token()}}','Id':Id,'product_quantity':product_quantity},
+            beforeSend: function (){
+               
+            },
+            success: function (data) {
+               $("#myCrtItem").text(data);
+               //$("#againCart").attr('value', 'Add to Cart Again');
+               swal("Item Successfully Added");
+               $("#addCartBtn").hide();
+               $("#checkoutCartBtn").show();
+            }
+          });
+        }
+    }
+</script>
+<script>
+	
+	function buyNow(Id,qty){
+        var product_quantity = 1;
+        if(qty == 0 || qty < 0){
+            swal('Out of Stock');
+			return false;
+        }
+        else{
+            $.ajax({
+			url: "{{ route('add-cart') }}",
+            type: "post",
+            datatype: "json",
+			data:{'_token':'{{csrf_token()}}','Id':Id,'product_quantity':product_quantity},
+            beforeSend: function (){
+               
+            },
+            success: function (data) {
+               $("#myCrtItem").text(data);
+			   window.location.href = "{{route('customer.carts')}}";
+            }
+          });
+        }
+    }
+</script>
+@endpush
 <!-- popular-products -->
+
+
 
 
 

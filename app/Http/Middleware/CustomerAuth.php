@@ -21,11 +21,10 @@ class CustomerAuth
             return $next($request);
         } 
         else{ //Admin, Superadmin
-            abort(401);
+            
             \Auth::logout();
             return redirect()
-            ->route('login')
-            ->with('warning', 'Only Customer can access this portal');
+            ->route('login');
         }
     }
 }
