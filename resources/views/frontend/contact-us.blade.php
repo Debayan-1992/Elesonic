@@ -34,28 +34,35 @@
 
 				<!-- item -->
 				<div class="lt-block">
+				@if(session()->has('message'))
+					<div class="alert alert-success">
+						{{ session()->get('message') }}
+					</div>
+				@endif
+
+				@if($errors->any())
+				<div class="alert alert-danger">
+					{!! implode('', $errors->all('<div>:message</div>')) !!}
+				</div>
+				@endif
 					<h4>Send Us a Message</h4>
 					<div class="form-bd">
-						<form>
-
+						<form action="{{route('contact_us')}}" method="post">
+						@csrf
 							<div class="item">
-								<input type="text" placeholder="First Name" name="">
+								<input type="text" placeholder="First Name" name="name">
 							</div>
 
 							<div class="item">
-								<input type="text" placeholder="Last Name" name="">
+								<input type="email" placeholder="Email" name="email">
 							</div>
 
 							<div class="item">
-								<input type="email" placeholder="Email" name="">
+								<input type="text" placeholder="Phone" name="mobile">
 							</div>
 
 							<div class="item">
-								<input type="text" placeholder="Phone" name="">
-							</div>
-
-							<div class="item">
-								<textarea placeholder="Message"></textarea>
+								<textarea placeholder="Message" name="message"></textarea>
 							</div>
 
 							<div class="item submit-mail-sec">
@@ -81,14 +88,14 @@
 								<ul>
 
 									<li>
-										<p>National Sales Office</p>
-										<a href="#">+91-20 4127 8518</a>
+										<p>{{$setting->site_number_office_name}}</p>
+										<a href="#">{{$setting->site_number}}</a>
 									</li>
 
-									<li>
+									{{-- <li>
 										<p>Kolkata Factory</p>
 										<a href="#">+91-33-2470 0066</a>
-									</li>
+									</li> --}}
 
 								</ul>
 							</div>
@@ -106,10 +113,10 @@
 								<ul>
 
 									<li>
-										<a href="#">elesonic.healthcare@gmail.com</a>
+										<a href="#">{{$setting->site_email}}</a>
 									</li>
 
-									<li>
+									{{-- <li>
 										<a href="#">elesonic@rediffmail.com</a>
 									</li>
 
@@ -123,7 +130,7 @@
 
 									<li>
 										<a href="#">elesonic.uganda@gmail.com</a>
-									</li>
+									</li> --}}
 
 								</ul>
 							</div>
@@ -141,10 +148,10 @@
 								<ul>
 
 									<li>
-										<a href="#">www.elesonicgroup.com</a>
+										<a href="{{$setting->site_link}}">{{$setting->site_link}}</a>
 									</li>
 
-									<li>
+									{{-- <li>
 										<a href="#">www.elesonicgroup.co.in</a>
 									</li>
 
@@ -162,7 +169,7 @@
 
 									<li>
 										<a href="#"></a>
-									</li>
+									</li> --}}
 									
 								</ul>
 							</div>
@@ -182,8 +189,7 @@
 					<div class="col-lg-4">
 						<div class="item-block">
 							<span><i class="fa fa-map-marker"></i></span>
-							<h4>Elesonic India National Sales Office</h4>
-							<p>Fortuna Building, Unit No. 506, Pimple Saudagar, Wakad, Pune, Maharashtra</p>
+							{!!$setting->address1!!}
 						</div>
 					</div>
 					<!-- item -->
@@ -192,8 +198,7 @@
 					<div class="col-lg-4">
 						<div class="item-block">
 							<span><i class="fa fa-map-marker"></i></span>
-							<h4>Elesonic Medical Systems Canada Inc.</h4>
-							<p>2000 McGill College Avenue, 6th Floor, Montreal, Quebec, H3A 3H3, Canada</p>
+							{!!$setting->address2!!}
 						</div>
 					</div>
 					<!-- item -->
@@ -202,8 +207,7 @@
 					<div class="col-lg-4">
 						<div class="item-block">
 							<span><i class="fa fa-map-marker"></i></span>
-							<h4>Elesonic Medical Systems Nigeria Ltd.</h4>
-							<p>Lagos, Nigeria, Nigeria – Local Contact : Harshit Vasavada</p>
+							{!!$setting->address3!!}
 						</div>
 					</div>
 					<!-- item -->
@@ -222,7 +226,7 @@
 <!-- map-block -->
 
 	<div class="map-block">
-		<iframe src="https://www.google.com/maps/embed?pb=!1m26!1m12!1m3!1d3688.959104545055!2d88.17788036401426!3d22.392899085275538!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m11!3e6!4m3!3m2!1d22.3929506!2d88.18023079999999!4m5!1s0x3a026297b1d0817d%3A0xad158e6d8f34440b!2sElesonic%20Healthcare%20Pvt%20Ltd%2095VH%2B6X5%20Thakurpukur-Bibirhat-Bakhrahat-Raipur%20Road%20Nodakhali%20P.%20O.%20Muchisa%20near%20Phultala%2C%20Saheban%2C%20Bagicha%2C%20West%20Bengal%20743377!3m2!1d22.3930002!2d88.1799733!5e0!3m2!1sen!2sin!4v1650637316494!5m2!1sen!2sin" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+		{!!$setting->map_embed_link!!}
 	</div>
 
 <!-- map-block -->

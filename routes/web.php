@@ -37,8 +37,8 @@ Route::get('/services', [FrontendNoAuthController::class, 'services'])->name('se
 Route::post('/servicebook', [FrontendNoAuthController::class, 'servicebook'])->name('servicebook');
 Route::get('/faq', [FrontendNoAuthController::class, 'faq'])->name('faq');
 Route::get('/content-details/{type?}', [FrontendNoAuthController::class, 'content_details'])->name('content-details');
-Route::get('/contact_us', [FrontendNoAuthController::class, 'contact_us'])->name('contact_us');
-Route::post('/contact_us', [FrontendNoAuthController::class, 'contact_us_post'])->name('contact_us');
+Route::get('/contact-us', [FrontendNoAuthController::class, 'contact_us'])->name('contact_us');
+Route::post('/contact-us', [FrontendNoAuthController::class, 'contact_us_post'])->name('contact_us');
 
 Route::post('/get-search-data', [FrontendNoAuthController::class, 'get_search_data'])->name('get-search-data');
 Route::get('/search-product', [FrontendNoAuthController::class, 'search_product'])->name('search-product');

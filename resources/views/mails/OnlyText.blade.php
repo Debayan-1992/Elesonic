@@ -2,7 +2,7 @@
 
 # Hi {{$name}},<br>
 <hr>
-{{$text}}<br>
+{!! $text !!}
 
 <hr>
 

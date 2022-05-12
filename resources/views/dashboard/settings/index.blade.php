@@ -34,7 +34,7 @@
                                     <div class="row">
                                         <div class="form-group col-md-6">
                                             <label>Site Name <span class="text-danger">*</span></label>
-                                            <input name="name" value="{{$settings->name}}" class="form-control">
+                                            <input name="name" id="name" value="{{$settings->name}}" class="form-control">
                                         </div>
 
                                         <div class="form-group col-md-6">
@@ -55,6 +55,39 @@
                                         <div class="form-group col-md-6">
                                             <label>Banner Description<span class="text-danger">*</span></label>
                                             <input name="banner_description" value="{{$settings->banner_description}}" class="form-control">
+                                        </div>
+
+                                        <div class="form-group col-md-6">
+                                            <label>Address1<span class="text-danger">*</span></label>
+                                            <input name="address1" value="{{$settings->address1}}" class="form-control">
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label>Address2<span class="text-danger">*</span></label>
+                                            <input name="address2" value="{{$settings->address2}}" class="form-control">
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label>Address3<span class="text-danger">*</span></label>
+                                            <input name="address3" value="{{$settings->address3}}" class="form-control">
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label>Map Embed Link<span class="text-danger">*&nbsp;<i>(Please keep width="100%" height="100%" after src)</i></span></label>
+                                            <textarea name="map_embed_link" value="{{$settings->map_embed_link}}" class="form-control">{{$settings->map_embed_link}}</textarea>
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label>Site Email<span class="text-danger">*</span></label>
+                                            <input name="site_email" value="{{$settings->site_email}}" class="form-control">
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label>Site Link<span class="text-danger">*</span></label>
+                                            <input name="site_link" value="{{$settings->site_link}}" class="form-control">
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label>Site Number<span class="text-danger">*</span></label>
+                                            <input name="site_number" value="{{$settings->site_number}}" class="form-control">
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label>Site Number Office Name <span class="text-danger">*</span></label>
+                                            <input name="site_number_office_name" value="{{$settings->site_number_office_name}}" class="form-control">
                                         </div>
                                     </div>
                                     <footer class="text-left">

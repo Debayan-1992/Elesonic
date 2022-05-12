@@ -31,10 +31,13 @@ use App\Utility\CategoryUtility;
 
 use App\Model\Subscribers;
 use App\Mail\OnlyTextMail;
+use App\Models\Setting as ModelsSetting;
+use Exception;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use DB;
+
 
 class FrontendNoAuthController extends Controller
 {
@@ -664,11 +667,72 @@ class FrontendNoAuthController extends Controller
 
     public function contact_us()
     {
-        return view('frontend.contact-us');
+        $setting = Setting::all([
+        'address1',
+        'address2',
+        'address3',
+        'map_embed_link',
+        'site_email',
+        'site_link',
+        'site_number',
+        'site_number_office_name'])->first();
+      
+        return view('frontend.contact-us')->with(['setting'=>$setting]);
     }
 
-    public function contact_us_post()
+    public function contact_us_post(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'email' => 'required|email',
+            'mobile' => 'required|min:10',
+            'message' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator);
+            //return redirect()->back()->with('message', 'Password must have a minimum length of 6 and both passwords should match.');
+        }
+
+        DB::table('contacts')->insert([
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->mobile,
+            'message' => $request->message,
+            'created_at' => date('Y-m-d h:i:s'),
+        ]);
+
+        // \Config::set([
+        //     #Mail Configuration
+        //     'mail.host' => 'smtp.mailtrap.io',
+        //     'mail.port' => 2525,
+        //     'mail.encryption' => 'tls',
+        //     'mail.username' => '',
+        //     'mail.password' => '',
+        // ]);
+
+        $txt = '';
+        $txt .= '<p>The following response has been submited by an user</p>';
+        $txt .= '<p><strong>Name: </strong>'.$request->name.'</p>';
+        $txt .= '<p><strong>Email: </strong>'.$request->email.'</p>';
+        $txt .= '<p><strong>Mobile: </strong>'.$request->mobile.'</p>';
+        $txt .= '<p><strong>Message: </strong>'.$request->message.'</p>';
+        $subject = 'Contact Us Response - Elesonic';
+        //$mailFromId = config()->get('mail.from.address');
+        $mailFromId = 'debo2696@gmail.com';
+        //dd(config()->all());
+        //return (new OnlyTextMail($request->name, $mailFromId, $txt, $subject))->render();
+        //dd($txt, $subject, $mailFromId);
+        try{
+            Mail::to($mailFromId)->send(new OnlyTextMail('Admin', $mailFromId, $txt, $subject));
+            $txt = "You have successfully filled up the Contact us form.";
+            Mail::to($request->email)->send(new OnlyTextMail($request->name, $mailFromId, $txt, $subject));
+        }
+        catch(Exception $e1){
+            
+        }
+        if(isset($e1)){dd($e1);}
+        return redirect()->back()->with('message', 'Response submitted successfully!');
 
     }
 }
