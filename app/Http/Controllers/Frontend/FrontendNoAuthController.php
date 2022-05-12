@@ -22,6 +22,8 @@ use App\Model\FaqContent;
 use App\Model\Cart_item;
 use App\Model\Delivery_address;
 
+use App\Model\State;
+
 use App\Model\Service_booking;
 use App\Model\Product_related_images;
 use App\Model\Category as Categorys;
@@ -533,9 +535,56 @@ class FrontendNoAuthController extends Controller
         $user_id= auth()->user()->id;
         $user = auth()->user();
         $delivery_address = Delivery_address::where('user_id',$user_id)->get();
+        $state = State::where('countryId',101)->get();
         $data['shippingAddress'] = $delivery_address;
         $data['user'] = $user;
+        $data['state'] = $state;
         return view('frontend.delivery_address',$data);
+    }
+    function get_city(Request $request){
+        $stateId= $request->state;
+        $city = City::where('state_id',$stateId)->get();
+        echo json_encode($city);
+    }
+    function makeDefault(Request $request){
+        $addressId = $request->addressId;
+        $user_id= auth()->user()->id;
+        $dataN = array('is_default'=>'No');
+        DB::table('delivery_address')
+                    ->where('user_id', $user_id)   
+                    ->update($dataN); 
+        $dataY = array('is_default'=>'Yes');
+        DB::table('delivery_address')
+                    ->where('address_id', $addressId)   
+                    ->update($dataY); 
+        $res = 1;
+        echo json_encode($res);
+    }
+    function makeDelete(Request $request){
+        $addressId = $request->addressId;
+        $user_id= auth()->user()->id;
+        $res1=Delivery_address::where('address_id',$addressId)->delete();
+        $res = 1;
+        echo json_encode($res);
+    }
+    function addaddress(Request $request){
+        $delivery_address = New Delivery_address;
+        $user_id= auth()->user()->id;
+        $cityName = City::where('id',$request->delcity)->first();
+        $stateName = State::where('id',$request->state)->first();
+        $delivery_address->user_first_name = $request->first_name;
+        $delivery_address->user_id=$user_id;
+        $delivery_address->user_last_name = $request->last_name;
+        $delivery_address->user_phone_no = $request->phone;
+        $delivery_address->user_email = $request->email;
+        $delivery_address->user_state = $stateName->name;
+        $delivery_address->user_city = $cityName->name;
+        $delivery_address->user_pincode = $request->postcode;
+        $delivery_address->user_address = $request->address;
+        $delivery_address->save();
+        return redirect()->route('customer.address')->with('message', 'Address saved successfully.');
+
+
     }
     function content_details(Request $request,$slug){
         $CmsContent = CmsContent::where('slug',$slug)->first();

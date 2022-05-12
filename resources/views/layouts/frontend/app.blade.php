@@ -108,21 +108,26 @@
 						@php 
 							if(Auth::check() == false){
 								$user_id= "";
+								
 							}else{
 								$user_id= auth()->user()->id;
 							}
 							if($user_id == ""){
 								$cart_sess_id= \Session::get('cart_session_id');
-								$mycartsItem=  App\Model\Cart_item::where('cart_session_id',$cart_sess_id)->get();
-								$totalQty = 0;
-								foreach($mycartsItem as $row){
-									$totalQty = $totalQty+$row->cart_item_qty;
+								if($cart_sess_id != ""){
+									$mycartsItem=  App\Model\Cart_item::where('cart_session_id',$cart_sess_id)->get();
+									$totalQty = 0;
+									foreach($mycartsItem as $row){
+										$totalQty = $totalQty+$row->cart_item_qty;
+									}
+								}else{
+									$totalQty = 0;
 								}
 							}else{
 								$mycartsItem=  App\Model\Cart_item::where('user_id',$user_id)->get();
-								$totalQty = 0;
+								$totalQty1 = 0;
 								foreach($mycartsItem as $row){
-									$totalQty = $totalQty+$row->cart_item_qty;
+									$totalQty1 = $totalQty1+$row->cart_item_qty;
 								}
 							}
 						@endphp
@@ -130,12 +135,12 @@
 							<ul>
 								<li class="sell-product"><a href="#">Sell on Elesonic</a></li>
 								@if(Auth::check())
-									<li class="user-icon"><a href="{{route('lgt')}}"><i class="fa fa-sign-out mr-2"></i> Logout</a></li>
+									<li class="user-icon"><a href="{{route('customer.customer_dashboard')}}"><i class="fa fa-user" aria-hidden="true"></i></a></li>
 								@else
 									<li class="user-icon"><a href="{{route('login')}}"><img src="{{asset('custom_resource/images/user-icon.png')}}"></a></li>
 								@endif
 								@if($user_id != "")
-								<li class="cagrt-icon" ><a href="{{route('customer.carts')}}"><img src="{{asset('custom_resource/images/cart-icon.png')}}"><span id="myCrtItem">{{$totalQty}}</span></a></li>
+								<li class="cagrt-icon" ><a href="{{route('customer.carts')}}"><img src="{{asset('custom_resource/images/cart-icon.png')}}"><span id="myCrtItem">{{$totalQty1}}</span></a></li>
 								@else
 									<li class="cagrt-icon"><a href="{{route('login')}}"><img src="{{asset('custom_resource/images/cart-icon.png')}}"><span id="myCrtItem">{{$totalQty}}</span></a></li>
 								@endif
@@ -430,6 +435,7 @@
       }
 	$(document).ready(function() {
      $('#city').select2();
+	 $('#state').select2();
     });
 	function serviceBokkingModal(id,name){
 		

@@ -225,6 +225,14 @@ Route::prefix('/customer/dashboard')->name('customer.')->middleware('customeraut
     Route::post('update-product-cart', [FrontendNoAuthController::class, 'update_product_cart'])->name('update-product-cart');
     Route::post('del-product-cart', [FrontendNoAuthController::class, 'del_product_cart'])->name('del-product-cart');
     Route::get('address', [FrontendNoAuthController::class, 'address'])->name('address');
+    Route::post('getcity', [FrontendNoAuthController::class, 'get_city'])->name('getcity');
+    Route::post('makeDefault', [FrontendNoAuthController::class, 'makeDefault'])->name('makeDefault');
+    Route::post('makeDelete', [FrontendNoAuthController::class, 'makeDelete'])->name('makeDelete');
+    Route::post('addaddress', [FrontendNoAuthController::class, 'addaddress'])->name('addaddress');
+    
+
+    
+    
 
     
 });

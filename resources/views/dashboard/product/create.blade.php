@@ -106,14 +106,15 @@
                             <input type="text" readonly="" placeholder="Net Price" class="form-control" id="net_price" name="net_price">
                            
                         </div>
-                        <div class="form-group col-md-6">
-                            <label>Quantity <span class="text-danger">*</span></label>
-                            <input type="number" class="form-control" placeholder="Quantity"  name="quantity">
-                        </div>
+                        
                         <div class="form-group col-md-6">
                             <label> Description </label>
                             <textarea class="description form-control"  name="prodescription"></textarea>
                         </div>
+                        <div class="form-group col-md-6">
+                            <label>Quantity <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" placeholder="Quantity"  name="quantity">
+                        </div> 
                         <div class="form-group col-md-6">
                             <label>Meta Title </label>
                             <input type="text" class="form-control"  placeholder="Meta title"  name="meta_title">
