@@ -1,102 +1,103 @@
 @extends('layouts.frontend.app')
 @section('content')
-@section('pageheader', 'My Address')
+@section('pageheader', 'Shipping Address')
+
 <div class="ptb bd_productlisting">
 <div class="container">
+<div class="heading text-center"><h2>Shipping Address</h2></div>
+    <div class="row justify-content-center align-content-center">
+        @if(count($shippingAddress) > 0)
+        @foreach($shippingAddress as $row)
+            <div class="col-md-4 col-sm-6 col-12 mb-2">
 
-    <div class="row ">
-        
-    @include('layouts.frontend.leftpanel')
+                <div id="box" class="user-card-active">
+                   <span><b>Shipping Address</b></span><br>
+                    <b>Name</b> : {{ $row->user_first_name.' '.$row->user_last_name}}&nbsp;&nbsp;
+                    @if($row->is_default == 'Yes')
+                    <span style="padding: 10px;color: green;">Default</span>
+                    @else
+                        <span onclick="makeDefault('{{$row->address_id}}')" style="cursor:pointer;padding: 10px;color: blue;">Make Default</span>
 
-            <div class="col-lg-8">
-            <div class="row justify-content-center align-content-center">
-               
-                    @if(count($shippingAddress) > 0)
-                    @foreach($shippingAddress as $row)
+                        <span onclick="makeDelete('{{$row->address_id}}')" style="cursor:pointer;padding: 10px;color: red;">Delete</span>
+                    @endif
 
-                    <div class="col-md-5 user-card-col col-12 mb-2">
-                        <div id="box" class="user-card">
-                            <b>Name</b> : {{ $row->user_first_name.' '.$row->user_last_name}}&nbsp;&nbsp;
-                        @if($row->is_default == 'Yes')
-                            <span style="padding: 10px;color: green;">Default</span>
-                         
-                        @else
-                                 <span onclick="makeDefault('{{$row->address_id}}')" style="cursor:pointer;padding: 10px;color: blue;">Make Default</span>
-
-                                  <span onclick="makeDelete('{{$row->address_id}}')" style="cursor:pointer;padding: 10px;color: red;">Delete</span>
-                        @endif
-
-                            <br> 
-                            <b>Email</b> : {{$row->user_email}}<br>
+                    <br> 
+                    <b>Email</b> : {{$row->user_email}}<br>
                             <b>Phone</b> : {{$row->user_phone_no}}<br>
                             <b>Address</b> : {{$row->user_address}} ,{{$row->user_pincode}}<br>{{$row->user_city}},{{$row->user_state}}
-                        </div>
-                    </div>
-
-               @endforeach
-               @endif
+                </div>
             </div>
-            
+       @endforeach
+       @endif
+    <div class="col-md-4 col-sm-6 col-12 mb-2">
+
+        <div id="box" class="user-card-active">
+            <span><b>Billing Address</b></span><br>
+            <b>Name</b> : {{ $member_dtl->name }}<br>
+            <b>Email</b> : {{ $member_dtl->email }}
+            <br> 
+            <b>Phone</b> : {{ $member_dtl->mobile }}
+            <br> 
+        </div>
+    </div>
+
+    </div>
  <section class="main-body mt-4">
     <div class="custom-container">
-        <form method="post" id="shippingAddress" action="{{ route('customer.addaddress') }}" class="form-page">
+    <form method="post" id="shippingAddress" action="{{ route('customer.addaddressdef') }}" class="form-page">
             @csrf
-            <div class="col-md-12 p-0">
-           
-                <div class="heading mb-1"><h2>Add New Shipping Details</h2></div>
-                        <!-- <h2>Add New Shipping Details</h2> -->
-            <div class="row">
-                <div class="col-md-6">
+    <div class="col-12">
+            <h2>Add New Shipping Details</h2>
+        <div class="row">
+            <div class="col-md-6">
                     <div class="from-group">
                         <label>First Name</label>
                         <input type="text" name="first_name" id="first_name" autocomplete="off" value="" class="form-control">
                     </div>
                 </div>
-                <div class="col-md-6">
-                        <div class="from-group">
-                            <label>Last Name</label>
-                            <input type="text" name="last_name" id="last_name" autocomplete="off" value="" class="form-control">
-                        </div>
+            <div class="col-md-6">
+                 <div class="from-group">
+                        <label>Last Name</label>
+                        <input type="text" name="last_name" id="last_name" autocomplete="off" value="" class="form-control">
                 </div>
             </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="from-group">
+                        <label>E-mail</label>
+                        <input type="email" name="email" id="email" class="form-control">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="from-group">
+                            <label>Phone</label>
+                        <input type="text" name="phone" onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="11" id="phone" autocomplete="off" value="" class="form-control">
+                </div>
+            </div>
+        </div>
             <div class="row">
                 <div class="col-md-6">
                     <div class="from-group">
-                        <label>E-mail</label>
-                        <input type="email" name="email" id="email" class="form-control">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="from-group">
-                        <label>Phone</label>
-                        <input type="text" name="phone" onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="11" id="phone" autocomplete="off" value="" class="form-control">
-                    </div>
-                </div>
-            </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="from-group">
-                            <label>State</label>
-                            <select  onchange="getCity(this.value)" name="state" id="state" class="form-control select2">
+                        <label>State</label>
+                        <select  onchange="getCity(this.value)" name="state" id="state" class="form-control select2">
                                 <option value="">Select State</option>
                                 @foreach ($state as $item)
                                     <option value="{{$item->id}}">{{$item->name}}</option>
                                 @endforeach
-                            </select>
-                            
-                    </div>
+                        </select>
                 </div>
-                <div class="col-md-6">
+            </div>
+             <div class="col-md-6">
                     <div class="from-group">
                             <label>City</label>
-                        <select class="form-control" autocomplete="off" name="delcity" id="delcity" placeholder="Pick a state...">
+                            <select class="form-control" autocomplete="off" name="delcity" id="delcity" placeholder="Pick a state...">
                         <option value="">Select City</option>
-
                         </select>
                     </div>
-                </div> 
                 </div>
-               <div class="row">
+            </div>
+            <div class="row">
                     <div class="col-md-6">
                     <div class="from-group">
                             <label>Postcode</label>
@@ -105,22 +106,22 @@
                 </div>
                 <div class="col-md-6">
                     <div class="from-group">
-                        <label>Street address</label>
-                            <textarea class="form-control" id="address" name="address" cols="5" rows="5" cols="5"></textarea>
+                            <label>Address</label>
+                        <textarea class="form-control" id="address" name="address" rows="5" cols="5"></textarea>
                     </div>
                 </div>
             </div>       
         </div>
     </form>
-     <div class="col-md-6 p-0">
+     <div class="col-md-6">
         <button class="bd_btn btn-save" onclick="saveShipping()">Save</button>
+         <a class="bd_btn btn-save btn-proceed" href="{{route('customer.place-order')}}">Proceed</a>
     </div>
-    </section>
-</div>
-</div>
+  </div>
 </section>
 </div>
 </div>
+
 @endsection
 @push('script')
 <script type="text/javascript">

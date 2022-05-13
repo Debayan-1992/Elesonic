@@ -3,6 +3,7 @@
 @section('pageheader', 'Carts')
 <div class="ptb bd_productlisting">
 <div class="container">
+<div class="heading text-center"><h2>Cart</h2></div>
      <span class="return_message"></span>
         <div class="row align-items-center justify-content-center">
             <div class="col-12">
@@ -83,7 +84,7 @@
               @endif
               <div class="cart_navigation text-right mr-2">
                 @if(count($cartDetails) > 0)
-                <a class="checkout-btn" href=""><i class="fa fa-check"></i> Proceed to checkout</a>
+                <a class="checkout-btn" href="{{route('customer.confirm-order')}}"><i class="fa fa-check"></i> Proceed to checkout</a>
                 @else
                 <div class="no-item">
                   <img src="./public/assets/front/images/no-item.png" alt="#" class="img-fluid">

@@ -23,7 +23,8 @@ use App\Model\Cart_item;
 use App\Model\Delivery_address;
 
 use App\Model\State;
-
+use App\Model\Order;
+use App\Model\Order_details;
 use App\Model\Service_booking;
 use App\Model\Product_related_images;
 use App\Model\Category as Categorys;
@@ -509,6 +510,9 @@ class FrontendNoAuthController extends Controller
     function carts(Request $request){
         $user_id= auth()->user()->id;
         $mycartsItem= Cart_item::where('Cart_item.user_id',$user_id)->leftjoin('products','products.id','=','Cart_item.cart_item_id')->get();
+        if(count($mycartsItem) == 0){
+            return redirect()->route('index');
+        }
         $data['cartDetails']=$mycartsItem;
         return view('frontend.carts',$data);
     }
@@ -586,8 +590,119 @@ class FrontendNoAuthController extends Controller
         $delivery_address->user_address = $request->address;
         $delivery_address->save();
         return redirect()->route('customer.address')->with('message', 'Address saved successfully.');
+    }
+    function addaddressdef(Request $request){
+        $delivery_address = New Delivery_address;
+        $user_id= auth()->user()->id;
+        $dataN = array('is_default'=>'No');
+        DB::table('delivery_address')
+                    ->where('user_id', $user_id)   
+                    ->update($dataN); 
+        $cityName = City::where('id',$request->delcity)->first();
+        $stateName = State::where('id',$request->state)->first();
+        $delivery_address->user_first_name = $request->first_name;
+        $delivery_address->user_id=$user_id;
+        $delivery_address->user_last_name = $request->last_name;
+        $delivery_address->user_phone_no = $request->phone;
+        $delivery_address->user_email = $request->email;
+        $delivery_address->user_state = $stateName->name;
+        $delivery_address->user_city = $cityName->name;
+        $delivery_address->user_pincode = $request->postcode;
+        $delivery_address->user_address = $request->address;
+        $delivery_address->is_default = 'Yes';
+        $delivery_address->save();
+        return redirect()->route('customer.confirm-order')->with('message', 'Address saved successfully.');
+    }
+    function confirm_order(Request $request){
+        $user_id= auth()->user()->id;
+        $user = auth()->user();
+        $delivery_address = Delivery_address::where('user_id',$user_id)->get();
+        $state = State::where('countryId',101)->get();
+        $member_dtl = User::where('id',$user_id)->first();
+        $data['shippingAddress'] = $delivery_address;
+        $data['member_dtl']      = $member_dtl;
+        $data['state'] = $state;
+        return view('frontend.confirm_order',$data);
+    }
 
+    function place_order(Request $request){
+        $user_id= auth()->user()->id;
+        $mycartsItem= Cart_item::where('Cart_item.user_id',$user_id)->leftjoin('products','products.id','=','Cart_item.cart_item_id')->get();
+        $delivery_address = Delivery_address::where('user_id',$user_id)->where('is_default','Yes')->first();
+        $data['cartDetails']=$mycartsItem;
+        $data['shippingAddress']=$delivery_address;
+        if(empty($delivery_address)){
+            return redirect()->route('customer.confirm-order')->with('message', 'Add shipping address');
+        }
+        return view('frontend.place_order',$data);
+    }
+    function order_now(Request $request){
+        $user_id= auth()->user()->id;
+        $mycartsItem      = Cart_item::where('Cart_item.user_id',$user_id)->leftjoin('products','products.id','=','Cart_item.cart_item_id')->get();
+        $delivery_address = Delivery_address::where('user_id',$user_id)->where('is_default','Yes')->first();
+        $subTotal = 0;
+        foreach($mycartsItem as $row){
+            $subTotal = $subTotal + ($row->cart_item_qty * $row->cart_item_net_price);
+        }
+        $order = New Order;
+        $ordrId= str_replace(".", "", microtime()).rand(000,999);
+        $order_unique_id = str_replace(" ", "-", $ordrId);
+        $order->order_unique_id = $order_unique_id;
+        $order->order_customer_id = $user_id;
+        $order->order_total_price = $subTotal;
+        $order->payment_mode = 'cod';
+        $order->created_at = date('Y-m-d H:i:s');
+        $order->payment_status = 'Paid';
+        $order->orderaddress = json_encode($delivery_address);
+        $order->save();
 
+        $setting = Setting::where('id',1)->first();
+
+        
+
+        foreach($mycartsItem as $row){
+            $order_details = New Order_details;
+            $commPercentage = $setting->commission;
+            
+
+            if($row->type == "old"){
+                $admin_commission = ($row->cart_item_net_price * $commPercentage)/100;
+                $seller_commission = ($row->cart_item_net_price - $admin_commission);
+            }else{
+                $admin_commission = 0;
+                $seller_commission = 0;
+            }
+
+            $order_details->order_id = $order->id;
+            $order_details->order_product_id = $row->cart_item_id;
+            $order_details->product_seller_id = $row->user_id;
+            $order_details->cart_item_pro_qty = $row->cart_item_qty;
+            $order_details->cart_item_price = $row->cart_item_price;
+            $order_details->cart_item_price_disc = $row->cart_item_price_disc;
+            $order_details->cart_item_net_price = $row->cart_item_net_price;
+            $order_details->created_at =  date('Y-m-d H:i:s');
+
+            $order_details->admin_commission = $admin_commission;
+            $order_details->seller_commission = $seller_commission;
+            $order_details->save();
+
+            
+            $existingQTY = $row->quantity;
+            $newQTY = $existingQTY - $row->cart_item_qty;
+            $dataQTY = array('quantity'=>$newQTY);
+            DB::table('products')
+                    ->where('id', $row->cart_item_id)   
+                    ->update($dataQTY); 
+
+        }
+        Cart_item::where('user_id',$user_id)->delete();
+        
+        return redirect()->route('customer.my-order')->with('message', 'Order successfully placed');;
+    }
+    function my_order(){
+        $orders = Order::orderBy('order_id', 'DESC')->get();
+        $data['orders'] = $orders;
+        return view('frontend.my_order',$data);
     }
     function content_details(Request $request,$slug){
         $CmsContent = CmsContent::where('slug',$slug)->first();

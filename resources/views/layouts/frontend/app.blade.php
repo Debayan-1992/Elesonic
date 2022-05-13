@@ -39,6 +39,9 @@
 
 	<link rel="stylesheet" href="{{config('app.url')}}/inhouse/bower_components/select2/dist/css/select2.min.css">
 	
+	<link rel="stylesheet" href="//cdn.datatables.net/1.11.5/css/dataTables.bootstrap4.min.css">
+
+	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.css">
 	@yield('header')
 	@stack('header')
 	 <!-- countru-code -->
@@ -412,6 +415,8 @@
 
 <script src="{{config('app.url')}}/inhouse/bower_components/select2/dist/js/select2.full.min.js"></script>
 <script src="//unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="//cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap4.min.js"></script>
 <script>
 	function subscribe(){
 		var subscribermail = $("#subscribermail").val();
@@ -437,6 +442,9 @@
      $('#city').select2();
 	 $('#state').select2();
     });
+	$(document).ready(function() {
+    $('#example').DataTable();
+    } );
 	function serviceBokkingModal(id,name){
 		
 		$("#serviceName").text(name);

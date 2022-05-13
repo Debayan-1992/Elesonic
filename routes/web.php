@@ -229,11 +229,13 @@ Route::prefix('/customer/dashboard')->name('customer.')->middleware('customeraut
     Route::post('makeDefault', [FrontendNoAuthController::class, 'makeDefault'])->name('makeDefault');
     Route::post('makeDelete', [FrontendNoAuthController::class, 'makeDelete'])->name('makeDelete');
     Route::post('addaddress', [FrontendNoAuthController::class, 'addaddress'])->name('addaddress');
-    
+    Route::get('confirm-order', [FrontendNoAuthController::class, 'confirm_order'])->name('confirm-order');
+    Route::post('addaddressdef', [FrontendNoAuthController::class, 'addaddressdef'])->name('addaddressdef');
+    Route::get('place-order', [FrontendNoAuthController::class, 'place_order'])->name('place-order');
+    Route::get('order-now', [FrontendNoAuthController::class, 'order_now'])->name('order-now');
+    Route::get('my-order', [FrontendNoAuthController::class, 'my_order'])->name('my-order');
 
     
-    
-
     
 });
 

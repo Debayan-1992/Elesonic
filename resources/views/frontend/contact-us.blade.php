@@ -15,8 +15,8 @@
 			<h3>Contact Us</h3>
 			<div class="breatcome_content">
 				<ul>
-					<li><a href="index.html">Home</a> <i class="fa fa-angle-right"></i> 
-					 <span>Contact Two</span></li>
+					<li><a href="{{route('index')}}">Home</a> <i class="fa fa-angle-right"></i> 
+					 <span>Contact Us</span></li>
 				</ul>
 			</div>
 
