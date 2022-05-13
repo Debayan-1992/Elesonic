@@ -6,7 +6,6 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Support\Facades\URL;
 
 class RequestServiceSubmitMail extends Mailable
 {
@@ -17,14 +16,14 @@ class RequestServiceSubmitMail extends Mailable
      *
      * @return void
      */
-    public function __construct($name, $mailFromId, $price, $message)
+    public function __construct($name, $mailFromId, $price, $message, $payment_link)
     {
         //
         $this->name = $name;
         $this->mailFromId = $mailFromId;
         $this->price = $price;
         $this->message = $message;
-        $this->payment_link = URL::to('cutomer/dashboard/my-services');
+        $this->payment_link = $payment_link;
     }
 
     /**

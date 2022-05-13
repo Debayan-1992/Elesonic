@@ -8,6 +8,7 @@ use App\Mail\RequestServiceSubmitMail;
 use App\Model\Service;
 use App\Model\Service_booking;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
 
 class ServiceController extends Controller
 {
@@ -155,15 +156,7 @@ class ServiceController extends Controller
                 }
                 Service_booking::where('id', $request->id)->update($request->except(['_token','type']));
             break;
-            case 'accept_or_reject_service':
-                $status = Service::findorfail($request->id);
-                if($status->popular == true ){
-                    $request['popular'] = false;
-                } else{
-                    $request['popular'] = true;
-                }
-                Service::where('id', $request->id)->update($request->except(['_token','type']));
-            break;
+            
             case 'delet':
                 $request['status'] = 'D';
                 Service::where('id', $request->id)->update($request->except(['_token','type']));
@@ -188,7 +181,8 @@ class ServiceController extends Controller
 
         $service_booking = Service_booking::where('id', $request->serviceBookingId)->first();
         $mailFromId = config()->get('mail.from.address');
-        Mail::to($service_booking->email)->send(new RequestServiceSubmitMail($service_booking->name, $mailFromId, $request->service_offered_price, $request->message));
+        $payment_link = URL::to('customer/dashboard/my-services/?_token='.encrypt($service_booking->email.','.$request->serviceBookingId));
+        Mail::to($service_booking->email)->send(new RequestServiceSubmitMail($service_booking->name, $mailFromId, $request->service_offered_price, $request->message, $payment_link));
         // $service_booking->acceptance_status = 'A';
         // $service_booking->service_request_acceptance_date = date('Y-m-d h:i:s');
         // $service_booking->save();
@@ -198,5 +192,11 @@ class ServiceController extends Controller
             'service_offered_price' => $request->service_offered_price,
             'service_request_acceptance_date' => date('Y-m-d h:i:s'),
         ]);
+
     }
+
+    // public function r_service_decrypt(Request $request)
+    // {
+
+    // }
 }
