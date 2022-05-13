@@ -24,6 +24,8 @@ use App\Model\Product;
 use App\Model\Service;
 use App\Model\Department;
 use App\Model\Service_booking;
+use App\Model\Order;
+use App\Model\Order_details;
 
 class CommonController extends Controller
 {
@@ -54,6 +56,12 @@ class CommonController extends Controller
             case 'brand':
                 $query = Brand::query();
                 $query->where('status','!=','D');
+                $request['searchdata'] = [];
+            break;
+            case 'orders':
+                $query = Order::query();
+                $query->leftJoin('users', 'users.id', '=', 'order.order_customer_id');
+                $request['searchdata'] = [];
                 $request['searchdata'] = [];
             break;
             case 'product':

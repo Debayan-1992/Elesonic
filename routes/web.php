@@ -15,6 +15,7 @@ use App\Http\Controllers\Frontend\Customer\CustomerController;
 use App\Http\Controllers\Frontend\Seller\SellerController;
 use App\Http\Controllers\Auth;
 use App\Http\Controllers\Frontend\FrontendNoAuthController;
+use App\Http\Controllers\Dashboard\OrderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -176,6 +177,10 @@ Route::prefix('/admin/dashboard')->name('dashboard.')->namespace('Dashboard')->m
         Route::post('/statusChange',[BrandController::class, 'statusChange'])->name('statusChange');
         Route::get('/edit/{id}',    [BrandController::class, 'edit'])->name('edit');
         Route::post('/update',      [BrandController::class, 'update'])->name('update');
+    });
+
+    Route::prefix('/orders')->name('orders.')->middleware('checkrole:superadmin|admin')->group(function(){
+        Route::get('/index/{type}', [OrderController::class, 'index'])->name('index');
     });
 
     //== Products Routes == //

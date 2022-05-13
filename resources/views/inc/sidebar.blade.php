@@ -83,6 +83,19 @@
                     </li>
                 @endif
                 @if(Myhelper::hasrole('superadmin'))
+                    <li class="treeview {{(isset($activemenu['main']) && $activemenu['main'] == 'orders') ? 'active menu-open' : ''}}"> 
+                        <a href="javascript:void(0);">
+                            <i class="fa fa-gear"></i> <span>Orders</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li class="{{(isset($activemenu['sub']) && $activemenu['sub'] == 'orders') ? 'active' : ''}}"><a href="{{route('dashboard.orders.index', ['type' => 'orders'])}}"><i class="fa fa-circle-o"></i> Orders</a></li>
+                        </ul>
+                    </li>
+                @endif
+                @if(Myhelper::hasrole('superadmin'))
                     <li class="treeview {{(isset($activemenu['main']) && $activemenu['main'] == 'services') ? 'active menu-open' : ''}}"> 
                         <a href="javascript:void(0);">
                             <i class="fa fa-gear"></i> <span>Services</span>

@@ -63,7 +63,7 @@ $user = auth()->user();
             @if($user->role_id  == App\Model\Role::IS_CUSTOMER)
             <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                 
-                <span class="text-secondary"><a href="{{route('customer.my-services')}}">Requested Service</a></span>
+                <span class="text-secondary"><a href="{{route('customer.my-services')}}">Requested Services</a></span>
             </li>
             @endif
             @if($user->role_id  == App\Model\Role::IS_SELLER)
