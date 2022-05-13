@@ -747,8 +747,14 @@ class FrontendNoAuthController extends Controller
         return view('frontend.my_services',$data);
     }
     function order_details(Request $request,$id){
+        $user_id= auth()->user()->id;
         $order_details = Order_details::where('order_id',$id)->leftjoin('products','products.id','=','Order_details.order_product_id')->get();
+        $billing = User::where('id',$user_id)->first();
+        $order =   Order::where('order_id',$id)->first();
+        $shipping = json_decode($order->orderaddress);
         $data['order_details'] = $order_details;
+        $data['billingAddress']=$billing;
+        $data['shippingAddress']=$shipping;
         return view('frontend.order_details',$data);
     }
     function content_details(Request $request,$slug){
