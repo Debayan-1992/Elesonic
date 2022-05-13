@@ -41,6 +41,21 @@
                                             <label>Site Title <span class="text-danger">*</span></label>
                                             <input name="title" value="{{$settings->title}}" class="form-control">
                                         </div>
+                                        <div class="form-group col-md-6">
+                                            <label>Commission (%) <span class="text-danger">*</span></label>
+                                            <input type="number" name="commission" value="{{$settings->commission}}" class="form-control">
+                                        </div>
+
+                                        <div class="form-group col-md-6">
+                                            <label>Order Below <span class="text-danger">*</span></label>
+                                            <input type="number" name="order_amount" value="{{$settings->order_amount}}" class="form-control">
+                                        </div>
+
+                                        <div class="form-group col-md-6">
+                                            <label>Shipping Charge (Fixed) <span class="text-danger">*</span></label>
+                                            <input type="number" name="charges" value="{{$settings->charges}}" class="form-control">
+                                        </div>
+
 
                                         <div class="form-group col-md-6">
                                             <label>Banner Title One<span class="text-danger">*</span></label>

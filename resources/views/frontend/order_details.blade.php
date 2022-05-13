@@ -1,5 +1,5 @@
 @extends('layouts.frontend.app')
-@section('pageheader', 'Orders')
+@section('pageheader', 'Order-details')
 @section('content')
 <div class="container"> 
     <div class="main-body">
@@ -19,29 +19,31 @@
         <thead>
             <tr>
                 <th>Sl No</th>
-                <th>Created On</th>
-                <th>Order Code</th>
-                <th>Order Price($)</th>
-                <th>Shipping Charge($)</th>
-                <th>Order Status</th>
+                <th>Product</th>
+                <th>QTY</th>
+                <th>MRP($)</th>
+                <th>Discount(%)</th>
+                <th>Net price($)</th>
+                <th>Status</th>
             </tr>
         </thead>
         <tbody>
-            @if(count($orders) > 0)
+            @if(count($order_details) > 0)
             @php
             $i= 0;
             @endphp
-            @foreach($orders as $row)
+            @foreach($order_details as $row)
             @php
             $i++;
             @endphp
             <tr>
                 <td>{{$i}}</td>
-                <td>{{$row->created_at}}</td>
-                <td><a href="{{route('customer.order-details')}}/{{ $row->order_id }}" target="_blank">{{$row->order_unique_id}}</a></td>
-                <td>{{$row->order_total_price}}</td>
-                <td>{{$row->shipping_charge}}</td>
-                <td>{{$row->order_status}}</td>
+                <td>{{$row->name}}</td>
+                <td>{{$row->cart_item_pro_qty}}</td>
+                <td>{{$row->cart_item_price}}</td>
+                <td>{{$row->cart_item_price_disc}}</td>
+                <td>{{$row->cart_item_net_price}}</td>
+                <td>{{$row->order_product_status}}</td>
             </tr>
             @endforeach
             @endif

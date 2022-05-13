@@ -222,12 +222,15 @@ class FrontendNoAuthController extends Controller
     }
 
     function servicebook(Request $request){
+        $user_id= auth()->user()->id;
+        $user = User::where('id',$user_id)
+        ->first();
         $Service_booking = new Service_booking;
         $serviceId = $request->serviceId;
-        $Service_booking->name = $request->name;
-        $Service_booking->phone = $request->mobile;
-        $Service_booking->email = $request->email;
-        $Service_booking->city = $request->city;
+        $Service_booking->name = $user->name;
+        $Service_booking->phone = $user->mobile;
+        $Service_booking->email = $user->email;
+       // $Service_booking->city = $request->city;
         $Service_booking->information = $request->information;
         $Service_booking->service_id = $serviceId;
         $Service_booking->save();
@@ -542,7 +545,7 @@ class FrontendNoAuthController extends Controller
         $user_id= auth()->user()->id;
         $user = auth()->user();
         $delivery_address = Delivery_address::where('user_id',$user_id)->get();
-        $state = State::where('countryId',101)->get();
+        $state = State::where('countryId',38)->get();
         $data['shippingAddress'] = $delivery_address;
         $data['user'] = $user;
         $data['state'] = $state;
@@ -617,7 +620,7 @@ class FrontendNoAuthController extends Controller
         $user_id= auth()->user()->id;
         $user = auth()->user();
         $delivery_address = Delivery_address::where('user_id',$user_id)->get();
-        $state = State::where('countryId',101)->get();
+        $state = State::where('countryId',38)->get();
         $member_dtl = User::where('id',$user_id)->first();
         $data['shippingAddress'] = $delivery_address;
         $data['member_dtl']      = $member_dtl;
@@ -631,6 +634,25 @@ class FrontendNoAuthController extends Controller
         $delivery_address = Delivery_address::where('user_id',$user_id)->where('is_default','Yes')->first();
         $data['cartDetails']=$mycartsItem;
         $data['shippingAddress']=$delivery_address;
+
+       
+        $subTotal = 0;
+        $setting = Setting::where('id',1)->first();
+        $orderBelow = $setting->order_amount;
+        $charges    = $setting->charges;
+        foreach($mycartsItem as $row){
+            $subTotal = $subTotal + ($row->cart_item_qty * $row->cart_item_net_price);
+        }
+
+        if($subTotal < $orderBelow){
+            $shippingCharges = $charges;
+            $subTotal = $subTotal + $shippingCharges;
+        }else{
+            $shippingCharges = 0;
+            $subTotal = $subTotal;
+        }
+        $data['subTotal']=$subTotal;
+        $data['shippingCharges']=$shippingCharges;
         if(empty($delivery_address)){
             return redirect()->route('customer.confirm-order')->with('message', 'Add shipping address');
         }
@@ -641,13 +663,28 @@ class FrontendNoAuthController extends Controller
         $mycartsItem      = Cart_item::where('Cart_item.user_id',$user_id)->leftjoin('products','products.id','=','Cart_item.cart_item_id')->get();
         $delivery_address = Delivery_address::where('user_id',$user_id)->where('is_default','Yes')->first();
         $subTotal = 0;
+        $setting = Setting::where('id',1)->first();
+        $orderBelow = $setting->order_amount;
+        $charges    = $setting->charges;
         foreach($mycartsItem as $row){
             $subTotal = $subTotal + ($row->cart_item_qty * $row->cart_item_net_price);
         }
+
+        if($subTotal < $orderBelow){
+            $shippingCharges = $charges;
+            $subTotal = $subTotal + $shippingCharges;
+        }else{
+            $shippingCharges = 0;
+            $subTotal = $subTotal;
+        }
+
+        
         $order = New Order;
         $ordrId= str_replace(".", "", microtime()).rand(000,999);
         $order_unique_id = str_replace(" ", "-", $ordrId);
         $order->order_unique_id = $order_unique_id;
+        $order->shipping_charge = $shippingCharges;
+        
         $order->order_customer_id = $user_id;
         $order->order_total_price = $subTotal;
         $order->payment_mode = 'cod';
@@ -655,10 +692,6 @@ class FrontendNoAuthController extends Controller
         $order->payment_status = 'Paid';
         $order->orderaddress = json_encode($delivery_address);
         $order->save();
-
-        $setting = Setting::where('id',1)->first();
-
-        
 
         foreach($mycartsItem as $row){
             $order_details = New Order_details;
@@ -700,9 +733,23 @@ class FrontendNoAuthController extends Controller
         return redirect()->route('customer.my-order')->with('message', 'Order successfully placed');;
     }
     function my_order(){
-        $orders = Order::orderBy('order_id', 'DESC')->get();
+        $user_id= auth()->user()->id;
+        $orders = Order::where('order_customer_id',$user_id)->orderBy('order_id', 'DESC')->get();
         $data['orders'] = $orders;
         return view('frontend.my_order',$data);
+    }
+    function my_services(){
+        $user_id= auth()->user()->id;
+        $users = User::where('id', $user_id)->first();
+        $services = Service_booking::where('Service_booking.email',$users->email)->leftjoin('services','services.id','=','Service_booking.service_id')->orderBy('Service_booking.id', 'DESC')->get();
+       
+        $data['services'] = $services;
+        return view('frontend.my_services',$data);
+    }
+    function order_details(Request $request,$id){
+        $order_details = Order_details::where('order_id',$id)->leftjoin('products','products.id','=','Order_details.order_product_id')->get();
+        $data['order_details'] = $order_details;
+        return view('frontend.order_details',$data);
     }
     function content_details(Request $request,$slug){
         $CmsContent = CmsContent::where('slug',$slug)->first();

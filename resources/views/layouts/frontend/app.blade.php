@@ -111,9 +111,10 @@
 						@php 
 							if(Auth::check() == false){
 								$user_id= "";
-								
+								$userdata = [];
 							}else{
 								$user_id= auth()->user()->id;
+								$userdata = App\User::where('id',$user_id)->first();
 							}
 							if($user_id == ""){
 								$cart_sess_id= \Session::get('cart_session_id');
@@ -174,8 +175,7 @@
                 ->get();
 				$cms = App\Model\CmsContent::where('page_name','!=',' ')
                 ->get();
-
-				$city = App\Model\City::all();
+			
 			@endphp
 				<!-- item -->
 					<div class="col-lg-3">
@@ -319,7 +319,7 @@
 
         <div class="form-bd">
 			
-        	<form id="serviceBook" action="{{route('servicebook')}}" method="post">
+        	<form id="serviceBook" action="{{route('customer.servicebook')}}" method="post">
 				@csrf
 				<input type="hidden" value="" name="serviceId" id="serviceId">
         		<!-- item -->
@@ -338,36 +338,26 @@
         		<!-- item -->
 	        		<div class="item">
 	        			<label>Your Name*</label>
-	        			<input type="text" placeholder="Enter your name" id="name" name="name">
+	        			<input type="text" readonly="" value="{{ @$userdata->name }}" placeholder="Enter your name" id="name" name="name">
 	        		</div>
         		<!-- item -->
 
 				<!-- item -->
 					<div class="item">
 						<label>Mobile Number*</label>
-						<input type="text" onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10" minlength="10" name="mobile" id="mobile">
+						<input type="text" readonly="" value="{{ @$userdata->mobile }}" onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10" minlength="10" name="mobile" id="mobile">
 					</div>
 				<!-- item -->
 
         		<!-- item -->
 	        		<div class="item">
 	        			<label>Email*</label>
-	        			<input type="email" id="email" name="email">
+	        			<input type="email" readonly="" value="{{ @$userdata->email }}" id="email" name="email">
 	        		</div>
         		<!-- item -->
 
 
-				<!-- item -->
-				<div class="item">
-				<label>City</label>
-				<select name="city" id="city" class="form-control select2">
-					<option value="">Select City</option>
-					@foreach ($city as $item)
-						<option value="{{$item->name}}">{{$item->name}}</option>
-					@endforeach
-				</select>
-				</div>
-        		<!-- item -->
+				
 
 
 				<!-- item -->
@@ -443,13 +433,24 @@
 	 $('#state').select2();
     });
 	$(document).ready(function() {
-    $('#example').DataTable();
-    } );
+		$("#example").DataTable({
+        	dom: 'Bfrtip',
+			buttons: [
+				'csv', 'excel', 'pdf', 'print'
+			],
+			"lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]]
+    	});
+    });
 	function serviceBokkingModal(id,name){
-		
-		$("#serviceName").text(name);
-		$("#serviceId").val(id);
-		$("#staticBackdrop").modal('show');
+		var userId = '{{ $user_id }}';
+		if(userId == ""){
+			swal('Please login to book service');
+			return false;
+		}else{
+			$("#serviceName").text(name);
+			$("#serviceId").val(id);
+			$("#staticBackdrop").modal('show');
+		}
 	}
 	function bookService(){
 		if($("#name").val() == ""){
@@ -464,10 +465,8 @@
 		}else if(!IsEmail($("#email").val())){
 			swal('Invalid email.');
 			return false;
-		}else if($("#city").val() == ""){
-			swal('City required.');
-			return false;
 		}else{
+		
 			$("#serviceBook").submit();
 			$('#serviceBook')[0].reset();
 			$("#staticBackdrop").modal('hide');
@@ -500,7 +499,12 @@ function get_prod(text_id){
 	}
 }
 </script>  
-
+ <script src="https://cdn.datatables.net/buttons/1.6.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.6.1/js/buttons.flash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.6.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.6.1/js/buttons.print.min.js"></script> 
 @yield('script')
 @stack('script')
 

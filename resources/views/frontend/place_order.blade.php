@@ -22,14 +22,7 @@
                   </thead>
 
                   <tbody id="show_table">
-                    @php
-                      $subTotal = 0;
-                    @endphp
-                        @foreach($cartDetails as $row)
-                        @php
-                        $subTotal = $subTotal + ($row->cart_item_qty * $row->cart_item_net_price);
-                        @endphp
-                
+                      @foreach($cartDetails as $row)
                     <tr>
                       <input type="hidden" id="max_odr_{{ $row->cart_item_id }}" value="{{ $row->quantity }}">
                       <input type="hidden" id="stock_qty_{{ $row->cart_item_id }}" value="{{ $row->quantity }}">
@@ -47,8 +40,12 @@
                     @endforeach
                   </tbody>
                   <tfoot>
-
-                    
+                    <tr>
+                      <td colspan="2" style="border: none;"></td>
+                      <td colspan="2" style="border-left: none;" class="text-right"><strong>Shipping Charges</strong></td>
+                      <td colspan="2" class="text-right"><strong>  ${{$shippingCharges}}</strong></td>
+                      </tr>
+                    <tr>
                       <td colspan="2" style="border: none;"></td>
                       <td colspan="2" style="border-left: none;" class="text-right"><strong>Total</strong></td>
                       <td colspan="2" class="text-right"><strong>  ${{$subTotal}}</strong></td>

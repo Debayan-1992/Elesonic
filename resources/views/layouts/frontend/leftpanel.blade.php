@@ -60,6 +60,12 @@ $user = auth()->user();
                 <span class="text-secondary"><a href="{{route('customer.my-order')}}">My Orders</a></span>
             </li>
             @endif
+            @if($user->role_id  == App\Model\Role::IS_CUSTOMER)
+            <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                
+                <span class="text-secondary"><a href="{{route('customer.my-services')}}">Requested Service</a></span>
+            </li>
+            @endif
             @if($user->role_id  == App\Model\Role::IS_SELLER)
             <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                 

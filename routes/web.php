@@ -34,7 +34,7 @@ Route::get('/product-list/{type?}', [FrontendNoAuthController::class, 'product_l
 Route::get('/product-details/{type?}/{id?}', [FrontendNoAuthController::class, 'product_details'])->name('product-details');
 Route::post('/get-filter-data', [FrontendNoAuthController::class, 'get_filter_data'])->name('get-filter-data');
 Route::get('/services', [FrontendNoAuthController::class, 'services'])->name('services');
-Route::post('/servicebook', [FrontendNoAuthController::class, 'servicebook'])->name('servicebook');
+
 Route::get('/faq', [FrontendNoAuthController::class, 'faq'])->name('faq');
 Route::get('/content-details/{type?}', [FrontendNoAuthController::class, 'content_details'])->name('content-details');
 Route::get('/contact-us', [FrontendNoAuthController::class, 'contact_us'])->name('contact_us');
@@ -235,7 +235,11 @@ Route::prefix('/customer/dashboard')->name('customer.')->middleware('customeraut
     Route::get('order-now', [FrontendNoAuthController::class, 'order_now'])->name('order-now');
     Route::get('my-order', [FrontendNoAuthController::class, 'my_order'])->name('my-order');
 
-    
+    Route::post('/servicebook', [FrontendNoAuthController::class, 'servicebook'])->name('servicebook');
+
+    Route::get('my-services', [FrontendNoAuthController::class, 'my_services'])->name('my-services');
+
+    Route::get('/order-details/{id?}', [FrontendNoAuthController::class, 'order_details'])->name('order-details');
     
 });
 

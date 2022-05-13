@@ -1,5 +1,5 @@
 @extends('layouts.frontend.app')
-@section('pageheader', 'Orders')
+@section('pageheader', 'Services')
 @section('content')
 <div class="container"> 
     <div class="main-body">
@@ -19,29 +19,46 @@
         <thead>
             <tr>
                 <th>Sl No</th>
-                <th>Created On</th>
-                <th>Order Code</th>
-                <th>Order Price($)</th>
-                <th>Shipping Charge($)</th>
-                <th>Order Status</th>
+                <th>Request On</th>
+                <th>Service</th>
+                <th>Approval</th>
+                <th>Quoted Price($)</th>
+                <th>Payment</th>
+                <th>Note</th>
             </tr>
         </thead>
         <tbody>
-            @if(count($orders) > 0)
+            @if(count($services) > 0)
             @php
             $i= 0;
             @endphp
-            @foreach($orders as $row)
+            @foreach($services as $row)
             @php
             $i++;
             @endphp
             <tr>
                 <td>{{$i}}</td>
                 <td>{{$row->created_at}}</td>
-                <td><a href="{{route('customer.order-details')}}/{{ $row->order_id }}" target="_blank">{{$row->order_unique_id}}</a></td>
-                <td>{{$row->order_total_price}}</td>
-                <td>{{$row->shipping_charge}}</td>
-                <td>{{$row->order_status}}</td>
+                <td>{{$row->name}}</td>
+               
+                <td>
+                    @if($row->service_acceptance_status == 'P')
+                        Pending
+                    @elseif($row->service_acceptance_status == 'A')
+                        Accepted
+                    @else
+                        Rejected
+                    @endif
+                </td>
+                <td>
+                    @if($row->service_offered_price > 0)
+                       {{$row->service_offered_price}}
+                    @else
+                    0
+                    @endif
+                </td>
+                <td>Unpaid</td>
+                <td>Lorem</td>
             </tr>
             @endforeach
             @endif

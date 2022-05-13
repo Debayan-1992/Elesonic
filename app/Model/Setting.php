@@ -10,6 +10,11 @@ class Setting extends Model
         'banner_title_one',
         'banner_title_two',
         'banner_description',
+
+        'commission',
+        'order_amount',
+        'charges',
+
         'name',
         'title',
         'smsflag',
