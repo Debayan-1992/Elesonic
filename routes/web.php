@@ -205,6 +205,13 @@ Route::prefix('/admin/dashboard')->name('dashboard.')->namespace('Dashboard')->m
         Route::post('/statusChange', [ServiceController::class, 'statusChange'])->name('statusChange');
     });
 
+    Route::prefix('/request-service')->name('request_service.')->middleware('checkrole:superadmin')->group(function(){
+        Route::get('/index', [ServiceController::class, 'r_service_index'])->name('index');
+        Route::post('/delete', [ServiceController::class, 'delete'])->name('delete');
+        Route::post('/statusChange', [ServiceController::class, 'r_service_statusChange'])->name('statusChange');
+        Route::post('/submit', [ServiceController::class, 'r_service_submit'])->name('r_service_submit');
+    });
+
     //== Departments ==//
     Route::prefix('/department')->name('department.')->middleware('checkrole:superadmin')->group(function(){
         Route::get('/index', [DepartmentController::class, 'index'])->name('index');

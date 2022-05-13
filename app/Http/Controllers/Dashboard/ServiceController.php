@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Dashboard;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Mail\RequestServiceSubmitMail;
 use App\Model\Service;
+use App\Model\Service_booking;
+use Illuminate\Support\Facades\Mail;
 
 class ServiceController extends Controller
 {
@@ -125,5 +128,75 @@ class ServiceController extends Controller
                 Service::where('id', $request->id)->update($request->except(['_token','type']));
             break;
         }
+    }
+
+    public function r_service_index()
+    {
+        $data['activemenu'] = array(
+            'main' => 'services',
+            'sub' => 'request-service',
+        );
+
+        $data['services'] = Service_booking::leftJoin('services', 'service_booking.service_id', '=', 'services.id')->select('service_booking.id', 'services.name as service_name', 'service_booking.name', 'service_booking.email', 'service_booking.phone', 'service_booking.status', 'service_booking.created_at')->get();
+        $data['statuses'] = ['A', 'I', 'D'];
+
+        return view('dashboard.service.request_service_index', $data);
+    }
+
+    public function r_service_statusChange(Request $request)
+    {
+        switch($request->type){
+            case 'statusChange':
+                $status = Service_booking::findorfail($request->id);
+                if($status->status == 'A' ){
+                    $request['status'] = 'I';
+                } else{
+                    $request['status'] = 'A';
+                }
+                Service_booking::where('id', $request->id)->update($request->except(['_token','type']));
+            break;
+            case 'accept_or_reject_service':
+                $status = Service::findorfail($request->id);
+                if($status->popular == true ){
+                    $request['popular'] = false;
+                } else{
+                    $request['popular'] = true;
+                }
+                Service::where('id', $request->id)->update($request->except(['_token','type']));
+            break;
+            case 'delet':
+                $request['status'] = 'D';
+                Service::where('id', $request->id)->update($request->except(['_token','type']));
+            break;
+        }
+    }
+ 
+    public function r_service_submit(Request $request)
+    {
+        $rules = array(
+            'serviceBookingId' => 'required|numeric',
+            'service_offered_price' => 'required|numeric',
+            'message' => 'required',
+        );
+
+        $validator = \Validator::make($request->all(), $rules);
+        if($validator->fails()){
+            foreach($validator->errors()->messages() as $key => $value){
+                return response()->json(['status' => $value[0]], 400);
+            }
+        }
+
+        $service_booking = Service_booking::where('id', $request->serviceBookingId)->first();
+        $mailFromId = config()->get('mail.from.address');
+        Mail::to($service_booking->email)->send(new RequestServiceSubmitMail($service_booking->name, $mailFromId, $request->service_offered_price, $request->message));
+        // $service_booking->acceptance_status = 'A';
+        // $service_booking->service_request_acceptance_date = date('Y-m-d h:i:s');
+        // $service_booking->save();
+        $service_booking->update([
+            'service_acceptance_status' => 'A',
+            'message' => $request->message,
+            'service_offered_price' => $request->service_offered_price,
+            'service_request_acceptance_date' => date('Y-m-d h:i:s'),
+        ]);
     }
 }

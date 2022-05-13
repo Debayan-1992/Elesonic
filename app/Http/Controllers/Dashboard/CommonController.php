@@ -23,6 +23,8 @@ use App\Model\Brand;
 use App\Model\Product;
 use App\Model\Service;
 use App\Model\Department;
+use App\Model\Service_booking;
+
 class CommonController extends Controller
 {
     public function fetchData($type, $fetch='all', $id='none', Request $request){
@@ -162,13 +164,21 @@ class CommonController extends Controller
                 $query->whereNotIn('status',['D']);
                 $request['searchdata'] = []; //Mention with what a search can be done
             break;
-
+            case 'request_service':
+                $query = Service_booking::query();
+                $query->leftJoin('services', 'service_booking.service_id', '=', 'services.id')->whereNotIn('service_booking.status',['D'])->select('service_booking.id', 'services.name as service_name', 'service_booking.name', 'service_booking.email', 'service_booking.phone', 'service_booking.status', 'service_booking.created_at', 'service_booking.service_acceptance_status');
+                $request['searchdata'] = [];
+            break;
             default:
                 abort(404, 'Invalid request recieved');
         }
 
         if($id != 'none'){
-            $query->where('id', $id);
+            // dd($query->getQuery()->joins);
+            // if($query->getQuery()->joins == null)
+                $query->where('id', $id);
+            //else{}
+                
         }
 
         $input = $request->all();
