@@ -2,9 +2,6 @@
 
 @push('header')
   <link rel="stylesheet" href="https://adminlte.io/themes/AdminLTE/plugins/iCheck/square/blue.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.css" integrity="sha512-8D+M+7Y6jVsEa7RD6Kv/Z7EImSpNpQllgaEIQAtqHcI0H6F4iZknRj0Nx1DCdB+TwBaS+702BGWYC0Ze2hpExQ==" crossorigin="anonymous" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw==" crossorigin="anonymous" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/0.7.8/themes/black/pace-theme-flash.min.css" integrity="sha512-0c1cb0LYXVvb9L459008ryNuWW7NuZEFY0ns6fAOfpJhHnTX7Db2vbSrjaLgvUpcl+atb3hkawh2s+eEE3KaLQ==" crossorigin="anonymous" />
 {{--@endpush--}}
 @endpush
 
@@ -45,7 +42,7 @@
 					<i class="fa fa-phone"></i>
 				</div>
 
-                <input type="text" placeholder="Phone No" name="mobile">
+                <input type="text" onkeypress='return event.charCode >= 48 && event.charCode <= 57' placeholder="Phone No" name="mobile">
               </div>
               <!-- item -->
 
@@ -133,6 +130,15 @@
 
         $('#signupform').validate({
             rules: {
+              role_id: {
+                    required: true,
+                },
+              name: {
+                    required: true,
+                },
+                mobile: {
+                    required: true,
+                },
                 email: {
                     required: true,
                     email: true
