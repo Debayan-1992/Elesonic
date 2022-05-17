@@ -68,7 +68,11 @@
             </tr>
             @endforeach
             @endif
-          
+
+           
+            <tr>
+            <td><a style="curser:pointer" href="{{config('app.url')}}/uploads/order/order-" download><i class="fa fa-print" aria-hidden="true"></i></a></td>
+            <tr>
         </tbody>
     </table>
 </form>
