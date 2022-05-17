@@ -1,10 +1,11 @@
-<html>
-<head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="x-apple-disable-message-reformatting" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta name="color-scheme" content="light dark" />
-    <meta name="supported-color-schemes" content="light dark" />
+    <meta name="color-scheme" content="" />
+    <meta name="supported-color-schemes" content="" />
     <title></title>
     <style type="text/css" rel="stylesheet" media="all">
     /* Base ------------------------------ */
@@ -46,6 +47,7 @@
     td,
     th {
       font-family: "Nunito Sans", Helvetica, Arial, sans-serif;
+      color:"#000000"
     }
     
     h1 {
@@ -75,6 +77,7 @@
     td,
     th {
       font-size: 16px;
+      
     }
     
     p,
@@ -280,7 +283,7 @@
     }
     
     body {
-      background-color: #F4F4F7;
+      background-color: #FFFFFF;
       color: #51545E;
     }
     
@@ -400,7 +403,7 @@
       .email-wrapper,
       .email-masthead,
       .email-footer {
-        background-color: #333333 !important;
+        background-color: #FFFFFF !important;
         color: #FFF !important;
       }
       p,
@@ -422,7 +425,6 @@
         text-shadow: none !important;
       }
     }
-    
     :root {
       color-scheme: light dark;
       supported-color-schemes: light dark;
@@ -430,76 +432,140 @@
     </style>
     
   </head>
+  <body>
+    @php
+    $user_id= auth()->user()->id;
+    $items  = \App\Model\Cart_item::where('cart_item.user_id',$user_id)->leftjoin('products','products.id','=','cart_item.cart_item_id')->get();
+    $delivery_address = \App\Model\Delivery_address::where('user_id',$user_id)->where('is_default','Yes')->first();
+    $billing_address = \App\User::where('id',$user_id)->first();
+    $subTotal = 0;
+    $setting = \App\Model\Setting::where('id',1)->first();
+    $orderBelow = $setting->order_amount;
+    $charges    = $setting->charges;
+    foreach($items as $row){
+      $subTotal = $subTotal + ($row->cart_item_qty * $row->cart_item_net_price);
+    }
+    if($subTotal < $orderBelow){
+      $shippingCharges = $charges;
+      $subTotal = $subTotal + $shippingCharges;
+    }else{
+      $shippingCharges = 0;
+      $subTotal = $subTotal;
+    }
+    @endphp
+    <table class="email-wrapper" width="100%" cellpadding="0" cellspacing="0" role="presentation">
+      <tr>
+        <td align="center">
+          <table class="email-content" width="100%" cellpadding="0" cellspacing="0" role="presentation">
+             <tr>
+              <td class="email-masthead">
+                <div class="card-header text-center">
+      
+                  <img src= "{{asset('custom_resource/images/logo.png')}}" style="width:110px; height:70px;">
+                </div><br>
+                <a href="" class="f-fallback email-masthead_name">
+                    Order Invoice - {{$orderCode}}
+                  </a>
+              
+              </td>
+            </tr> 
+              <table width="100%" border=2>
+              <tr style="background: #FFFFFF;">
+                <td class="strong small gry-color"><b>Billing Address</b><br>
+                  {{$billing_address->name}}<br>
+                  {{$billing_address->email}}<br>
+                  {{$billing_address->mobile}}<br>
+                
+                </td>
+                <td align="right" class="strong small gry-color"><b>Shipping Address</b><br>
+                {{$delivery_address->user_first_name}} {{$delivery_address->user_last_name}}<br>
+                {{$delivery_address->user_email}} <br>
+                {{$delivery_address->user_phone_no}} <br>
+                {{$delivery_address->user_address}} , {{$delivery_address->user_city}} , {{$delivery_address->user_state}} , {{$delivery_address->user_pincode}}
+                </td>
+              </tr>
+              </table>
+            <!-- Email Body -->
+            <tr>
+              <td class="email-body" width="100%" cellpadding="0" cellspacing="0">
+              <table  width="100%" border=2>
+              <thead>
+                  <tr style="background: #FFFFFF;">
+                  
 
-<body>
+                      <th width="30%">Product</th>
 
-	<div>
+                      <th width="15%">MRP($)</th>
 
+                      <th width="5%">Discount(%)</th>
 
-		<div>
+                      <th width="20%">Net Price($)</th>
 
-			<table>
+                      <th width="10%">QTY</th>
 
-				<tr>
+                      <th width="15%" class="text-right">Total($)</th>
+                  </tr>
+              </thead>
 
-					<td>
+                <tbody style="background: #FFFFFF;">
+                  @php
+                  $i = 0;
+                
+                  @endphp
+                    @foreach($items as $row)
+                  @php
+                  $i++;
+                  @endphp
 
-					
-
-							<img loading="lazy"  src="{{asset('custom_resource/images/logo.png')}}" height="40" style="display:inline-block;">
-
-					
-					</td>
-
-				</tr>
-
-			</table>
-
-			<table>
-
-
-				<tr>
-
-					<td style="font-size: 1.2rem;" class="strong">{{config('app.name')}}</td>
-
-					<td class="text-right"></td>
-
-				</tr>
-
-				<tr>
-
-					<td class="gry-color small">a</td>
-
-					<td class="text-right"></td>
-
-				</tr>
-
-				<tr>
-
-					<td class="gry-color small">Email: a</td>
-					
-
-					<td class="text-right small"><span class="gry-color small">Order ID:</span> <span class="strong">aa</span></td>
-
-				</tr>
-
-				<tr>
-
-					<td class="gry-color small">Phone: aa</td>
-
-				
-
-				</tr>
-
-			</table>
-
-
-
-		</div>
-
-	   
-	</div>
-</body>
-
+                      <tr>
+                        <td>{{$i}}. {{$row->name}}</td>
+                        <td>{{$row->cart_item_price}}</td>
+                        <td>{{$row->cart_item_price_disc}}</td>
+                        <td>{{$row->cart_item_net_price}}</td>
+                        <td>{{$row->cart_item_qty}}</td>
+                        <td>{{$row->cart_item_qty * $row->cart_item_net_price}}</td>
+                      </tr>
+                @endforeach
+                </tbody>
+               <tr style="background: #FFFFFF;">
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td  width="20%"><b>Sub-Total</b></td>
+                  <td  width="20%">${{$subTotal - $shippingCharges}}</td>
+                </tr>
+                <tr style="background: #FFFFFF;">
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td  width="20%"><b>Shipping</b> </td>
+                  <td  width="20%">${{$shippingCharges}}</td>
+                 
+                 
+                </tr>
+                <tr style="background: #FFFFFF;">
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td  width="20%"><b>Total</b></td>
+                  <td  width="20%">${{$subTotal}}</td>
+                  
+                </tr>
+                </table>
+              </td>
+            </tr>
+            
+          </table>
+          <table  width="100%" border=2>
+            <tr style="background: #404040;">
+           This is an auto generated mail, don't copy it. All rights reserved.
+            </tr>
+            </table>
+        </td>
+      </tr>
+    </table>
+  </body>
 </html>
-

@@ -436,7 +436,7 @@
 <script type="text/javascript" src="{{asset('custom_resource/js/custome.js')}}"></script>
 
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<script type="text/javascript" src="//ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js">
+<script type="text/javascript" src="//ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
 <script src="{{config('app.url')}}/inhouse/bower_components/select2/dist/js/select2.full.min.js"></script>
 <script src="//unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script src="//cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>

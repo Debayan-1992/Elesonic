@@ -72,7 +72,7 @@
             </button> -->
             <div class="col-12 text-center mt-3">
                 
-                <a class="bd_btn btn-save" href="{{route('customer.order-now')}}">Place Now</a>
+                <a class="bd_btn btn-save" onclick="placeOrder()">Place Now</a>
                 
              </div>
               <div class="col-12 text-center mt-3">
@@ -92,4 +92,24 @@
 </section>
 @endsection
 @push('script')
+<script>
+  function placeOrder(){
+    $.ajax({
+			url: "{{ route('customer.order-now') }}",
+            type: "get",
+            datatype: "json",
+			      data:{'_token':'{{csrf_token()}}'},
+            beforeSend: function (){
+              $("#loadList").css('display','block');
+          },
+          success: function (data) {
+            if(data==1){
+            $("#loadList").css('display','none');
+            window.location.href = "{{route('customer.my-order')}}";
+            }
+            
+          }
+      });
+  }
+</script>
 @endpush

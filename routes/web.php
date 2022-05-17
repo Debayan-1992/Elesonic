@@ -252,6 +252,11 @@ Route::prefix('/customer/dashboard')->name('customer.')->middleware('customeraut
     Route::get('my-services', [FrontendNoAuthController::class, 'my_services'])->name('my-services');
 
     Route::get('/order-details/{id?}', [FrontendNoAuthController::class, 'order_details'])->name('order-details');
+
+      Route::get('/pdfdown', [FrontendNoAuthController::class, 'pdfdown'])->name('pdfdown');
+
+
+    
     
 });
 

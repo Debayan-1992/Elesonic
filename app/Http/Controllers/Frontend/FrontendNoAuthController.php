@@ -28,6 +28,7 @@ use App\Model\Service_booking;
 use App\Model\Product_related_images;
 use App\Model\Category as Categorys;
 use App\Utility\CategoryUtility;
+use PDF;
 
 use App\Model\Subscribers;
 use App\Mail\OnlyTextMail;
@@ -37,7 +38,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-
+use App\Mail\OrderGenerationMail;
 
 class FrontendNoAuthController extends Controller
 {
@@ -137,6 +138,7 @@ class FrontendNoAuthController extends Controller
             $role_id= auth()->user()->role_id;
          }
          $data['role_id']       = $role_id;
+       
         return view('frontend.product_details',$data);
     }
 
@@ -174,6 +176,15 @@ class FrontendNoAuthController extends Controller
         
         $data['relatedImage']       = $relatedImage;
         $data['relatedProducts']    = $relatedProducts;
+        if(\Auth::check() == false){
+            $user_id= "";
+            $role_id= "";
+            $userdata = [];
+         }else{
+            $user_id= auth()->user()->id;
+            $role_id= auth()->user()->role_id;
+         }
+         $data['role_id']       = $role_id;
         return view('frontend.product_details',$data);
     }
 
@@ -670,6 +681,7 @@ class FrontendNoAuthController extends Controller
         $user_id= auth()->user()->id;
         $mycartsItem      = Cart_item::where('cart_item.user_id',$user_id)->leftjoin('products','products.id','=','cart_item.cart_item_id')->get();
         $delivery_address = Delivery_address::where('user_id',$user_id)->where('is_default','Yes')->first();
+        $billing_address = User::where('id',$user_id)->first();
         $subTotal = 0;
         $setting = Setting::where('id',1)->first();
         $orderBelow = $setting->order_amount;
@@ -736,9 +748,27 @@ class FrontendNoAuthController extends Controller
                     ->update($dataQTY); 
 
         }
+        $data['orderCode'] = $order_unique_id;
+        $pdf = \PDF::loadView('frontend/orderpdf',$data);
+        $path = public_path('uploads/order/');
+        $fileName = 'Order-'.encrypt($order->id).'.pdf';
+        $pdf->save($path.'/'.$fileName);
+
+        $code = $order_unique_id;
+        $subject = 'Order Place E-mail - Elesonic';
+        $mailFromId = config()->get('mail.from.address');
+        Mail::to($billing_address->email)->send(new OrderGenerationMail($mailFromId, $subject,$code,$fileName));
         Cart_item::where('user_id',$user_id)->delete();
-        
-        return redirect()->route('customer.my-order')->with('message', 'Order successfully placed');;
+        $res = 1;
+        echo json_encode($res);
+    }
+
+    function pdfdown(){
+        $pdf = \PDF::loadView('frontend/orderpdf');
+        $path = public_path('uploads/order/');
+        $fileName = 'Order-1'.'.pdf';
+        $pdf->save($path.'/'.$fileName);
+        return $pdf->download($path.'/'.$fileName);
     }
     function my_order(){
         $user_id= auth()->user()->id;
@@ -1135,6 +1165,7 @@ class FrontendNoAuthController extends Controller
         $data['order_details'] = $order_details;
         $data['billingAddress']=$billing;
         $data['shippingAddress']=$shipping;
+        $data['orderid'] = $id;
         return view('frontend.seller.order_details',$data);
     }
     public function fetchData($type, $fetch='all', $id='none', Request $request){
