@@ -42,6 +42,8 @@
 	<link rel="stylesheet" href="//cdn.datatables.net/1.11.5/css/dataTables.bootstrap4.min.css">
 
 	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.css">
+
+	<link rel="icon" type="image/png" href="{{asset('custom_resource/images/logo.png')}}">
 	@yield('header')
 	@stack('header')
 	 <!-- countru-code -->
@@ -111,9 +113,11 @@
 						@php 
 							if(Auth::check() == false){
 								$user_id= "";
+								$role_id= "";
 								$userdata = [];
 							}else{
 								$user_id= auth()->user()->id;
+								$role_id= auth()->user()->role_id;
 								$userdata = App\User::where('id',$user_id)->first();
 							}
 							if($user_id == ""){
@@ -135,9 +139,10 @@
 								}
 							}
 						@endphp
+						@if($role_id == 5)
 						<div class="icon-block">
 							<ul>
-								<li class="sell-product"><a href="#">Sell on Elesonic</a></li>
+								
 								@if(Auth::check())
 									<li class="user-icon"><a href="{{route('customer.customer_dashboard')}}"><i class="fa fa-user" aria-hidden="true"></i></a></li>
 								@else
@@ -150,6 +155,35 @@
 								@endif
 							</ul>
 						</div>
+						@elseif($role_id == 6)
+						<div class="icon-block">
+							<ul>
+								@if(Auth::check())
+									<li class="user-icon"><a href="{{route('seller.seller_dashboard')}}"><i class="fa fa-user" aria-hidden="true"></i></a></li>
+								@else
+									<li class="user-icon"><a href="{{route('login')}}"><img src="{{asset('custom_resource/images/user-icon.png')}}"></a></li>
+								@endif
+								<li class="sell-product"><a href="{{route('seller.add-product')}}">Sell on Elesonic</a></li>
+							
+							</ul>
+						</div>
+						@else
+						<div class="icon-block">
+								<ul>
+								<li class="sell-product"><a href="{{route('seller.add-product')}}">Sell on Elesonic</a></li>
+								@if(Auth::check())
+									<li class="user-icon"><a href="{{route('customer.customer_dashboard')}}"><i class="fa fa-user" aria-hidden="true"></i></a></li>
+								@else
+									<li class="user-icon"><a href="{{route('login')}}"><img src="{{asset('custom_resource/images/user-icon.png')}}"></a></li>
+								@endif
+								@if($user_id != "")
+								<li class="cagrt-icon" ><a href="{{route('customer.carts')}}"><img src="{{asset('custom_resource/images/cart-icon.png')}}"><span id="myCrtItem">{{$totalQty1}}</span></a></li>
+								@else
+									<li class="cagrt-icon"><a href="{{route('login')}}"><img src="{{asset('custom_resource/images/cart-icon.png')}}"><span id="myCrtItem">{{$totalQty}}</span></a></li>
+								@endif
+							</ul>
+						</div>
+						@endif
 					</div>
 				<!---->
 
@@ -402,11 +436,18 @@
 <script type="text/javascript" src="{{asset('custom_resource/js/custome.js')}}"></script>
 
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-
+<script type="text/javascript" src="//ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js">
 <script src="{{config('app.url')}}/inhouse/bower_components/select2/dist/js/select2.full.min.js"></script>
 <script src="//unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script src="//cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap4.min.js"></script>
+<script type="text/javascript">
+	$(document).ready(function () {
+    $('#example').DataTable();
+});
+</script>
+
+
 <script>
 	function subscribe(){
 		var subscribermail = $("#subscribermail").val();
@@ -432,15 +473,7 @@
      $('#city').select2();
 	 $('#state').select2();
     });
-	$(document).ready(function() {
-		$("#example").DataTable({
-        	dom: 'Bfrtip',
-			buttons: [
-				'csv', 'excel', 'pdf', 'print'
-			],
-			"lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]]
-    	});
-    });
+	
 	function serviceBokkingModal(id,name){
 		var userId = '{{ $user_id }}';
 		if(userId == ""){
@@ -505,6 +538,8 @@ function get_prod(text_id){
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
 <script src="https://cdn.datatables.net/buttons/1.6.1/js/buttons.html5.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/1.6.1/js/buttons.print.min.js"></script> 
+
+    </script>
 @yield('script')
 @stack('script')
 

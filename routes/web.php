@@ -261,6 +261,20 @@ Route::prefix('/seller/dashboard')->name('seller.')->middleware('sellerauth','ch
     Route::get('password-change', [FrontendNoAuthController::class, 'password_change_form'])->name('frontend_change_pass');
     Route::post('password-change', [FrontendNoAuthController::class, 'password_change_update'])->name('frontend_pass_upd');
     Route::post('account-update', [FrontendNoAuthController::class, 'my_account_update'])->name('frontend_acc_upd');
+    Route::get('products', [FrontendNoAuthController::class, 'products'])->name('products');
+    Route::any('fetchdata/{type?}/{fetch?}/{id?}', [FrontendNoAuthController::class, 'fetchdata'])->name('fetchdata');
+    Route::post('statusChange', [FrontendNoAuthController::class, 'statusChange'])->name('statusChange');
+    Route::get('productedit/{id?}', [FrontendNoAuthController::class, 'productedit'])->name('productedit');
+    Route::get('add-product', [FrontendNoAuthController::class, 'add_product'])->name('add-product');
+    Route::post('productstore', [FrontendNoAuthController::class, 'productstore'])->name('productstore');
+    Route::post('productupdate', [FrontendNoAuthController::class, 'productupdate'])->name('productupdate');
+    Route::post('imageDelete', [FrontendNoAuthController::class, 'imageDelete'])->name('imageDelete');
+
+    Route::get('my-order', [FrontendNoAuthController::class, 'seller_order'])->name('my-order');
+
+     Route::get('/order-details/{id?}', [FrontendNoAuthController::class, 'seller_order_details'])->name('order-details');
+    
+    
 });
     //Route::get('/login', [FrontendController::class, 'signin'])->name('login'); //Frontend Login
     //Auth::routes(['verify' => true]); //This has been removed because these routes are being manually used

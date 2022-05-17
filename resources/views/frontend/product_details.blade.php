@@ -73,7 +73,7 @@
 							<h5>$ {{ $product->unit_price}}</h5>
 							<span>$ {{ $product->purchase_price}}</span>
 						</div>
-
+						@if($role_id != 6)
 						<ul class="button-block">
 							@if($product->quantity > 0)
 							<li><a href="javascript:void(0)" id="addCartBtn" onclick="addCart('{{ $product->id }}','{{ $product->quantity }}')">ADD TO CART</a></li>
@@ -83,6 +83,7 @@
 							<li><a href="javascript:void(0)">Out Of Stock</a></li>    
 							@endif
 						</ul>
+						@endif
 
 						<h6>{{ $product->name}}</h6>
 						{{  strip_tags($product->description)}}

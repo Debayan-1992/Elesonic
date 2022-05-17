@@ -376,7 +376,7 @@ class HomeController extends Controller
                 return redirect()->route('login')->with('success', 'Success! User created');
                 //dd('Email verified');
             }
-            dd('Some error'); 
+            
         }    
         else
             return redirect()->route('login')->with('success', 'Email was already verified');

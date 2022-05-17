@@ -1,6 +1,6 @@
-<?php error_reporting(0) ?>
+@extends('layouts.frontend.app')
 @section('pageheader', 'Add Product')
-@extends('layouts.app')
+@section('content')
 <style>
 .imageThumb {
   max-height: 75px;
@@ -11,6 +11,14 @@
 .pip {
   display: inline-block;
   margin: 10px 10px 0 0;
+}
+.existingremove{
+  display: block;
+  background: #444;
+  border: 1px solid black;
+  color: white;
+  text-align: center;
+  cursor: pointer;
 }
 .remove {
   display: block;
@@ -25,24 +33,20 @@
   color: black;
 }
 </style>
-@section('content')
-    <section class="content-header">
-        <h1>
-            Product Management
-            <small>Add</small>
-        </h1>
-    </section>
-
-    <section class="content">
-        <div class="box">
-            <div class="box-header with-border">
-                <h3 class="box-title">Add product</h3>
-
-                <div class="box-tools pull-right">
-                    {{-- Tools --}}
-                </div>
-            </div>
-            <form action="{{route('dashboard.product.store')}}" method="POST" id="productform" enctype="multipart/form-data">
+<div class="container">
+    <div class="main-body">
+        <div class="row">
+    @if(session()->has('message'))
+        <div class="alert alert-success">
+            {{ session()->get('message') }}
+        </div>
+    @endif
+    @include('layouts.frontend.leftpanel')
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-body">
+                        
+                      <form action="{{route('seller.productstore')}}" enctype="multipart/form-data" method="POST" id="productform">
                 <div class="box-body">
                     @csrf
 
@@ -75,7 +79,7 @@
 
                                 @foreach ($category->childrenCategories as $childCategory)
 
-                                @include('categories.child_category', ['child_category' => $childCategory])
+                                @include('categories.child_category', ['child_category' => $childCategory,'cat_id'=>''])
 
                                 @endforeach
 
@@ -133,10 +137,14 @@
                     <button type="submit" class="btn btn-md btn-primary">Submit</button>
                 </div>
             </form>
-        </div>
-    </section>
-@endsection
 
+                    </div>
+                </div>
+            </dIv>
+        </dIv>
+    </dIv>
+</dIv>
+@endsection
 @push('script')
 <script src="//cloud.tinymce.com/stable/tinymce.min.js"></script>
 <script>
@@ -250,8 +258,6 @@
                 }
 
                 var form = $('#productform');
-
-                Pace.track(function(){
                     form.ajaxSubmit({
                         dataType:'json',
                         beforeSubmit:function(){
@@ -270,8 +276,9 @@
                             showErrors(errors, form);
                         }
                     });
-                });
             }
         });
     </script>
+       
+
 @endpush

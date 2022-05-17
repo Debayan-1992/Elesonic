@@ -42,6 +42,18 @@ $user = auth()->user();
                 <span class="text-secondary"><a href="{{route('seller.frontend_change_pass')}}">Change Password</a></span>
                 @endif
             </li>
+            @if($user->role_id  == App\Model\Role::IS_SELLER)
+            <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                
+                <span class="text-secondary"><a href="{{route('seller.products')}}">My Products</a></span>
+            </li>
+            @endif
+            @if($user->role_id  == App\Model\Role::IS_SELLER)
+            <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                
+                <span class="text-secondary"><a href="{{route('seller.add-product')}}">Add Product</a></span>
+            </li>
+            @endif
             @if($user->role_id  == App\Model\Role::IS_CUSTOMER)
             <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                 
@@ -60,16 +72,16 @@ $user = auth()->user();
                 <span class="text-secondary"><a href="{{route('customer.my-order')}}">My Orders</a></span>
             </li>
             @endif
+            @if($user->role_id  == App\Model\Role::IS_SELLER)
+            <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                
+                <span class="text-secondary"><a href="{{route('seller.my-order')}}">Ordered Items</a></span>
+            </li>
+            @endif
             @if($user->role_id  == App\Model\Role::IS_CUSTOMER)
             <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                 
                 <span class="text-secondary"><a href="{{route('customer.my-services')}}">Requested Services</a></span>
-            </li>
-            @endif
-            @if($user->role_id  == App\Model\Role::IS_SELLER)
-            <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-                
-                <span class="text-secondary"><a href="">Request Service</a></span>
             </li>
             @endif
             <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">

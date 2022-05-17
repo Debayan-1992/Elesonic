@@ -9,6 +9,7 @@ use App\Model\Permission;
 
 class Myhelper {
     public static function can($permission , $id="none") {
+
         if($id == "none"){
             $id = \Auth::id();
         }

@@ -58,6 +58,10 @@
                                 <input type="text"  class="form-control" value="{{ $user->mobile }}" readonly>
                             </div>
                         </div>
+
+                       
+
+
                         <div class="row mb-3">
                             <div class="col-sm-3">
                                 <h6 class="mb-0">Role</h6>
@@ -77,10 +81,58 @@
                             <div class="col-sm-9 text-secondary">
                                 <input type="file" accept="image/*" class="form-control" id="profile_image" name="image" >
                                 <input type="hidden"  class="form-control"  name="old_image" value="{{ $user->profile_image }}" >
+                                @if($user->profile_image)
+                                <hr class="short">
+            
+                                <img class="img-responsive img-bordered pad"  height="150px" width="150px" src="{{config('app.url')}}/uploads/profile/{{ $user->profile_image }}" class="img-responsive img-bordered pad">
+                                @endif
                                 
                                 <img src="" class="previewHolder" style="display:none;" alt="User Image empty" class="rounded-circle p-1 bg-primary" width="110">  
                             </div>
                         </div>
+
+                        @if($user->role_id  == App\Model\Role::IS_SELLER)
+                        <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">Pancard</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                <input type="file" name="pancard_image" accept="image/*"  class="form-control"  readonly>
+                                @if($user->details)
+                                <hr class="short">
+                                <img class="img-responsive img-bordered pad"  height="150px" width="150px" src="{{$user->details->pancardimagepath}}" class="img-responsive img-bordered pad">
+                                @endif
+                            </div>
+                           
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">Aadhar Card</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                <input type="file" name="aadharcard_image" accept="image/*"  class="form-control" readonly>
+                                @if($user->details)
+                                <hr class="short">
+                                <img class="img-responsive img-bordered pad"  height="150px" width="150px" src="{{$user->details->aadharcardimagepath}}" class="img-responsive img-bordered pad">
+                            @endif
+                            </div>
+                          
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">Cancelled Cheque</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                <input type="file" name="cancelled_cheque_image" accept="image/*"  class="form-control"  readonly>
+                            @if($user->details)
+                                <hr class="short">
+                                <img class="img-responsive img-bordered pad" height="150px" width="150px" src="{{$user->details->cancelledchequeimagepath}}" class="img-responsive img-bordered pad">
+                            @endif
+                            </div>
+                           
+                        </div>
+
+                        @endif
                         
                         <div class="row">
                             <div class="col-sm-3"></div>

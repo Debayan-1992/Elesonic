@@ -138,7 +138,7 @@
 
                                             @if($user->details)
                                                 <hr class="short">
-                                                <img src="{{$user->details->pancardimagepath}}" class="img-responsive img-bordered pad">
+                                                <img height="150px" width="150px" src="{{$user->details->pancardimagepath}}" class="img-responsive img-bordered pad">
                                             @endif
                                         </div>
 
@@ -152,7 +152,7 @@
 
                                             @if($user->details)
                                                 <hr class="short">
-                                                <img src="{{$user->details->aadharcardimagepath}}" class="img-responsive img-bordered pad">
+                                                <img height="150px" width="150px" src="{{$user->details->aadharcardimagepath}}" class="img-responsive img-bordered pad">
                                             @endif
                                         </div>
 
@@ -166,7 +166,7 @@
 
                                             @if($user->details)
                                                 <hr class="short">
-                                                <img src="{{$user->details->cancelledchequeimagepath}}" class="img-responsive img-bordered pad">
+                                                <img height="150px" width="150px" src="{{$user->details->cancelledchequeimagepath}}" class="img-responsive img-bordered pad">
                                             @endif
                                         </div>
                                     </div>
@@ -433,7 +433,7 @@
         }
     });
 
-    /* @if (in_array($user->role->slug, ['customer'])) */
+    /* @if (in_array($user->role->slug, ['customer','seller'])) */
     $('#businessdocform').validate({
         errorElement: "p",
         errorPlacement: function ( error, element ) {

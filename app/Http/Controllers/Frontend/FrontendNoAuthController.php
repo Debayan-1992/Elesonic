@@ -21,7 +21,6 @@ use App\Model\CmsContent;
 use App\Model\FaqContent;
 use App\Model\Cart_item;
 use App\Model\Delivery_address;
-
 use App\Model\State;
 use App\Model\Order;
 use App\Model\Order_details;
@@ -129,6 +128,15 @@ class FrontendNoAuthController extends Controller
         
         $data['relatedImage']       = $relatedImage;
         $data['relatedProducts']    = $relatedProducts;
+        if(\Auth::check() == false){
+            $user_id= "";
+            $role_id= "";
+            $userdata = [];
+         }else{
+            $user_id= auth()->user()->id;
+            $role_id= auth()->user()->role_id;
+         }
+         $data['role_id']       = $role_id;
         return view('frontend.product_details',$data);
     }
 
@@ -512,7 +520,7 @@ class FrontendNoAuthController extends Controller
     }
     function carts(Request $request){
         $user_id= auth()->user()->id;
-        $mycartsItem= Cart_item::where('Cart_item.user_id',$user_id)->leftjoin('products','products.id','=','Cart_item.cart_item_id')->get();
+        $mycartsItem= Cart_item::where('cart_item.user_id',$user_id)->leftjoin('products','products.id','=','cart_item.cart_item_id')->get();
         if(count($mycartsItem) == 0){
             return redirect()->route('index');
         }
@@ -630,7 +638,7 @@ class FrontendNoAuthController extends Controller
 
     function place_order(Request $request){
         $user_id= auth()->user()->id;
-        $mycartsItem= Cart_item::where('Cart_item.user_id',$user_id)->leftjoin('products','products.id','=','Cart_item.cart_item_id')->get();
+        $mycartsItem= Cart_item::where('cart_item.user_id',$user_id)->leftjoin('products','products.id','=','cart_item.cart_item_id')->get();
         $delivery_address = Delivery_address::where('user_id',$user_id)->where('is_default','Yes')->first();
         $data['cartDetails']=$mycartsItem;
         $data['shippingAddress']=$delivery_address;
@@ -660,7 +668,7 @@ class FrontendNoAuthController extends Controller
     }
     function order_now(Request $request){
         $user_id= auth()->user()->id;
-        $mycartsItem      = Cart_item::where('Cart_item.user_id',$user_id)->leftjoin('products','products.id','=','Cart_item.cart_item_id')->get();
+        $mycartsItem      = Cart_item::where('cart_item.user_id',$user_id)->leftjoin('products','products.id','=','cart_item.cart_item_id')->get();
         $delivery_address = Delivery_address::where('user_id',$user_id)->where('is_default','Yes')->first();
         $subTotal = 0;
         $setting = Setting::where('id',1)->first();
@@ -741,14 +749,14 @@ class FrontendNoAuthController extends Controller
     function my_services(){
         $user_id= auth()->user()->id;
         $users = User::where('id', $user_id)->first();
-        $services = Service_booking::where('Service_booking.email',$users->email)->leftjoin('services','services.id','=','Service_booking.service_id')->orderBy('Service_booking.id', 'DESC')->get();
+        $services = Service_booking::where('service_booking.email',$users->email)->leftjoin('services','services.id','=','service_booking.service_id')->orderBy('Service_booking.id', 'DESC')->get();
        
         $data['services'] = $services;
         return view('frontend.my_services',$data);
     }
     function order_details(Request $request,$id){
         $user_id= auth()->user()->id;
-        $order_details = Order_details::where('order_id',$id)->leftjoin('products','products.id','=','Order_details.order_product_id')->get();
+        $order_details = Order_details::where('order_id',$id)->leftjoin('products','products.id','=','order_details.order_product_id')->get();
         $billing = User::where('id',$user_id)->first();
         $order =   Order::where('order_id',$id)->first();
         $shipping = json_decode($order->orderaddress);
@@ -809,24 +817,60 @@ class FrontendNoAuthController extends Controller
             return redirect()->back()->withErrors($validator);
             //return redirect()->back()->with('message', 'Password must have a minimum length of 6 and both passwords should match.');
         }
-        
+        $update1 = array();
+        $update1['name'] = $request->name;
         if($request->file('image')){
             $file = $request->file('image');
             $ext = substr(strrchr($file->getClientOriginalName(), '.'), 1);
             $new_name1 = str_replace(".", "", microtime());
             $new_name = str_replace(" ", "_", $new_name1);
             $filename = $new_name.'.'.$ext;
-
             \Image::make($file->getRealPath())->save('uploads/profile/'.$filename); 
+            $update1['profile_image'] = $filename;
         }
-        else
-        {
-            $filename= $request->old_image;
+        User::updateorcreate(['id' => decrypt($request->user_id)], $update1);
+        $update = array();
+        $update['user_id'] = decrypt($request->user_id);
+
+        if($request->file('pancard_image')){
+            $file = $request->file('pancard_image');
+            $filename = Carbon::now()->timestamp.'_'.$file->getClientOriginalName();
+
+            //Resizing and compressing the image
+            if(\Image::make($file->getRealPath())->save('uploads/profile/customers/'.$filename, 60)){
+                $update['pancardimage'] = $filename;
+            } else{
+                return response()->json(['status' => 'Pancard image cannot be saved to server.'], 400);
+            }
         }
-        User::where('id', decrypt($request->user_id))->update([
-            'name' => $request->name,
-            'profile_image' => $filename,
-        ]);
+
+        if($request->file('aadharcard_image')){
+            $file = $request->file('aadharcard_image');
+            $filename = Carbon::now()->timestamp.'_'.$file->getClientOriginalName();
+
+            //Resizing and compressing the image
+            if(\Image::make($file->getRealPath())->save('uploads/profile/customers/'.$filename, 60)){
+                $update['aadharcardimage'] = $filename;
+            } else{
+                return response()->json(['status' => 'Aadharcard image cannot be saved to server.'], 400);
+            }
+        }
+
+        if($request->file('cancelled_cheque_image')){
+            $file = $request->file('cancelled_cheque_image');
+            $filename = Carbon::now()->timestamp.'_'.$file->getClientOriginalName();
+
+            //Resizing and compressing the image
+            if(\Image::make($file->getRealPath())->save('uploads/profile/customers/'.$filename, 60)){
+                $update['cancelledchequeimage'] = $filename;
+            } else{
+                return response()->json(['status' => 'Cancelled cheque image cannot be saved to server.'], 400);
+            }
+        }
+
+       
+       
+        CustomerDetail::updateorcreate(['user_id' => decrypt($request->user_id)], $update);
         if(auth()->user()->role_id == Role::IS_CUSTOMER)
             return redirect()->route('customer.customer_dashboard')->with('message', 'Account details updated successfully.');
         elseif(auth()->user()->role_id == Role::IS_SELLER)
@@ -902,5 +946,250 @@ class FrontendNoAuthController extends Controller
         if(isset($e1)){dd($e1);}
         return redirect()->back()->with('message', 'Response submitted successfully!');
 
+    }
+
+    function products(){
+        $user_id= auth()->user()->id;
+        return view('frontend.seller.products');
+    }
+    function add_product(){
+        $categories = Categorys::where('parent_id', 0)->where('status','A')
+        ->with('childrenCategories')
+        ->get();
+        $brand = Brand::where('status','A')
+        ->get();
+        $data['categories'] = $categories;
+        $data['brands'] = $brand;
+        return view('frontend.seller.create', $data);
+    }
+    function productstore(Request $request){
+        $user_id= auth()->user()->id;
+        $product = new Product;
+        $product->name = $request->name;
+        $product->category_id  = $request->category_id;
+        $product->brand_id  = $request->brand_id;
+        $product->quantity  = $request->quantity;
+        $product->type  = 'old';
+        $product->added_by  = 'seller';
+        if($request->net_price == ""){
+            $request->net_price = $request->mrp - ($request->mrp * $request->discount)/100;
+        }else{
+            $request->net_price = $request->net_price;
+        }
+        $request->net_price = number_format((float)$request->net_price, 2, '.', '');
+        $product->unit_price  = $request->net_price;
+        $product->purchase_price  = $request->mrp;
+        $product->discount  = $request->discount;
+        $product->meta_title = $request->meta_title;
+        $product->meta_description = $request->meta_description;
+        $product->meta_keyword = $request->meta_keyword;
+        $product->user_id = $user_id;
+        $chkSlug = Product::where('slug',$request->slug)->count();
+        if($chkSlug > 0){
+            return redirect()->route('seller.products')->with('message', 'duplicate slug.');
+        }
+        if ($request->slug != null) {
+            $product->slug = $request->slug;
+        } else {
+            $product->slug = preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $request->name)) . '-' . Str::random(5);
+        }
+       
+        if($request->file('image')){
+            $file = $request->file('image');
+            
+            $ext = substr(strrchr($file->getClientOriginalName(), '.'), 1);
+            $new_name1 = str_replace(".", "", microtime());
+            $new_name = str_replace(" ", "_", $new_name1);
+            $filename = $new_name.'.'.$ext;
+
+            if(\Image::make($file->getRealPath())->save('uploads/products/'.$filename)){
+                $product->photos = $filename;
+            } else{
+                return redirect()->route('seller.products')->with('message', 'Error image uload.');
+            }
+        }
+       
+        $product->description = $request->prodescription;
+        $product->save();
+        $multiImages = $request->file('related_image');
+        if($multiImages){
+           
+            for($i=0;$i<count($multiImages);$i++){
+                $Product_related_images = new Product_related_images;
+                $ext = substr(strrchr($multiImages[$i]->getClientOriginalName(), '.'), 1);
+                $new_name1 = str_replace(".", "", microtime());
+                $new_name = str_replace(" ", "_", $new_name1);
+                $multifilename = $new_name.'.'.$ext;
+                if(\Image::make($multiImages[$i]->getRealPath())->save('uploads/products/'.$multifilename)){
+                $Product_related_images->image = $multifilename;
+                $Product_related_images->product_id = $product->id;
+                $Product_related_images->save();
+                }
+            }
+        }
+        return redirect()->route('seller.products')->with('message', 'Product Added.');
+    }
+    function productupdate(Request $request){
+        $id = $request->id;
+        $product = Product::findOrFail($id);
+        $product->name = $request->name;
+        $product->category_id  = $request->category_id;
+        $product->brand_id  = $request->brand_id;
+        $product->quantity  = $request->quantity;
+        if($request->net_price == ""){
+            $request->net_price = $request->mrp - ($request->mrp * $request->discount)/100;
+        }else{
+            $request->net_price = $request->net_price;
+        }
+        $request->net_price = number_format((float)$request->net_price, 2, '.', '');
+        $product->unit_price  = $request->net_price;
+        $product->purchase_price  = $request->mrp;
+        $product->discount  = $request->discount;
+        $product->meta_title = $request->meta_title;
+        $product->meta_description = $request->meta_description;
+        $product->meta_keyword = $request->meta_keyword;
+        $chkSlug = Product::where('slug',$request->slug)->count();
+        
+        if ($request->slug != null) {
+            $product->slug = $request->slug;
+        } else {
+            $product->slug = preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $request->name)) . '-' . Str::random(5);
+        }
+       
+        if($request->file('image')){
+            $file = $request->file('image');
+            
+            $ext = substr(strrchr($file->getClientOriginalName(), '.'), 1);
+            $new_name1 = str_replace(".", "", microtime());
+            $new_name = str_replace(" ", "_", $new_name1);
+            $filename = $new_name.'.'.$ext;
+
+            if(\Image::make($file->getRealPath())->save('uploads/products/'.$filename)){
+                $product->photos = $filename;
+            } else{
+                return redirect()->route('seller.products')->with('message', 'Error in image upload.');
+            }
+        }
+        $product->description = $request->description;
+        $product->save();
+        $multiImages = $request->file('related_image');
+        if($multiImages){
+           
+            for($i=0;$i<count($multiImages);$i++){
+                $Product_related_images = new Product_related_images;
+                $ext = substr(strrchr($multiImages[$i]->getClientOriginalName(), '.'), 1);
+                $new_name1 = str_replace(".", "", microtime());
+                $new_name = str_replace(" ", "_", $new_name1);
+                $multifilename = $new_name.'.'.$ext;
+                if(\Image::make($multiImages[$i]->getRealPath())->save('uploads/products/'.$multifilename)){
+                $Product_related_images->image = $multifilename;
+                $Product_related_images->product_id = $product->id;
+                $Product_related_images->save();
+                }
+            }
+        }
+        return redirect()->route('seller.products')->with('message', 'Product Updated.');
+    }
+    function productedit(Request $request, $id){
+        $id =  request()->segment(4);
+        $product = Product::findOrFail($id);
+        $categories = Categorys::where('parent_id', 0)->where('status','A')
+        ->with('childrenCategories')
+        ->get();
+
+        $categories = Categorys::where('parent_id', 0)
+        ->with('childrenCategories')
+        ->get();
+
+        $multiImage = Product_related_images::where('product_id', $id)
+        ->get();
+ 
+        $brand = Brand::where('status','A')
+        ->get();
+        $data['categories'] = $categories;
+        $data['brands'] = $brand;
+        $data['product'] = $product;
+        $data['multiImage'] = $multiImage;
+        return view('frontend.seller.edit', $data);
+    }
+    function imageDelete(Request $request){
+        $id = $request->id;
+        if($id){
+            $res=Product_related_images::where('id',$id)->delete();
+        }
+        $res = 1;
+        echo json_encode($res);
+    }
+    function seller_order(){
+        $user_id= auth()->user()->id;
+        $orders = Order_details::where('product_seller_id',$user_id)->leftjoin('order','order.order_id','=','order_details.order_id')->leftjoin('products','order_details.order_product_id','=','products.id')->get();
+        $data['orders'] = $orders;
+        return view('frontend.seller.my_order',$data);
+    }
+    function seller_order_details(Request $request,$id){
+        $user_id= auth()->user()->id;
+        $order_details = Order_details::where('order_id',$id)->leftjoin('products','products.id','=','order_details.order_product_id')->get();
+        $order =   Order::where('order_id',$id)->first();
+        $billing = User::where('id',$order->order_customer_id)->first();
+        $shipping = json_decode($order->orderaddress);
+        $data['order_details'] = $order_details;
+        $data['billingAddress']=$billing;
+        $data['shippingAddress']=$shipping;
+        return view('frontend.seller.order_details',$data);
+    }
+    public function fetchData($type, $fetch='all', $id='none', Request $request){
+        $user_id= auth()->user()->id;
+        switch($type){
+            case 'product':
+                $query = Product::query();
+                $query->where('status','!=','D');
+                $query->where('user_id',$user_id);
+                $request['searchdata'] = [];
+            break;
+            default:
+                abort(404, 'Invalid request recieved');
+        }
+        $input = $request->all();
+        foreach($request->searchdata as $key => $value){
+            if(isset($input[$value]) && $input[$value] != ''){
+                $query->where($value, $input[$value]);
+            }
+        }
+        switch ($fetch) {
+            case 'single':
+                return response()->json(['result' => $query->first()], 200);
+            break;
+        }
+        if(request()->ajax()){
+            return datatables()->of($query)->make(true);
+        }
+    }
+
+    public function statusChange(Request $request){
+        switch($request->type){
+            case 'statusChange':
+                $status = Product::findorfail($request->id);
+                if($status->status == 'A' ){
+                    $request['status'] = 'I';
+                } else{
+                    $request['status'] = 'A';
+                }
+                Product::where('id', $request->id)->update($request->except(['_token','type']));
+            break;
+            case 'delete':
+                $request['status'] = 'D';
+                $brand = Product::findorfail($request->id);
+                Product::where('id', $request->id)->update($request->except(['_token','type']));
+            break;
+            case 'popular':
+                $status = Product::findorfail($request->id);
+                if($status->ispopular == 'Y' ){
+                    $request['ispopular'] = 'N';
+                } else{
+                    $request['ispopular'] = 'Y';
+                }
+                Product::where('id', $request->id)->update($request->except(['_token','type']));
+            break;
+        }
     }
 }

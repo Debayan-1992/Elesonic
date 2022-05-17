@@ -72,8 +72,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function getDetailsAttribute(){
         if($this->role->slug == 'customer'){
             return Model\CustomerDetail::where('user_id', $this->id)->first();
+        }else{
+            return Model\CustomerDetail::where('user_id', $this->id)->first();
         }
 
-        return false;
+      
     }
 }
