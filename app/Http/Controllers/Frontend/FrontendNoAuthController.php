@@ -1167,7 +1167,7 @@ class FrontendNoAuthController extends Controller
         $data['shippingAddress']=$shipping;
         $data['orderid'] = $id;
         
-        $data['path'] = asset('public/uploads/order/order-'.encrypt($id).'.pdf');
+        return $data['path'] = asset('public/uploads/order/Order-'.encrypt($id).'.pdf');
         
         return view('frontend.seller.order_details',$data);
     }
