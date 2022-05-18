@@ -94,7 +94,7 @@
 @push('script')
 <script>
   function placeOrder(){
-    var paymentType = $('input[name="payment_type"]:checked').val(); //cod or online
+    var paymentType = $('input[name="payment_type"]:checked').val(); //'cod' or 'online' payment method
     //alert(paymentType);
     $.ajax({
 			url: "{{ route('customer.order-now') }}",
