@@ -27,6 +27,7 @@
                             <th>Name</th>
                             <th>Status</th>
                             <th>Is Popular</th>
+                            <th>Is Best</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -80,6 +81,20 @@
                     url: "{{route('dashboard.product.statusChange')}}",
                     method: "POST",
                     data: {'_token':'{{csrf_token()}}','type':'popular','id':id},
+                    success: function(data){
+                        $('#my-datatable').dataTable().api().ajax.reload();
+                    }, error: function(errors){
+                        showErrors(errors);
+                    }
+                });
+            });
+        }
+        function changeActionBest(id){
+            Pace.track(function(){
+                $.ajax({
+                    url: "{{route('dashboard.product.statusChange')}}",
+                    method: "POST",
+                    data: {'_token':'{{csrf_token()}}','type':'best','id':id},
                     success: function(data){
                         $('#my-datatable').dataTable().api().ajax.reload();
                     }, error: function(errors){
@@ -161,6 +176,21 @@
                             html = `<a onclick="changeActionPopular(`+full.id+`)" class="btn btn-sm btn-success"><i class="fa fa-check-circle"></i>&nbsp;Yes</a>`;
                         } else if(data== 'N'){
                             html = `<a onclick="changeActionPopular(`+full.id+`)" class="btn btn-sm btn-warning"><i class="fa fa-remove"></i>&nbsp;No</a>`;
+                        }else{
+                            html = '';
+                        }
+
+                        return html;
+                    },
+                },
+                {
+                    data:'isbest',
+                    name: 'isbest',
+                    render: function(data, type, full, meta){
+                        if(data == 'Y'){
+                            html = `<a onclick="changeActionBest(`+full.id+`)" class="btn btn-sm btn-success"><i class="fa fa-check-circle"></i>&nbsp;Yes</a>`;
+                        } else if(data== 'N'){
+                            html = `<a onclick="changeActionBest(`+full.id+`)" class="btn btn-sm btn-warning"><i class="fa fa-remove"></i>&nbsp;No</a>`;
                         }else{
                             html = '';
                         }

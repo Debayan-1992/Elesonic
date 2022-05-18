@@ -209,7 +209,8 @@
                 ->get();
 				$cms = App\Model\CmsContent::where('page_name','!=',' ')
                 ->get();
-			
+                $sociallinks = App\Model\Setting::where('id','1')
+                ->get();
 			@endphp
 				<!-- item -->
 					<div class="col-lg-3">
@@ -252,10 +253,10 @@
 						<div class="item quick-links-block">
 							<h4>ABOUT</h4>
 							<ul>
-								<li><a href="#">Our Story</a></li>
+								
 								<li><a href="{{route('contact_us')}}">Contact Us</a></li>
 								<li><a href="#">News</a></li>
-								<li><a href="#">Blogs</a></li>
+								<li><a href="{{route('blogs')}}">Blogs</a></li>
 								<li><a href="#">Write for Us</a></li>
 							</ul>
 						</div>
@@ -284,10 +285,10 @@
 
 						<div class="social-icon">
 							<ul>
-								<li><a href="#" target="_blank"><i class="fa fa-facebook"></i></a></li>
-								<li><a href="#" target="_blank"><i class="fa fa-twitter"></i></a></li>
-								<li><a href="#" target="_blank"><i class="fa fa-linkedin"></i></a></li>
-								<li><a href="#" target="_blank"><i class="fa fa-instagram"></i></a></li>
+								<li><a href="" target="_blank"><i class="fa fa-facebook"></i></a></li>
+								<li><a href="" target="_blank"><i class="fa fa-twitter"></i></a></li>
+								<li><a href="" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+								<li><a href="" target="_blank"><i class="fa fa-instagram"></i></a></li>
 								
 							</ul>
 						</div>
@@ -320,7 +321,7 @@
 			<!---->
 			<div class="item">
 
-				<p>&copy; 2021 Elesonic | Website designed and developed by</p>
+				<p>&copy; {{date('Y')}} {{config('app.name')}} | Website designed and developed by</p>
 				<a href="https://www.ivaninfotech.com/" target="_blank">Ivan Infotech</a>
 			</div>
 			<!---->
@@ -353,7 +354,7 @@
 
         <div class="form-bd">
 			
-        	<form id="serviceBook" action="{{route('customer.servicebook')}}" method="post">
+        	<form id="serviceBook" action="" method="post">
 				@csrf
 				<input type="hidden" value="" name="serviceId" id="serviceId">
         		<!-- item -->
@@ -397,7 +398,7 @@
 				<!-- item -->
 					<div class="item">
 						<label>Enter additional information</label>
-						<textarea name="information"></textarea>
+						<textarea id="information" name="information"></textarea>
 					</div>
 				<!-- item -->
 
@@ -476,8 +477,14 @@
 	
 	function serviceBokkingModal(id,name){
 		var userId = '{{ $user_id }}';
+		var role_id = '{{ $role_id }}';
+
+		
 		if(userId == ""){
 			swal('Please login to book service');
+			return false;
+		}else if(role_id == 6){
+			swal('Please login as a customer to book service');
 			return false;
 		}else{
 			$("#serviceName").text(name);
@@ -499,12 +506,28 @@
 			swal('Invalid email.');
 			return false;
 		}else{
-		
-			$("#serviceBook").submit();
-			$('#serviceBook')[0].reset();
-			$("#staticBackdrop").modal('hide');
+			var information    = $("#information").val();
+			var serviceId      = $("#serviceId").val();
+			$.ajax({
+			url: "{{route('customer.servicebook')}}",
+            type: "POST",
+            datatype: "json",
+			data:{'_token':'{{csrf_token()}}','information':information,'serviceId':serviceId},
+            beforeSend: function (){
+              $("#loadList").css('display','block');
+              $("#staticBackdrop").modal('hide');
+	          },
+	          success: function (data) {
+	            if(data==1){
+	            $("#loadList").css('display','none');
+	            swal('Request has been sent successfully');
+	            $('#serviceBook')[0].reset();
+			    $("#staticBackdrop").modal('hide');
+	            }
+	            
+	          }
+	      });
 		}
-		
 	}
 </script>
 

@@ -17,6 +17,8 @@ use App\Http\Controllers\Auth;
 use App\Http\Controllers\Frontend\FrontendNoAuthController;
 use App\Http\Controllers\Dashboard\OrderController;
 
+use App\Http\Controllers\Dashboard\BlogsController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -47,6 +49,8 @@ Route::get('/search-product', [FrontendNoAuthController::class, 'search_product'
 Route::post('/subscribeEmail', [FrontendNoAuthController::class, 'subscribeEmail'])->name('subscribeEmail');
 
 Route::get('/departments', [FrontendNoAuthController::class, 'departments'])->name('departments');
+
+Route::get('/blogs', [FrontendNoAuthController::class, 'blogs'])->name('blogs');
 
 Route::post('/add-cart', [FrontendNoAuthController::class, 'add_cart'])->name('add-cart');
 
@@ -277,7 +281,15 @@ Route::prefix('/seller/dashboard')->name('seller.')->middleware('sellerauth','ch
 
     Route::get('my-order', [FrontendNoAuthController::class, 'seller_order'])->name('my-order');
 
-     Route::get('/order-details/{id?}', [FrontendNoAuthController::class, 'seller_order_details'])->name('order-details');
+    Route::get('/order-details/{id?}', [FrontendNoAuthController::class, 'seller_order_details'])->name('order-details');
+
+    Route::get('seller-reports', [FrontendNoAuthController::class, 'seller_reports'])->name('seller-reports');
+
+   
+
+    Route::any('generate-excel', [FrontendNoAuthController::class, 'generate_excel'])->name('generate-excel');
+
+    Route::any('generate-excel-revenue', [FrontendNoAuthController::class, 'generate_excel_revenue'])->name('generate-excel-revenue');
     
     
 });

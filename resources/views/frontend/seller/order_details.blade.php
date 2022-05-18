@@ -71,7 +71,7 @@
 
            
             <tr>
-            <td><a style="curser:pointer" href="{{$path}}" download><i class="fa fa-print" aria-hidden="true"></i></a></td>
+            <!-- <td><a style="curser:pointer" href="{{$path}}" download><i class="fa fa-print" aria-hidden="true"></i></a></td> -->
             <tr>
         </tbody>
     </table>

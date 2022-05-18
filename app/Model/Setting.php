@@ -15,6 +15,11 @@ class Setting extends Model
         'order_amount',
         'charges',
 
+        'fb_link',
+        'twitter_link',
+        'linkedin_link',
+        'instagram_link',
+
         'name',
         'title',
         'smsflag',

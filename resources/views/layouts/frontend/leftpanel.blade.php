@@ -78,6 +78,12 @@ $user = auth()->user();
                 <span class="text-secondary"><a href="{{route('seller.my-order')}}">Ordered Items</a></span>
             </li>
             @endif
+            @if($user->role_id  == App\Model\Role::IS_SELLER)
+            <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                
+                <span class="text-secondary"><a href="{{route('seller.seller-reports')}}">Order Report</a></span>
+            </li>
+            @endif
             @if($user->role_id  == App\Model\Role::IS_CUSTOMER)
             <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                 

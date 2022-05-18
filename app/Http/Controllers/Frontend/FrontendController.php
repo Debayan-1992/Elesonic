@@ -27,6 +27,8 @@ use App\Model\FaqContent;
 use App\Model\Cart_item;
 use App\Model\Service_booking;
 
+use App\Model\Countries;
+
 use App\Model\Category as Categorys;
 use App\Utility\CategoryUtility;
 use Illuminate\Support\Facades\DB;
@@ -131,7 +133,9 @@ class FrontendController extends Controller
 
     public function signup()
     {
-        return view('frontend.sign-up');
+        $country= Countries::all();
+        $data['country'] =  $country;
+        return view('frontend.sign-up',$data);
     }
 
     public function signup_post(Request $request)
@@ -142,6 +146,7 @@ class FrontendController extends Controller
             'password' => 'required|string|min:6|confirmed',
             'mobile' => 'required|min:10|unique:users,mobile', //Meaning unique phone no. in users table
             'role_id' => 'required',
+            'country' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -153,6 +158,7 @@ class FrontendController extends Controller
         $request->request->add(['status'=>1]);
         $input = $request->all();
         $input['password'] = Hash::make($input['password']);
+        $input['country'] = $input['country'];
         $input['mobile_verified_at'] = date('Y-m-d H:i:s');
         $val = User::create($input);
         

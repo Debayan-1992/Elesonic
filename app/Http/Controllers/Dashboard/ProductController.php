@@ -143,6 +143,15 @@ class ProductController extends Controller
                 }
                 Product::where('id', $request->id)->update($request->except(['_token','type']));
             break;
+            case 'best':
+                $status = Product::findorfail($request->id);
+                if($status->isbest == 'Y' ){
+                    $request['isbest'] = 'N';
+                } else{
+                    $request['isbest'] = 'Y';
+                }
+                Product::where('id', $request->id)->update($request->except(['_token','type']));
+            break;
         }
     }
 

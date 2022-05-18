@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Frontend;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-
+use App\Model\Countries;
 use App\Model\Role;
 use App\User;
 use Carbon\Carbon;
@@ -15,6 +15,7 @@ use App\Model\LandingBanner;
 use App\Model\Setting;
 use App\Model\Product;
 use App\Model\Department;
+use App\Model\Blog;
 use App\Model\Service;
 use App\Model\Brand;
 use App\Model\CmsContent;
@@ -29,6 +30,7 @@ use App\Model\Product_related_images;
 use App\Model\Category as Categorys;
 use App\Utility\CategoryUtility;
 use PDF;
+use Excel;
 
 use App\Model\Subscribers;
 use App\Mail\OnlyTextMail;
@@ -39,7 +41,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\OrderGenerationMail;
-
+use App\Exports\OrderReportsExportByRange;
 class FrontendNoAuthController extends Controller
 {
     //After login for seller, customer this controller should be hit if hitting FrontendController then it'll keep looping
@@ -53,6 +55,9 @@ class FrontendNoAuthController extends Controller
         ->first();
         $products = Product::where('status','A')->where('ispopular','Y')
         ->get();
+        $bestproducts = Product::where('status','A')->where('isbest','Y')->with('category')
+        ->get();
+      
         $departments = Department::where('status','A')
         ->get();
         $services = Service::where('status','A')->where('popular','1')
@@ -61,6 +66,7 @@ class FrontendNoAuthController extends Controller
         $data['banners'] = $banners;
         $data['titles']  = $titles;
         $data['popularproducts']  = $products;
+        $data['bestproducts']  = $bestproducts;
         $data['departments']  = $departments;
         $data['services']  = $services;
         return view('frontend.home', $data);
@@ -239,6 +245,15 @@ class FrontendNoAuthController extends Controller
         $data['departments'] = $departments;
         return view('frontend.departments',$data);
     }
+    function blogs(){
+       
+        $blogs = Blog::where('status','1')
+        ->get();
+        $data['blogs'] = $blogs;
+        return view('frontend.blogs',$data);
+    }
+
+   
 
     function servicebook(Request $request){
         $user_id= auth()->user()->id;
@@ -260,8 +275,10 @@ class FrontendNoAuthController extends Controller
         soon as we can';
         $subject = 'Service Booking Quote - Elesonic';
         $mailFromId = config()->get('mail.from.address');
-        Mail::to($request->email)->send(new OnlyTextMail($request->name, $mailFromId, $txt, $subject));
-        return redirect()->route('services')->with('message', 'Request has been sent successfully.');
+        Mail::to($user->email)->send(new OnlyTextMail($request->name, $mailFromId, $txt, $subject));
+        $res = 1;
+        echo json_encode($res);
+        //return redirect()->route('services')->with('message', 'Request has been sent successfully.');
     }
 
     function subscribeEmail(Request $request){
@@ -564,7 +581,9 @@ class FrontendNoAuthController extends Controller
         $user_id= auth()->user()->id;
         $user = auth()->user();
         $delivery_address = Delivery_address::where('user_id',$user_id)->get();
-        $state = State::where('countryId',38)->get();
+        $usercountry = User::where('id',$user_id)->first();
+        $country = Countries::where('sortName',$usercountry->country)->first();
+        $state = State::where('countryId',$country->id)->get();
         $data['shippingAddress'] = $delivery_address;
         $data['user'] = $user;
         $data['state'] = $state;
@@ -639,7 +658,9 @@ class FrontendNoAuthController extends Controller
         $user_id= auth()->user()->id;
         $user = auth()->user();
         $delivery_address = Delivery_address::where('user_id',$user_id)->get();
-        $state = State::where('countryId',38)->get();
+        $usercountry = User::where('id',$user_id)->first();
+        $country = Countries::where('sortName',$usercountry->country)->first();
+        $state = State::where('countryId',$country->id)->get();
         $member_dtl = User::where('id',$user_id)->first();
         $data['shippingAddress'] = $delivery_address;
         $data['member_dtl']      = $member_dtl;
@@ -1158,7 +1179,7 @@ class FrontendNoAuthController extends Controller
     }
     function seller_order_details(Request $request,$id){
         $user_id= auth()->user()->id;
-        $order_details = Order_details::where('order_id',$id)->leftjoin('products','products.id','=','order_details.order_product_id')->get();
+        $order_details = Order_details::where('order_details.order_id',$id)->where('order_details.product_seller_id',$user_id)->leftjoin('products','products.id','=','order_details.order_product_id')->get();
         $order =   Order::where('order_id',$id)->first();
         $billing = User::where('id',$order->order_customer_id)->first();
         $shipping = json_decode($order->orderaddress);
@@ -1168,6 +1189,78 @@ class FrontendNoAuthController extends Controller
         $data['orderid'] = $id;
         $data['path'] = asset('public/uploads/order/Order-'.$order->order_unique_id.'.pdf');
         return view('frontend.seller.order_details',$data);
+    }
+
+    function seller_reports(Request $request){
+        return view('frontend.seller.reports');
+    }
+    function generate_excel_revenue(Request $request){
+        $startdate = $request->startDate;
+        $enddate = $request->endDate;
+        $user_id= auth()->user()->id;
+        $orders = Order_details::whereBetween('order_details.created_at', [$startdate, $enddate])->where('product_seller_id',$user_id)->leftjoin('order','order.order_id','=','order_details.order_id')->leftjoin('products','order_details.order_product_id','=','products.id')->get();
+        
+        $titles = [
+            'Start Date',
+            'End Date',
+            'Total Revenue',
+        ];
+        $excelData = [];
+        $cntr = 1;
+        $name = 'Revenue' . '.xlsx';
+        $revenue = 0;
+        foreach ($orders as $key => $data) {
+            $revenue = $revenue + $data->seller_commission;
+        }
+        $output['Start Date'] = $request->startDate;
+        $output['End Date']   = $request->endDate;
+        $output['Revenue']    = $revenue;
+        array_push($excelData, $output);
+        return Excel::download(new OrderReportsExportByRange($titles, $excelData), $name);
+    }
+    function generate_excel(Request $request){
+        $startdate = $request->startDate;
+        $enddate = $request->endDate;
+        $user_id= auth()->user()->id;
+        $orders = Order_details::whereBetween('order_details.created_at', [$startdate, $enddate])->where('product_seller_id',$user_id)->leftjoin('order','order.order_id','=','order_details.order_id')->leftjoin('products','order_details.order_product_id','=','products.id')->get();
+        
+        $titles = [
+            'Sl',
+            'Order Date',
+            'Order Code',
+            'Status',
+            'Customer',
+            'Product',
+            'QTY',
+            'MRP',
+            'Discount',
+            'Net Price',
+            'Shipping',
+            'Sub Total',
+            'Commission',
+        ];
+        $excelData = [];
+        $cntr = 1;
+        $name = 'Order' . '.xlsx';
+        foreach ($orders as $key => $data) {
+            $billing = User::where('id',$data->order_customer_id)->first();
+            $output = array();
+            $output['Sl'] = $cntr++;
+            $output['Order Date'] = $data->created_at;
+            $output['Order Code'] = $data->order_unique_id;
+            $output['Status'] = $data->order_product_status;
+            $output['Customer'] = $billing->name;
+            $output['Product'] = $data->name;
+            $output['QTY'] = $data->cart_item_pro_qty;
+            $output['MRP'] = $data->cart_item_price;
+            $output['Discount'] = $data->cart_item_price_disc;
+            $output['Net Price'] = $data->cart_item_net_price;
+            $output['Shipping'] = $data->shipping_charge;
+            $output['Sub Total'] = $data->cart_item_pro_qty * $data->cart_item_net_price;
+            $output['Commission'] = $data->seller_commission;
+            array_push($excelData, $output);
+        }
+        return Excel::download(new OrderReportsExportByRange($titles, $excelData), $name);
     }
     public function fetchData($type, $fetch='all', $id='none', Request $request){
         $user_id= auth()->user()->id;

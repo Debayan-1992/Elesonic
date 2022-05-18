@@ -147,6 +147,7 @@
 
 
 <!-- popular-products -->
+@if(!empty($bestproducts))
 	<div class="elesonic-block">
 		<div class="container">
 			<h3>Best of ELESONIC</h3>
@@ -156,217 +157,29 @@
 					<div id="elesonic-slider" class="owl-carousel">
 
 						<!-- item -->
+						@foreach($bestproducts as $row)
 						<div class="item">
-							<a href="#">
+							<a href="{{route('product-details')}}/{{ $row->slug }}">
 								<div class="img-figure">
-									<img src="{{asset('custom_resource/images/elesonic/img1.png')}}">
+								<img src="{{config('app.url')}}/uploads/products/{{ $row->photos }}">
 								</div>
 
 								<div class="text-block">
-									<span>Radiology</span>
-									<p>Medical Diagnostic X-ray equipments</p>
-									<h6>$ 27,720</h6>
+									<span>{{ $row->category->name }}</span>
+									<p>{{ $row->name }}</p>
+									<h6>$ {{ $row->unit_price }}</h6>
 								</div>
 
 							</a>						
 						</div>
+						@endforeach
 						<!-- item -->
-
-						<!-- item -->
-						<div class="item">
-							<a href="#">
-								<div class="img-figure">
-									<img src="{{asset('custom_resource/images/elesonic/img2.png')}}">
-								</div>
-
-								<div class="text-block">
-									<span>CT SEGMENT</span>
-									<p>High quality & cost effective CT Scan</p>
-									<h6>$ 27,720</h6>
-								</div>
-
-							</a>						
-						</div>
-						<!-- item -->
-
-						<!-- item -->
-						<div class="item">
-							<a href="#">
-								<div class="img-figure">
-									<img src="{{asset('custom_resource/images/elesonic/img3.png')}}">
-								</div>
-
-								<div class="text-block">
-									<span>MRI SEGMENT</span>
-									<p>Medical Diagnostic X-ray equipments</p>
-									<h6>$ 27,720</h6>
-								</div>
-
-							</a>						
-						</div>
-						<!-- item -->
-
-						<!-- item -->
-						<div class="item">
-							<a href="#">
-								<div class="img-figure">
-									<img src="{{asset('custom_resource/images/elesonic/img1.png')}}">
-								</div>
-
-								<div class="text-block">
-									<span>Radiology</span>
-									<p>Medical Diagnostic X-ray equipments</p>
-									<h6>$ 27,720</h6>
-								</div>
-
-							</a>						
-						</div>
-						<!-- item -->
-
-						<!-- item -->
-						<div class="item">
-							<a href="#">
-								<div class="img-figure">
-									<img src="{{asset('custom_resource/images/elesonic/img2.png')}}">
-								</div>
-
-								<div class="text-block">
-									<span>CT SEGMENT</span>
-									<p>High quality & cost effective CT Scan</p>
-									<h6>$ 27,720</h6>
-								</div>
-
-							</a>						
-						</div>
-						<!-- item -->
-
-						<!-- item -->
-						<div class="item">
-							<a href="#">
-								<div class="img-figure">
-									<img src="{{asset('custom_resource/images/elesonic/img3.png')}}">
-								</div>
-
-								<div class="text-block">
-									<span>MRI SEGMENT</span>
-									<p>Medical Diagnostic X-ray equipments</p>
-									<h6>$ 27,720</h6>
-								</div>
-
-							</a>						
-						</div>
-						<!-- item -->
-
-						<!-- item -->
-						<div class="item">
-							<a href="#">
-								<div class="img-figure">
-									<img src="{{asset('custom_resource/images/elesonic/img1.png')}}">
-								</div>
-
-								<div class="text-block">
-									<span>Radiology</span>
-									<p>Medical Diagnostic X-ray equipments</p>
-									<h6>$ 27,720</h6>
-								</div>
-
-							</a>						
-						</div>
-						<!-- item -->
-
-						<!-- item -->
-						<div class="item">
-							<a href="#">
-								<div class="img-figure">
-									<img src="{{asset('custom_resource/images/elesonic/img2.png')}}">
-								</div>
-
-								<div class="text-block">
-									<span>CT SEGMENT</span>
-									<p>High quality & cost effective CT Scan</p>
-									<h6>$ 27,720</h6>
-								</div>
-
-							</a>						
-						</div>
-						<!-- item -->
-
-						<!-- item -->
-						<div class="item">
-							<a href="#">
-								<div class="img-figure">
-									<img src="{{asset('custom_resource/images/elesonic/img3.png')}}">
-								</div>
-
-								<div class="text-block">
-									<span>MRI SEGMENT</span>
-									<p>Medical Diagnostic X-ray equipments</p>
-									<h6>$ 27,720</h6>
-								</div>
-
-							</a>						
-						</div>
-						<!-- item -->
-
-						<!-- item -->
-						<div class="item">
-							<a href="#">
-								<div class="img-figure">
-									<img src="{{asset('custom_resource/images/elesonic/img1.png')}}">
-								</div>
-
-								<div class="text-block">
-									<span>Radiology</span>
-									<p>Medical Diagnostic X-ray equipments</p>
-									<h6>$ 27,720</h6>
-								</div>
-
-							</a>						
-						</div>
-						<!-- item -->
-
-						<!-- item -->
-						<div class="item">
-							<a href="#">
-								<div class="img-figure">
-									<img src="{{asset('custom_resource/images/elesonic/img2.png')}}">
-								</div>
-
-								<div class="text-block">
-									<span>CT SEGMENT</span>
-									<p>High quality & cost effective CT Scan</p>
-									<h6>$ 27,720</h6>
-								</div>
-
-							</a>						
-						</div>
-						<!-- item -->
-
-						<!-- item -->
-						<div class="item">
-							<a href="#">
-								<div class="img-figure">
-									<img src="{{asset('custom_resource/images/elesonic/img3.png')}}">
-								</div>
-
-								<div class="text-block">
-									<span>MRI SEGMENT</span>
-									<p>Medical Diagnostic X-ray equipments</p>
-									<h6>$ 27,720</h6>
-								</div>
-
-							</a>						
-						</div>
-						<!-- item -->
-
-						
-
-						
 					</div>
 				</div>
 			<!---->
 		</div>
 	</div>
+@endif
 <!-- popular-products -->
 
 

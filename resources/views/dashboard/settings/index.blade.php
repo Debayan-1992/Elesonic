@@ -41,6 +41,26 @@
                                             <label>Site Title <span class="text-danger">*</span></label>
                                             <input name="title" value="{{$settings->title}}" class="form-control">
                                         </div>
+
+                                         <div class="form-group col-md-6">
+                                            <label>Fb Link <span class="text-danger">*</span></label>
+                                            <input name="fb_link" value="{{$settings->fb_link}}" class="form-control">
+                                        </div>
+
+                                         <div class="form-group col-md-6">
+                                            <label>Twitter Link <span class="text-danger">*</span></label>
+                                            <input name="twitter_link" value="{{$settings->twitter_link}}" class="form-control">
+                                        </div>
+
+                                         <div class="form-group col-md-6">
+                                            <label>Linkedin Link <span class="text-danger">*</span></label>
+                                            <input name="linkedin_link" value="{{$settings->linkedin_link}}" class="form-control">
+                                        </div>
+
+                                         <div class="form-group col-md-6">
+                                            <label>Instagram Link <span class="text-danger">*</span></label>
+                                            <input name="instagram_link" value="{{$settings->instagram_link}}" class="form-control">
+                                        </div>
                                         <div class="form-group col-md-6">
                                             <label>Commission (%) <span class="text-danger">*</span></label>
                                             <input type="number" name="commission" value="{{$settings->commission}}" class="form-control">

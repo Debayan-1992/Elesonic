@@ -55,13 +55,25 @@
               </div>
               <!-- item -->
 
+              <div class="item">
+                <div class="icon">
+                <i class="fa fa-globe" aria-hidden="true"></i>
+                </div>
+                       <select name="country" id="country" onchange="warning()"  class="form-control select2">
+                         <option>Choose Country</option>
+                        @foreach($country as $row)
+                         <option value="{{$row->sortName}}">{{$row->name}}<option>
+                        @endforeach
+                       </select>
+                </div>
+
 
               <!-- item -->
               <div class="item">
               	<div class="icon">
               		<i class="fa fa-lock"></i>
               	</div>
-                <input type="password" placeholder="Password" name="password">
+                <input type="password" placeholder="Password" name="password" id="password">
               </div>
               <!-- item -->
 
@@ -115,9 +127,16 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.js" integrity="sha512-zlWWyZq71UMApAjih4WkaRpikgY9Bz1oXIW5G0fED4vk14JjGlQ1UmkGM392jEULP8jbNMiwLWdM8Z87Hu88Fw==" crossorigin="anonymous"></script>
 
   <script src="{{asset('js/custom.js')}}"></script>
+  <script src="//unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 @endpush
 
 @push('script')
+
+<script>
+  function warning(){
+    swal('Confirm it carefully before registration');
+  }
+</script>
 
     <script>
         $(function () {
@@ -143,9 +162,18 @@
                     required: true,
                     email: true
                 },
-                password: {
+                country: {
                     required: true,
                 },
+                password : {
+                    required : true,
+                    minlength : 6
+                }, 
+                password_confirmation : {
+                    required : true,
+                    minlength : 6,
+                    equalTo:"#password"
+                }
             },
             messages: {
                 email: {
