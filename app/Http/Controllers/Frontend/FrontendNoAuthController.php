@@ -751,7 +751,7 @@ class FrontendNoAuthController extends Controller
         $data['orderCode'] = $order_unique_id;
         $pdf = \PDF::loadView('frontend/orderpdf',$data);
         $path = public_path('uploads/order/');
-        $fileName = 'Order-'.encrypt($order->id).'.pdf';
+        $fileName = 'Order-'.$order_unique_id.'.pdf';
         $pdf->save($path.'/'.$fileName);
 
         $code = $order_unique_id;
@@ -1166,9 +1166,7 @@ class FrontendNoAuthController extends Controller
         $data['billingAddress']=$billing;
         $data['shippingAddress']=$shipping;
         $data['orderid'] = $id;
-        
-        return $data['path'] = asset('public/uploads/order/Order-'.encrypt($id).'.pdf');
-        
+        $data['path'] = asset('public/uploads/order/Order-'.$order->order_unique_id.'.pdf');
         return view('frontend.seller.order_details',$data);
     }
     public function fetchData($type, $fetch='all', $id='none', Request $request){

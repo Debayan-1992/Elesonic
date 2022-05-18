@@ -60,7 +60,7 @@
                 <input type="radio" value="cod" name="payment_type" checked> Cash On Delivery
               </div>
               <div class="col-12 text-center">
-                <input type="radio" name="payment_type" value="online"> Online
+                <input type="radio" value="online" name="payment_type" value="online"> Online
               </div>
 
               <!-- <div class="col-12 text-center">
@@ -94,11 +94,13 @@
 @push('script')
 <script>
   function placeOrder(){
+    var paymentType = $('input[name="payment_type"]:checked').val(); //cod or online
+    //alert(paymentType);
     $.ajax({
 			url: "{{ route('customer.order-now') }}",
             type: "get",
             datatype: "json",
-			      data:{'_token':'{{csrf_token()}}'},
+			      data:{'_token':'{{csrf_token()}}','paymentType':paymentType},
             beforeSend: function (){
               $("#loadList").css('display','block');
           },
