@@ -23,6 +23,7 @@
             <b>Name</b> : {{$billingAddress->name}}<br>
             <b>Email</b> : {{$billingAddress->email}}<br>
             <b>Phone</b> : {{$billingAddress->mobile}}<br>
+            {{ $billingAddress->address }} {{ $billingAddress->pincode }} , {{ $mycity->name }} {{ $mystate->name }}
         </div>
     </div>
     <div class="col-md-5 user-card-col col-12 mb-2">

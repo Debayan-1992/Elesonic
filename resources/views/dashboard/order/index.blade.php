@@ -40,6 +40,11 @@
 
 @push('script')
     <script>
+         function edit(id){
+            var url = '{{ route("dashboard.orders.view", ":slug") }}';
+            url = url.replace(':slug', id);
+            window.location.href = url;
+        }
         $('#my-datatable').DataTable({
             processing: true,
             serverSide: true,
@@ -98,11 +103,24 @@
                     },
                 },
                 {
-                    data:'order_status',
-                    name: 'order_status',
                     render: function(data, type, full, meta){
-                        return data;
+                        var html = '';
+
+                        var menu = `<div class="btn-group">\
+                                <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">\
+                                    <i class="fa fa-bars"></i>&nbsp;&nbsp;<span class="fa fa-caret-down"></span>\
+                                </button>\
+                                <ul class="dropdown-menu">\
+                                    <li><a href="javascript:;" onclick="edit('`+full.order_id+`')"><i class="fa fa-view"></i>View</a></li>\
+                        
+                                </ul>\
+                    
+                            </div>`;
+
+                        return menu;
                     },
+                    orderable: false,
+                    searchable: false,
                 },
              
             ],

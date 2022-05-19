@@ -187,6 +187,8 @@ Route::prefix('/admin/dashboard')->name('dashboard.')->namespace('Dashboard')->m
 
     Route::prefix('/orders')->name('orders.')->middleware('checkrole:superadmin|admin')->group(function(){
         Route::get('/index/{type}', [OrderController::class, 'index'])->name('index');
+        Route::get('/view/{id?}',   [OrderController::class, 'view'])->name('view');
+        Route::post('statusChange',   [OrderController::class, 'statusChange'])->name('statusChange');
     });
 
     //== Products Routes == //

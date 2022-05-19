@@ -665,8 +665,12 @@ class FrontendNoAuthController extends Controller
         $country = Countries::where('sortName',$usercountry->country)->first();
         $state = State::where('countryId',$country->id)->get();
         $member_dtl = User::where('id',$user_id)->first();
+        $mystate = State::where('id',$member_dtl->state_id)->first();
+        $mycity = City::where('id',$member_dtl->city_id)->first();
         $data['shippingAddress'] = $delivery_address;
         $data['member_dtl']      = $member_dtl;
+        $data['mystate']         = $mystate;
+        $data['mycity']          = $mycity;
         $data['state'] = $state;
         return view('frontend.confirm_order',$data);
     }
@@ -703,7 +707,7 @@ class FrontendNoAuthController extends Controller
     }
     function order_now(Request $request){
 
-        dd($request->all());
+     
         if($request->radio_button)
         {
             $status = $this->order_online();
@@ -841,6 +845,10 @@ class FrontendNoAuthController extends Controller
         $order =   Order::where('order_id',$id)->first();
         $shipping = json_decode($order->orderaddress);
         $data['order_details'] = $order_details;
+        $mystate = State::where('id',$billing->state_id)->first();
+        $mycity  = City::where('id',$billing->city_id)->first();
+        $data['mystate']         = $mystate;
+        $data['mycity']          = $mycity;
         $data['billingAddress']=$billing;
         $data['shippingAddress']=$shipping;
         return view('frontend.order_details',$data);
@@ -859,7 +867,12 @@ class FrontendNoAuthController extends Controller
     public function dashboard()
     {
         $user = auth()->user();
-        return view('frontend.dashboard.dashboard')->with(['user'=>$user]);
+        $user_id= auth()->user()->id;
+        $usercountry = User::where('id',$user_id)->first();
+        $country = Countries::where('sortName',$usercountry->country)->first();
+        $state = State::where('countryId',$country->id)->get();
+        $city = City::where('id',$usercountry->city_id)->first();
+        return view('frontend.dashboard.dashboard')->with(['user'=>$user,'state'=>$state,'city'=>$city]);
     }
 
     public function password_change_form()
@@ -899,6 +912,10 @@ class FrontendNoAuthController extends Controller
         }
         $update1 = array();
         $update1['name'] = $request->name;
+        $update1['state_id'] = $request->state;
+        $update1['city_id'] = $request->delcity;
+        $update1['pincode'] = $request->pincode;
+        $update1['address'] = $request->address;
         if($request->file('image')){
             $file = $request->file('image');
             $ext = substr(strrchr($file->getClientOriginalName(), '.'), 1);
@@ -1217,6 +1234,10 @@ class FrontendNoAuthController extends Controller
         $data['shippingAddress']=$shipping;
         $data['orderid'] = $id;
         $data['path'] = asset('public/uploads/order/Order-'.$order->order_unique_id.'.pdf');
+        $mystate = State::where('id',$billing->state_id)->first();
+        $mycity  = City::where('id',$billing->city_id)->first();
+        $data['mystate']         = $mystate;
+        $data['mycity']          = $mycity;
         return view('frontend.seller.order_details',$data);
     }
 

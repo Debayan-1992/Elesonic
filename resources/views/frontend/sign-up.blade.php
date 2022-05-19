@@ -21,7 +21,7 @@
               <h4>Sign Up Account</h4>
               <!-- item -->
               <div class="user-select-area">
-                <input type="radio" id="customer" name="role_id" value="5">
+                <input type="radio" id="customer" checked="" name="role_id" value="5">
                <label for="">Customer</label><br>
                <input type="radio" id="seller" name="role_id" value="6">
                <label for="">Seller</label><br>
@@ -60,7 +60,7 @@
                 <i class="fa fa-globe" aria-hidden="true"></i>
                 </div>
                        <select name="country" id="country" onchange="warning()"  class="form-control select2">
-                         <option>Choose Country</option>
+                         <option value="">Choose Country</option>
                         @foreach($country as $row)
                          <option value="{{$row->sortName}}">{{$row->name}}<option>
                         @endforeach

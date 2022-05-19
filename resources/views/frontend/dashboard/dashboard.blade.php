@@ -90,7 +90,59 @@
                                 <img src="" class="previewHolder" style="display:none;" alt="User Image empty" class="rounded-circle p-1 bg-primary" width="110">  
                             </div>
                         </div>
+                         @if($user->role_id  == App\Model\Role::IS_CUSTOMER)
+                         <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">State</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                               <select  onchange="getCity(this.value)" name="state" id="state" class="form-control select2">
+                                @if($user->state_id == "")
+                                <option value="">Select State</option>
+                                @endif
+                                @foreach ($state as $item)
+                                    <option {{ $user->state_id == $item->id ? 'selected' : '' }} value="{{$item->id}}">{{$item->name}}</option>
+                                @endforeach
+                            </select>
+                            </div>
+                        </div>
+                         <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">City</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                            <select class="form-control" autocomplete="off" name="delcity" id="delcity" placeholder="Pick a state...">
+                            @if($user->city_id == "")
+                            <option value="">Select City</option>
+                            @else
+                            <option value="{{ $user->city_id }}">{{ $city->name }}</option>
+                            @endif
+                        </select>
+                            </div>
+                        </div>
 
+                        <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">Pincode</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                              
+                                <input type="number" name="pincode"  class="form-control" value="{{ $user->pincode }}">
+                               
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">Address</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                              
+                              <textarea rows="5" name="address" cols="65">{{ $user->address }}</textarea>
+                               
+                            </div>
+                        </div>
+                        @endif
                         @if($user->role_id  == App\Model\Role::IS_SELLER)
                         <div class="row mb-3">
                             <div class="col-sm-3">
@@ -179,6 +231,27 @@
 @endsection
 
 @push('script')
+<script type="text/javascript">
+function getCity(state)
+{  
+    var city = '<option value="">Select City</option>';
+    $.ajax({
+    type: "POST",
+    dataType: 'Json',
+    url: "{{ route('customer.getcity') }}",
+    data:{'_token':'{{csrf_token()}}','state':state},
+    async: true,
+    success: function (data) {
+        if(data.length > 0){
+            for(var i=0;i<data.length;i++){
+                city+='<option value="'+data[i].id+'">'+data[i].name+'</option>';
+            }
+            $("#delcity").html(city);
+        }        
+    }
+    });  
+}
+</script>
     <script src="//adminlte.io/themes/AdminLTE/plugins/iCheck/icheck.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"
         integrity="sha512-2ImtlRlf2VVmiGZsjm9bEyhjGW4dU7B6TNwh/hx/iSByxNENtj3WVE6o/9Lj4TJeVXPi4bnOIMXFIJJAeufa0A=="

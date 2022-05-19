@@ -38,6 +38,7 @@
             <br> 
             <b>Phone</b> : {{ $member_dtl->mobile }}
             <br> 
+            {{ $member_dtl->address }} {{ $member_dtl->pincode }} {{ $mycity->name }} {{ $mystate->name }}
         </div>
     </div>
 
