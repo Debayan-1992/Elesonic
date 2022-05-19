@@ -11,8 +11,10 @@ use Carbon\Carbon;
 use App\Model\City;
 use App\Model\OtpVerification;
 use App\Model\CustomerDetail;
+use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Stripe;
 
 class HomeController extends Controller
 {
@@ -372,8 +374,53 @@ class HomeController extends Controller
             }
             elseif($user->role_id == 5 || $user->role_id == 6) //true or false
             {
+                if($user->role_id == 6) //If Seller
+                {
+                    try
+                    {
+                        $stripe = new Stripe\StripeClient(config()->get('stripe.secret_key'));
+                        $stripe->accounts->create([
+                        'type' => 'custom',
+                        'country' => $user->country,
+                        'email' => $user->email,
+                        'capabilities' => [
+                            'card_payments' => ['requested' => true],
+                            'transfers' => ['requested' => true],
+                        ],
+                        ]);
+                    }
+                    catch(Stripe\Exception\CardException $e) {
+                        // Since it's a decline, \Stripe\Exception\CardException will be caught
+                        $err = '';
+                        $err += 'Status is:' . $e->getHttpStatus() . '\n';
+                        $err += 'Type is:' . $e->getError()->type . '\n';
+                        $err += 'Code is:' . $e->getError()->code . '\n';
+                        // param is '' in this case
+                        $err += 'Param is:' . $e->getError()->param . '\n';
+                        $err += 'Message is:' . $e->getError()->message . '\n';
+                      } catch (Stripe\Exception\RateLimitException $e) {
+                        $err = 'Too many requests made to the API too quickly';
+                      } catch (Stripe\Exception\InvalidRequestException $e) {
+                        $err = 'Invalid parameters were supplied to Stripe API';
+                      } catch (Stripe\Exception\AuthenticationException $e) {
+                        $err = 'Authentication with Stripe API failed';
+                      } catch (Stripe\Exception\ApiConnectionException $e) {
+                        $err = 'Network communication with Stripe failed';
+                      } catch (Stripe\Exception\ApiErrorException $e) {
+                        $err =  'Stripe API error';
+                      } catch (Exception $e) {
+                        $err =  'Something else happened, completely unrelated to Stripe';
+                      }
+
+                    User::where('id', $user->id)->update([
+                        'stripe_account_id' => $user->stripe_account_id,
+                        'updated_at' => date('Y-m-d h:i:s'),
+                    ]);
+
+                    return redirect()->route('login')->with('success', 'Success! Seller acoount created and Stripe account initialized');
+                }
                 
-                return redirect()->route('login')->with('success', 'Success! User created');
+                return redirect()->route('login')->with('success', 'Success! User created'); //For customer
                 //dd('Email verified');
             }
             

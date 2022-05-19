@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "896c358df857e4687021c6da05ce1130",
+    "content-hash": "849768b455ba0edccec954a63b144bf7",
     "packages": [
         {
             "name": "barryvdh/laravel-dompdf",
@@ -2836,8 +2836,6 @@
             "time": "2021-12-11T13:40:54+00:00"
         },
         {
-<<<<<<< Updated upstream
-=======
             "name": "stripe/stripe-php",
             "version": "v8.1.0",
             "source": {
@@ -2898,7 +2896,6 @@
             "time": "2022-05-11T18:08:23+00:00"
         },
         {
->>>>>>> Stashed changes
             "name": "swiftmailer/swiftmailer",
             "version": "v6.3.0",
             "source": {

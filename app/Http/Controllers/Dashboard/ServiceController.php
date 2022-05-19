@@ -147,19 +147,9 @@ class ServiceController extends Controller
     public function r_service_statusChange(Request $request)
     {
         switch($request->type){
-            case 'statusChange':
-                $status = Service_booking::findorfail($request->id);
-                if($status->status == 'A' ){
-                    $request['status'] = 'I';
-                } else{
-                    $request['status'] = 'A';
-                }
+            case 'delete': //In activating
+                $request['service_acceptance_status'] = 'I';
                 Service_booking::where('id', $request->id)->update($request->except(['_token','type']));
-            break;
-            
-            case 'delet':
-                $request['status'] = 'D';
-                Service::where('id', $request->id)->update($request->except(['_token','type']));
             break;
         }
     }

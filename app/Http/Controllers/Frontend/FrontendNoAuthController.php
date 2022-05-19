@@ -710,7 +710,7 @@ class FrontendNoAuthController extends Controller
      
         if($request->radio_button)
         {
-            $status = $this->order_online();
+            $status = $this->order_online('total price', 'no of sellers and details', 'order_id');
         }
         $user_id= auth()->user()->id;
         $mycartsItem      = Cart_item::where('cart_item.user_id',$user_id)->leftjoin('products','products.id','=','cart_item.cart_item_id')->get();
@@ -801,7 +801,7 @@ class FrontendNoAuthController extends Controller
 
         $transfer = \Stripe\Transfer::create([
             'amount' => 7000,
-            'currency' => 'inr',
+            'currency' => 'usd',
             'destination' => '{{CONNECTED_STRIPE_ACCOUNT_ID}}',
             'transfer_group' => '{ORDER10}',
           ]);
@@ -1402,7 +1402,7 @@ class FrontendNoAuthController extends Controller
             ]);
             //dd($request->all(), $dec_arr, $charge);
         }
-        catch(\Stripe\Exception\CardException $e) {
+        catch(Stripe\Exception\CardException $e) {
             // Since it's a decline, \Stripe\Exception\CardException will be caught
             $err = '';
             $err += 'Status is:' . $e->getHttpStatus() . '\n';
@@ -1411,15 +1411,15 @@ class FrontendNoAuthController extends Controller
             // param is '' in this case
             $err += 'Param is:' . $e->getError()->param . '\n';
             $err += 'Message is:' . $e->getError()->message . '\n';
-          } catch (\Stripe\Exception\RateLimitException $e) {
+          } catch (Stripe\Exception\RateLimitException $e) {
             $err = 'Too many requests made to the API too quickly';
-          } catch (\Stripe\Exception\InvalidRequestException $e) {
+          } catch (Stripe\Exception\InvalidRequestException $e) {
             $err = 'Invalid parameters were supplied to Stripe API';
-          } catch (\Stripe\Exception\AuthenticationException $e) {
+          } catch (Stripe\Exception\AuthenticationException $e) {
             $err = 'Authentication with Stripe API failed';
-          } catch (\Stripe\Exception\ApiConnectionException $e) {
+          } catch (Stripe\Exception\ApiConnectionException $e) {
             $err = 'Network communication with Stripe failed';
-          } catch (\Stripe\Exception\ApiErrorException $e) {
+          } catch (Stripe\Exception\ApiErrorException $e) {
             $err =  'Stripe API error';
           } catch (Exception $e) {
             $err =  'Something else happened, completely unrelated to Stripe';

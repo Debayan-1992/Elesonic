@@ -163,17 +163,23 @@
                     name: 'service_acceptance_status',
                     render: function(data, type, full, meta){
                         var html = '';
-
+                        if(data == 'P'){
                         var menu = `<div class="btn-group">\
                                 <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">\
                                     <i class="fa fa-bars"></i>&nbsp;&nbsp;<span class="fa fa-caret-down"></span>\
                                 </button>\
                                 <ul class="dropdown-menu">\
                                     <li><a href="javascript:;" onclick="accept('`+full.id+`')"><i class="fa fa-edit"></i>Accept</a></li>\
-                                    <li><a href="javascript:;" onclick="rej('`+full.id+`')"><i class="fa fa-trash"></i>Reject</a></li>\
+                                    <li><a href="javascript:;" onclick="reject('`+full.id+`')"><i class="fa fa-trash"></i>Reject</a></li>\
                                 </ul>\
                                 
                             </div>`;
+                        }else if(data == 'A'){
+                            menu = `<a class="btn btn-sm btn-success"><i class="fa fa-remove"></i>&nbsp;Accepted</a>`;
+                        }else if(data== 'I'){
+                            menu = `<a class="btn btn-sm btn-danger"><i class="fa fa-remove"></i>&nbsp;Rejected</a>`;
+                        }else{ menu=''; }
+    
 
                         return menu;
                     },
@@ -231,6 +237,32 @@
         function accept(id){ //Edit Page
             $("#serviceBookingId").val(id);
             $('#r_servicemodal').modal('show');
+        }
+
+        function reject(id){
+            swal({
+			 title: "Are you sure?",
+			 text: "",
+			 icon: "warning",
+			 buttons: true,
+			 dangerMode: true,
+			})
+			.then((willDelete) => {
+			if (willDelete) {
+                Pace.track(function(){
+                    $.ajax({
+                            url: "{{route('dashboard.request_service.statusChange')}}",
+                            method: "POST",
+                            data: {'_token':'{{csrf_token()}}','type':'delete','id':id},
+                            success: function(data){
+                                $('#my-datatable').dataTable().api().ajax.reload();
+                            }, error: function(errors){
+                                showErrors(errors);
+                            }
+                        });
+                    });       // submitting the form when user press yes
+				} else {}
+			});
         }
         
     </script>
