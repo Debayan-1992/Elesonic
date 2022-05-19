@@ -39,6 +39,10 @@ class AppServiceProvider extends ServiceProvider
             'mail.password' => $settings->mailpwd,
             'mail.from.address' => $settings->mailfrom,
             'mail.from.name' => $settings->mailname,
+
+            //STRIPE
+            'stripe.publishable_key' => $settings->stripe_published_key,
+            'stripe.secret_key' => $settings->stripe_secret_key,
         ]);
     }
 }

@@ -15,6 +15,7 @@
         "laravel/framework": "5.8.*",
         "laravel/tinker": "^1.0",
         "maatwebsite/excel": "^3.1",
+        "stripe/stripe-php": "^8.1",
         "yajra/laravel-datatables-oracle": "~9.0"
     },
     "require-dev": {

@@ -181,7 +181,7 @@ class ServiceController extends Controller
 
         $service_booking = Service_booking::where('id', $request->serviceBookingId)->first();
         $mailFromId = config()->get('mail.from.address');
-        $payment_link = URL::to('customer/dashboard/my-services/?_token='.encrypt($service_booking->email.','.$request->serviceBookingId));
+        $payment_link = URL::to('service_payment_form/?_tkn='.encrypt($service_booking->email.','.$request->serviceBookingId.','.$service_booking->service_id.','.$request->service_offered_price));
         Mail::to($service_booking->email)->send(new RequestServiceSubmitMail($service_booking->name, $mailFromId, $request->service_offered_price, $request->message, $payment_link));
         // $service_booking->acceptance_status = 'A';
         // $service_booking->service_request_acceptance_date = date('Y-m-d h:i:s');
@@ -192,6 +192,8 @@ class ServiceController extends Controller
             'service_offered_price' => $request->service_offered_price,
             'service_request_acceptance_date' => date('Y-m-d h:i:s'),
         ]);
+
+        return response()->json(['status' => 'Mail sent successfully'], 200);
 
     }
 

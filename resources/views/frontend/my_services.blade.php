@@ -24,7 +24,8 @@
                 <th>Approval</th>
                 <th>Quoted Price($)</th>
                 <th>Payment</th>
-                <th>Note</th>
+                <th>Status</th>
+                <th>Payment Status</th>
             </tr>
         </thead>
         <tbody>
@@ -32,7 +33,7 @@
             @php
             $i= 0;
             @endphp
-            @foreach($services as $row)
+            @foreach($services as $key => $row)
             @php
             $i++;
             @endphp
@@ -50,15 +51,9 @@
                         Rejected
                     @endif
                 </td>
-                <td>
-                    @if($row->service_offered_price > 0)
-                       {{$row->service_offered_price}}
-                    @else
-                    0
-                    @endif
-                </td>
-                <td>Unpaid</td>
-                <td>Lorem</td>
+                <td>{{ ($row->service_offered_price != null)? $row->service_offered_price : '0' }}</td>
+                <td>{{ ($row->payment_status != null)?'Paid' : 'Un-Paid' }}</td>
+                <td>@php echo ($row->payment_status != null) ? $row->payment_status : "<a href='".$payment_link[$key]."' class='btn btn-primary'>Pay</a>";@endphp</td>
             </tr>
             @endforeach
             @endif

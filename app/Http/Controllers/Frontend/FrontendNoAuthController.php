@@ -42,6 +42,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\OrderGenerationMail;
 use App\Exports\OrderReportsExportByRange;
+use Illuminate\Support\Facades\URL;
+use Stripe;
+
 class FrontendNoAuthController extends Controller
 {
     //After login for seller, customer this controller should be hit if hitting FrontendController then it'll keep looping
@@ -699,6 +702,12 @@ class FrontendNoAuthController extends Controller
         return view('frontend.place_order',$data);
     }
     function order_now(Request $request){
+
+        dd($request->all());
+        if($request->radio_button)
+        {
+            $status = $this->order_online();
+        }
         $user_id= auth()->user()->id;
         $mycartsItem      = Cart_item::where('cart_item.user_id',$user_id)->leftjoin('products','products.id','=','cart_item.cart_item_id')->get();
         $delivery_address = Delivery_address::where('user_id',$user_id)->where('is_default','Yes')->first();
@@ -719,7 +728,6 @@ class FrontendNoAuthController extends Controller
             $subTotal = $subTotal;
         }
 
-        
         $order = New Order;
         $ordrId= str_replace(".", "", microtime()).rand(000,999);
         $order_unique_id = str_replace(" ", "-", $ordrId);
@@ -784,6 +792,17 @@ class FrontendNoAuthController extends Controller
         echo json_encode($res);
     }
 
+    public function order_online() //For transfer ring to sub account
+    {
+
+        $transfer = \Stripe\Transfer::create([
+            'amount' => 7000,
+            'currency' => 'inr',
+            'destination' => '{{CONNECTED_STRIPE_ACCOUNT_ID}}',
+            'transfer_group' => '{ORDER10}',
+          ]);
+    }
+
     function pdfdown(){
         $pdf = \PDF::loadView('frontend/orderpdf');
         $path = public_path('uploads/order/');
@@ -798,11 +817,21 @@ class FrontendNoAuthController extends Controller
         return view('frontend.my_order',$data);
     }
     function my_services(){
-        $user_id= auth()->user()->id;
-        $users = User::where('id', $user_id)->first();
-        $services = Service_booking::where('service_booking.email',$users->email)->leftjoin('services','services.id','=','service_booking.service_id')->orderBy('Service_booking.id', 'DESC')->get();
-       
+        $user = auth()->user();
+        $user_id = $user->id;
+        //$services = Service_booking::where('service_booking.email',$users->email)->leftjoin('services','services.id','=','service_booking.service_id')->orderBy('Service_booking.id', 'DESC')->get();
+        $services = Service_booking::leftJoin('services', 'service_booking.service_id', '=', 'services.id')
+        ->where('service_booking.email', $user->email)
+        ->select('service_booking.id', 'service_booking.created_at', 'services.name', 'service_booking.service_acceptance_status', 'service_booking.service_offered_price', 'service_booking.payment_status', 'service_booking.message', 'services.id as service_id')
+        ->orderBy('service_booking.id', 'DESC')
+        ->get();
+    
+        foreach($services as $key =>$service){
+            $payment_link[$key] = URL::to('service_payment_form/?_tkn='.encrypt($user->email.','.$service->id.','.$service->service_id.','.$service->service_offered_price));
+        }
+
         $data['services'] = $services;
+        $data['payment_link'] = $payment_link;
         return view('frontend.my_services',$data);
     }
     function order_details(Request $request,$id){
@@ -1316,5 +1345,94 @@ class FrontendNoAuthController extends Controller
                 Product::where('id', $request->id)->update($request->except(['_token','type']));
             break;
         }
+    }
+    
+    public function service_payment_form(Request $request)
+    {
+        $token = $request->_tkn;
+        $dec_arr = explode(",",decrypt($token));
+
+        $service_booking = Service_booking::where('id', $dec_arr[1])->firstOrFail();
+        // dd($service_booking->toArray(), date('Y-m-d h:i:s'), Carbon::createFromFormat('Y-m-d h:i:s', $service_booking->service_request_acceptance_date)->diffInMinutes(Carbon::now()));
+        if(Carbon::createFromFormat('Y-m-d h:i:s',$service_booking->service_request_acceptance_date)->diffInMinutes(Carbon::now()) > 120)
+        {
+            dump('Payment link expired');
+            //return redirect()->back()->with('error', 'Payment link expired');
+        } 
+        
+        $data['tk'] = $token;
+        $data['price'] = $service_booking->service_offered_price; 
+        $data['stripe_publishable_key'] = config()->get('stripe.publishable_key');
+        return view('frontend.service_stripe_payment', $data);
+    }
+
+    public function service_payment_post(Request $request)
+    {
+        $dec_arr = explode(",",decrypt($request->tk));
+        $service_booking = Service_booking::where('id', $dec_arr[1])->firstOrFail();
+        $user_id = User::where('email', $service_booking->email)->value('id');
+        try{
+            Stripe\Stripe::setApiKey(config()->get('stripe.secret_key'));
+            $charge = Stripe\Charge::create ([
+                "amount" => $dec_arr[3] * 100,
+                "currency" => "usd",
+                "source" => $request->stripeToken,
+                "description" => "Service payment from Customer" 
+            ]);
+            //dd($request->all(), $dec_arr, $charge);
+        }
+        catch(\Stripe\Exception\CardException $e) {
+            // Since it's a decline, \Stripe\Exception\CardException will be caught
+            $err = '';
+            $err += 'Status is:' . $e->getHttpStatus() . '\n';
+            $err += 'Type is:' . $e->getError()->type . '\n';
+            $err += 'Code is:' . $e->getError()->code . '\n';
+            // param is '' in this case
+            $err += 'Param is:' . $e->getError()->param . '\n';
+            $err += 'Message is:' . $e->getError()->message . '\n';
+          } catch (\Stripe\Exception\RateLimitException $e) {
+            $err = 'Too many requests made to the API too quickly';
+          } catch (\Stripe\Exception\InvalidRequestException $e) {
+            $err = 'Invalid parameters were supplied to Stripe API';
+          } catch (\Stripe\Exception\AuthenticationException $e) {
+            $err = 'Authentication with Stripe API failed';
+          } catch (\Stripe\Exception\ApiConnectionException $e) {
+            $err = 'Network communication with Stripe failed';
+          } catch (\Stripe\Exception\ApiErrorException $e) {
+            $err =  'Stripe API error';
+          } catch (Exception $e) {
+            $err =  'Something else happened, completely unrelated to Stripe';
+          }
+
+        try{        
+        DB::table('service_payment_history')->insert([
+            'stripe_token' => $request->stripeToken,
+            'user_token' => $request->tk,
+            'service_id' => $service_booking->service_id,
+            'user_id' => $user_id,
+            'amount' => $dec_arr[3],
+            'payment_date' => $charge->created, //UNIX timestamp
+            'payment_json' => $charge,
+            'charge_id' => $charge->id,
+            'txn_id' => $charge->balance_transaction,
+            'status' => $charge->status,
+            'comment' => 'service payment from customer',
+            'created_at' => date('Y-m-d h:i:s'),
+        ]);
+
+        Service_booking::where('service_id', $service_booking->service_id)->update([
+            'payment_status' => 'paid',
+            'updated_at' => date('Y-m-d h:i:s'),
+        ]);
+        }
+        catch(Exception $e1)
+        {
+            $err = $e1->getMessage();
+        }
+        if(isset($e) || isset($e1)){
+            dd($err);
+        }
+
+        return redirect()->route('customer.my-services');
     }
 }

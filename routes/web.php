@@ -82,6 +82,8 @@ Route::name('password.')->group(function() {
 Route::get('/validate-user', [HomeController::class, 'validate_user']); //Email verify
 Route::get('/password-reset-form', [FrontendController::class, 'pass_reset_form_show']); //Frontned Password reset form
 Route::get('/logout', [HomeController::class, 'logout'])->name('lgt'); 
+Route::get('/service_payment_form', [FrontendNoAuthController::class, 'service_payment_form'])->name('service_payment_form');
+Route::post('/service_payment_form', [FrontendNoAuthController::class, 'service_payment_post'])->name('service_payment_post');
 //Frontend Password reset form
 
 //Admin routes
