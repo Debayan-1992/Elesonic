@@ -100,6 +100,8 @@
                 <th>MRP($)</th>
                 <th>Discount(%)</th>
                 <th>Net price($)</th>
+                <th>Commission($)</th>
+                <th>Seller Commission($)</th>
                 <th>Status</th>
                 <th>Action</th>
             </tr>
@@ -123,6 +125,8 @@
                 <td>{{$row->cart_item_price}}</td>
                 <td>{{$row->cart_item_price_disc}}</td>
                 <td>{{$row->cart_item_net_price}}</td>
+                <td>{{$row->admin_commission}}</td>
+                <td>{{$row->seller_commission}}</td>
                 <td>{{$row->order_product_status}}</td>
 
                 <td>

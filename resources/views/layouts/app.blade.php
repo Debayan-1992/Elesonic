@@ -26,6 +26,8 @@
         <!-- Theme style -->
         <link rel="stylesheet" href="{{asset('inhouse/dist/css/AdminLTE.min.css')}}">
 
+        <link rel="icon" type="image/png" href="{{asset('custom_resource/images/logo.png')}}">
+
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
         <!--[if lt IE 9]>

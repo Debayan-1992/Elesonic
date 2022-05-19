@@ -18,6 +18,7 @@ use App\Http\Controllers\Frontend\FrontendNoAuthController;
 use App\Http\Controllers\Dashboard\OrderController;
 
 use App\Http\Controllers\Dashboard\BlogsController;
+use App\Http\Controllers\Dashboard\ReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -189,6 +190,11 @@ Route::prefix('/admin/dashboard')->name('dashboard.')->namespace('Dashboard')->m
         Route::get('/index/{type}', [OrderController::class, 'index'])->name('index');
         Route::get('/view/{id?}',   [OrderController::class, 'view'])->name('view');
         Route::post('statusChange',   [OrderController::class, 'statusChange'])->name('statusChange');
+    });
+    Route::prefix('/reports')->name('reports.')->middleware('checkrole:superadmin|admin')->group(function(){
+        Route::get('/index/{type}', [ReportController::class, 'index'])->name('index');
+
+        Route::post('generate-excel', [ReportController::class, 'generate_excel'])->name('generate-excel');
     });
 
     //== Products Routes == //

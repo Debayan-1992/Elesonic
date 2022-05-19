@@ -60,7 +60,7 @@
                     <div class="modal-body">
                         <div class="form-group">
                             <label>Price <span class="text-danger">*</span></label>
-                            <input type="text" value="" name="service_offered_price" class="form-control" placeholder="Enter Service Price" required>
+                            <input type="number" value="" name="service_offered_price" class="form-control" placeholder="Enter Service Price" required>
                         </div>
 
                         <div class="form-group">
