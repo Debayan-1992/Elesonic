@@ -708,7 +708,7 @@ class FrontendNoAuthController extends Controller
     function order_now(Request $request){
 
      
-        if($request->radio_button)
+        if($request->paymentType == 'online')
         {
             $status = $this->order_online('total price', 'no of sellers and details', 'order_id');
         }
