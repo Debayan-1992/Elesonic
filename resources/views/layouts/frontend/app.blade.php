@@ -103,12 +103,14 @@
 
 				<!---->
 					<div class="right-block">
-
+					
 						<div class="search-block" id="pro_search">
 					  	<form action="{{route('search-product')}}" method="get">
 					      <input class="form-control" type="search" onkeypress="get_prod('search_name')"  id="search_name" name="search" placeholder="Search Products....." placeholder="Search" aria-label="Search">
 					    </form>
+						
 						</div>
+						
 						
 						@php 
 							if(Auth::check() == false){
@@ -141,8 +143,9 @@
 						@endphp
 						@if($role_id == 5)
 						<div class="icon-block">
+						
 							<ul>
-								
+								<div id="google_translate_element"></div>
 								@if(Auth::check())
 									<li class="user-icon"><a href="{{route('customer.customer_dashboard')}}"><i class="fa fa-user" aria-hidden="true"></i></a></li>
 								@else
@@ -184,7 +187,9 @@
 							</ul>
 						</div>
 						@endif
+						
 					</div>
+					<div id="google_translate_element"></div>
 				<!---->
 
 			</div>
@@ -561,8 +566,13 @@ function get_prod(text_id){
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
 <script src="https://cdn.datatables.net/buttons/1.6.1/js/buttons.html5.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/1.6.1/js/buttons.print.min.js"></script> 
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
+}
+</script>
 
-    </script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 @yield('script')
 @stack('script')
 

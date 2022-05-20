@@ -50,7 +50,7 @@
 										        <div class="card-body">
 
 										        	<!---->
-										            <div class="search-group">
+										            <!-- <div class="search-group">
 
 														
 														<input type="search" placeholder="Search..." class="form-control" />
@@ -58,7 +58,7 @@
 														<button type="button" class="btn btn-primary">
 															<i class="fa fa-search"></i>
 														</button>
-										            </div>
+										            </div> -->
 										            <!---->
 
 										            <!-- check box block -->
@@ -131,7 +131,7 @@
 										        <div class="card-body">
 
 										        	<!---->
-										            <div class="search-group">
+										            <!-- <div class="search-group">
 
 														
 														<input type="search" placeholder="Search..." class="form-control" />
@@ -139,7 +139,7 @@
 														<button type="button" class="btn btn-primary">
 															<i class="fa fa-search"></i>
 														</button>
-										            </div>
+										            </div> -->
 										            <!---->
 
 										            <!-- check box block -->
