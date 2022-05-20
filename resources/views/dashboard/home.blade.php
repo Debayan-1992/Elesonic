@@ -23,8 +23,50 @@
                 </div>
             </div>
             <div class="box-body">
-                Start creating your amazing application!
+                
+                <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box">
+                        <span class="info-box-icon bg-green"><i class="ion ion-ios-cart-outline"></i></span>
+                        <div class="info-box-content">
+                        <span class="info-box-text">Total Order</span>
+                        <span class="info-box-number">{{$order_total}}</span>
+                        </div>
+                    </div>  
+                </div>
+
+                <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box">
+                        <span class="info-box-icon bg-red"><i class="ion ion-ios-gear-outline"></i></span>
+                        <div class="info-box-content">
+                        <span class="info-box-text">Total Service</span>
+                        <span class="info-box-number">{{$service_total}}</span>
+                        </div>
+                    </div>  
+                </div>
+
+                <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box">
+                        <span class="info-box-icon bg-yellow"><i class="ion ion-ios-people-outline"></i></span>
+                        <div class="info-box-content">
+                        <span class="info-box-text">Total Customer</span>
+                        <span class="info-box-number">{{$customer_total}}</span>
+                        </div>
+                    </div>  
+                </div>
+
+                <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box">
+                        <span class="info-box-icon bg-yellow"><i class="ion ion-ios-people-outline"></i></span>
+                        <div class="info-box-content">
+                        <span class="info-box-text">Total Seller</span>
+                        <span class="info-box-number">{{$seller_total}}</span>
+                        </div>
+                    </div>  
+                </div>
+                
             </div>
+
+
             <div class="box-footer">
                 Footer
             </div>

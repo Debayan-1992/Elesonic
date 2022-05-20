@@ -11,6 +11,8 @@ use Carbon\Carbon;
 use App\Model\City;
 use App\Model\OtpVerification;
 use App\Model\CustomerDetail;
+use App\Model\Order;
+use App\Model\Service;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -36,7 +38,6 @@ class HomeController extends Controller
 
     public function landing()
     {
-        //dd('dsfsdfs');
         return view('frontend.index');
     }
 
@@ -49,6 +50,10 @@ class HomeController extends Controller
     {
         $data['activemenu']['main'] = 'dashboard';
 
+        $data['order_total'] = Order::count();
+        $data['service_total'] = Service::count();
+        $data['customer_total'] = User::where('role_id', 5)->count();
+        $data['seller_total'] = User::where('role_id', 6)->count();
         return view('dashboard.home', $data);
     }
 
