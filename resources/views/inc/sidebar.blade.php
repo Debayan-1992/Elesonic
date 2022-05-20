@@ -119,6 +119,7 @@
                         <ul class="treeview-menu">
                             <li class="{{(isset($activemenu['sub']) && $activemenu['sub'] == 'services') ? 'active' : ''}}"><a href="{{route('dashboard.service.index')}}"><i class="fa fa-circle-o"></i> Services</a></li>
                             <li class="{{(isset($activemenu['sub']) && $activemenu['sub'] == 'request-service') ? 'active' : ''}}"><a href="{{route('dashboard.request_service.index')}}"><i class="fa fa-circle-o"></i> Requested Service</a></li>
+                            <li class="{{(isset($activemenu['sub']) && $activemenu['sub'] == 'service-payment-history') ? 'active' : ''}}"><a href="{{route('dashboard.service_payment_history.index')}}"><i class="fa fa-circle-o"></i> Payment History</a></li>
                         </ul>
                     </li>
                 @endif

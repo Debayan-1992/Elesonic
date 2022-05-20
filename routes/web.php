@@ -231,6 +231,10 @@ Route::prefix('/admin/dashboard')->name('dashboard.')->namespace('Dashboard')->m
         Route::post('/submit', [ServiceController::class, 'r_service_submit'])->name('r_service_submit');
     });
 
+    Route::prefix('/service-payment-history')->name('service_payment_history.')->middleware('checkrole:superadmin')->group(function(){
+        Route::get('/index', [ServiceController::class, 'service_pay_index'])->name('index');
+    });
+
     //== Departments ==//
     Route::prefix('/department')->name('department.')->middleware('checkrole:superadmin')->group(function(){
         Route::get('/index', [DepartmentController::class, 'index'])->name('index');

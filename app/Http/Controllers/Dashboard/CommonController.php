@@ -26,6 +26,7 @@ use App\Model\Department;
 use App\Model\Service_booking;
 use App\Model\Order;
 use App\Model\Order_details;
+use DB;
 
 class CommonController extends Controller
 {
@@ -175,6 +176,12 @@ class CommonController extends Controller
             case 'request_service':
                 $query = Service_booking::query();
                 $query->leftJoin('services', 'service_booking.service_id', '=', 'services.id')->whereNotIn('service_booking.status',['D'])->select('service_booking.id', 'services.name as service_name', 'service_booking.name', 'service_booking.email', 'service_booking.phone', 'service_booking.status', 'service_booking.created_at', 'service_booking.service_acceptance_status');
+                $request['searchdata'] = [];
+            break;
+
+            case 'service_payment_history':
+                $query = \DB::table('service_payment_history')->leftJoin('services', 'service_payment_history.service_id', '=', 'services.id')->Join('users', 'service_payment_history.user_id', '=', 'users.id')
+                ->select('service_payment_history.id', 'users.email', 'services.name', 'service_payment_history.amount', 'service_payment_history.status',  'service_payment_history.charge_id', 'service_payment_history.created_at', 'service_payment_history.receipt_url');
                 $request['searchdata'] = [];
             break;
             default:

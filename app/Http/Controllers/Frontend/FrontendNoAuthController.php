@@ -1437,6 +1437,7 @@ class FrontendNoAuthController extends Controller
             'charge_id' => $charge->id,
             'txn_id' => $charge->balance_transaction,
             'status' => $charge->status,
+            'receipt_url' => $charge->receipt_url,
             'comment' => 'service payment from customer',
             'created_at' => date('Y-m-d h:i:s'),
         ]);

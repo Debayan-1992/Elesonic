@@ -187,6 +187,15 @@ class ServiceController extends Controller
 
     }
 
+    public function service_pay_index()
+    {
+        $data['activemenu'] = array(
+            'main' => 'services',
+            'sub' => 'service-payment-history',
+        );
+
+        return view('dashboard.service.service_payment_history');
+    }
     // public function r_service_decrypt(Request $request)
     // {
 

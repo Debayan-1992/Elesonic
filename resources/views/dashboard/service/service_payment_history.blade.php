@@ -30,7 +30,9 @@
                             <th>Service Name</th>
                             <th>Price</th>
                             <th>Charge_Id</th>
+                            <th>Status</th>
                             <th>Created At</th>
+                            <th>Receipt</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -149,10 +151,25 @@
                     },
                 },
                 {
+                    data:'status',
+                    name: 'status',
+                    render: function(data, type, full, meta){
+                        return data
+                    },
+                },
+                {
                     data:'created_at',
                     name: 'created_at',
                     render: function(data, type, full, meta){
                         return data
+                    },
+                },
+                {
+                    data:'receipt_url',
+                    name: 'receipt_url',
+                    render: function(data, type, full, meta){
+                        return '<a class="btn btn-primary" href='+data+'>Download</a>';
+                        
                     },
                 }
             ],
